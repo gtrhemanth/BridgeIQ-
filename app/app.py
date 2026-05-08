@@ -433,9 +433,18 @@ PAGES = [
     "👤 About the Analyst",
 ]
 
+# Programmatic navigation: buttons set go_to_page, we consume it here before rendering the selectbox
+if "go_to_page" not in st.session_state:
+    st.session_state["go_to_page"] = None
+
+_nav_index = 0
+if st.session_state["go_to_page"] and st.session_state["go_to_page"] in PAGES:
+    _nav_index = PAGES.index(st.session_state["go_to_page"])
+    st.session_state["go_to_page"] = None  # consume it so it doesn't persist
+
 nav_col, info_col = st.columns([3, 1])
 with nav_col:
-    page = st.selectbox("Navigate", PAGES, label_visibility="collapsed", key="main_nav")
+    page = st.selectbox("Navigate", PAGES, index=_nav_index, label_visibility="collapsed")
 with info_col:
     st.markdown('<div style="text-align:right;font-size:11px;color:#64748b;padding-top:8px">Apex Solutions · B2B SaaS Demo · Built by <b>Sai Hemanth</b></div>', unsafe_allow_html=True)
 
@@ -570,7 +579,7 @@ if page == "🏠 Home":
         """, unsafe_allow_html=True)
         col.markdown('<div class="home-card-btn">', unsafe_allow_html=True)
         if col.button(f"→ Open {title}", key=f"hn_{nav_target}"):
-            st.session_state["main_nav"] = nav_target
+            st.session_state["go_to_page"] = nav_target
             st.rerun()
         col.markdown('</div>', unsafe_allow_html=True)
 
