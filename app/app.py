@@ -53,6 +53,15 @@ header[data-testid="stHeader"] { background: #0f1117 !important; }
 /* Main background */
 .stApp { background-color: #0f1117; }
 
+/* Remove default top padding so nav bar sits flush */
+.main .block-container {
+    padding-top: 0rem !important;
+    padding-bottom: 1rem !important;
+}
+section[data-testid="stMain"] > div:first-child {
+    padding-top: 0 !important;
+}
+
 /* Sidebar */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0d1b2a 0%, #1a2d40 100%);
