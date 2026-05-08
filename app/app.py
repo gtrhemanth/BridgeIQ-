@@ -501,8 +501,7 @@ if page == "📊 Executive Dashboard":
             st.markdown('<div class="section-header">MRR Distribution by Region</div>', unsafe_allow_html=True)
             reg_mrr = query(f"""
                 SELECT region, ROUND(SUM(mrr),0) AS total_mrr, COUNT(*) AS customers
-                FROM customers c {where_clause()}
-                AND status='Active'
+                FROM customers c WHERE status='Active' {and_clause()}
                 GROUP BY region ORDER BY total_mrr DESC
             """)
             fig4 = px.treemap(reg_mrr, path=["region"], values="total_mrr",
@@ -585,7 +584,7 @@ if page == "📊 Executive Dashboard":
                 FROM customers c
                 LEFT JOIN (SELECT customer_id, COUNT(*) AS sessions FROM product_usage GROUP BY customer_id) u
                     ON c.customer_id=u.customer_id
-                {where_clause()}
+                WHERE 1=1 {and_clause()}
             """)
             fig4 = px.scatter(scatter_df, x="sessions", y="health_score",
                               color="status", size="mrr",
@@ -751,7 +750,7 @@ if page == "📊 Executive Dashboard":
                        ROUND(COUNT(CASE WHEN o.completed=1 THEN 1 END)*100.0/COUNT(*),1) AS pct,
                        ROUND(AVG(CASE WHEN o.completed=1 THEN o.days_to_complete END),1) AS avg_days
                 FROM onboarding o JOIN customers c ON o.customer_id=c.customer_id
-                {where_clause()}
+                WHERE 1=1 {and_clause()}
                 GROUP BY c.plan_type
             """)
             fig3 = go.Figure()
