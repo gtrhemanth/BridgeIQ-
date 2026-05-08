@@ -192,7 +192,7 @@ if page == "Executive Dashboard":
             return "background-color: #FFF3CC; color: #996600"
         return "background-color: #CCFFCC; color: #006600"
 
-    styled = at_risk.style.applymap(color_risk, subset=["risk_score"])
+    styled = at_risk.style.map(color_risk, subset=["risk_score"])
     st.dataframe(styled, use_container_width=True, hide_index=True)
 
     # ── Row 4: Churn by Industry + Health Distribution ─────────────────────────
