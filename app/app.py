@@ -438,7 +438,18 @@ if page == "📊 Executive Dashboard":
 
         styled = at_risk.style.map(style_risk, subset=["Risk"]) \
                               .map(lambda v: "color:#ef4444;font-weight:600" if v == "No" else "color:#22c55e", subset=["Onboarded"])
-        st.dataframe(styled, use_container_width=True, hide_index=True, height=420)
+
+        col_tbl, col_exp = st.columns([5, 1])
+        with col_tbl:
+            st.dataframe(styled, use_container_width=True, hide_index=True, height=420)
+        with col_exp:
+            st.download_button(
+                label="Export CSV",
+                data=at_risk.to_csv(index=False),
+                file_name="at_risk_customers.csv",
+                mime="text/csv",
+                use_container_width=True,
+            )
 
     # ════════════════════════════════════════════════════════════════════════
     # TAB 2 — REVENUE

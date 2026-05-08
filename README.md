@@ -1,12 +1,19 @@
 # BridgeIQ — AI-Powered Business Intelligence & Process Transformation
 
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-Live-FF4B4B?style=flat&logo=streamlit&logoColor=white)
+![Plotly](https://img.shields.io/badge/Plotly-Interactive-3F4F75?style=flat&logo=plotly&logoColor=white)
+![Claude AI](https://img.shields.io/badge/Claude_AI-Integrated-D97757?style=flat)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=flat&logo=sqlite&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat)
+
 > A Technical Business Analyst portfolio project demonstrating end-to-end BA capabilities — from data modeling and SQL analytics to AI-powered requirements generation and live interactive dashboards.
 
 ---
 
 ## Live Demo
 
-**[Launch BridgeIQ App](https://share.streamlit.io/gtrhemanth/bridgeiq)** ← Click to explore the live platform
+**[Launch BridgeIQ App](https://komhjq3bxsukmilc5tcjgp.streamlit.app/)** ← Click to explore the live platform
 
 ---
 
@@ -169,6 +176,17 @@ cd ../presentation && python build_deck.py
 - [x] AI Requirements Generator (live)
 - [x] Executive Presentation Deck
 - [x] UAT Test Framework
+
+---
+
+## Process Documentation
+
+| Diagram | Description |
+|---|---|
+| [AS-IS Process Flow](diagrams/process_asis.md) | Current manual churn detection — pain points mapped |
+| [TO-BE Process Flow](diagrams/process_tobe.md) | BridgeIQ automated churn prevention workflow |
+| [Entity Relationship Diagram](diagrams/erd.md) | Full data model with relationships |
+| [Data Dictionary](docs/data_dictionary.csv) | 48 columns documented with types, rules, examples |
 
 ---
 

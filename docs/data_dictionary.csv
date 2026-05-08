@@ -1,0 +1,51 @@
+Table,Column,Data Type,Nullable,Primary Key,Foreign Key,Description,Example Value,Business Rule
+customers,customer_id,TEXT,No,Yes,,Unique identifier for each customer account,CUST0001,Format: CUST + 4-digit number
+customers,company_name,TEXT,No,,,Legal business name of the customer company,Acme Solutions Inc.,Populated from CRM at contract signing
+customers,industry,TEXT,No,,,Primary industry vertical of the customer,Healthcare,One of 10 defined industry categories
+customers,plan_type,TEXT,No,,,Subscription plan tier,Growth,Must be one of: Starter / Growth / Enterprise
+customers,mrr,REAL,No,,,Monthly Recurring Revenue in USD for this customer,2499.00,Excludes one-time fees and refunds
+customers,region,TEXT,No,,,Geographic region of the customer headquarters,North America,One of 5 defined regions
+customers,company_size,TEXT,No,,,Employee headcount band of the customer,201-500,One of 5 defined size bands
+customers,contract_start,DATE,No,,,Date the customer first signed a contract,2023-04-15,ISO 8601 format (YYYY-MM-DD)
+customers,churn_date,DATE,Yes,,,Date the customer cancelled their subscription. NULL if still active,2024-09-30,NULL for active customers. Set on cancellation.
+customers,status,TEXT,No,,,Current account status,Active,Must be one of: Active / Churned
+customers,health_score,REAL,No,,,Composite health score from 0-100. Higher = healthier account,76.4,Computed daily from usage + tickets + billing signals
+customers,nps_score,INTEGER,No,,,Net Promoter Score from most recent survey (0-10),8,0-6: Detractor. 7-8: Passive. 9-10: Promoter
+transactions,transaction_id,TEXT,No,Yes,,Unique identifier for each billing transaction,TXN00142,Format: TXN + 5-digit number
+transactions,customer_id,TEXT,No,,customers.customer_id,Foreign key linking to the customer who generated this transaction,CUST0001,Must exist in customers table
+transactions,amount,REAL,No,,,Transaction amount in USD. Negative values indicate refunds or downgrades,-299.00,Refunds and downgrades are negative amounts
+transactions,transaction_date,DATE,No,,,Date the transaction was processed,2024-03-01,ISO 8601 format (YYYY-MM-DD)
+transactions,transaction_type,TEXT,No,,,Category of the billing event,Renewal,One of: Subscription / Renewal / Upgrade / Downgrade / One-time Add-on / Refund
+transactions,status,TEXT,No,,,Processing status of the transaction,Completed,One of: Completed / Pending / Failed
+transactions,payment_method,TEXT,No,,,Payment instrument used for this transaction,ACH,One of: Credit Card / ACH / Wire Transfer / Invoice
+support_tickets,ticket_id,TEXT,No,Yes,,Unique identifier for each support ticket,TKT00892,Format: TKT + 5-digit number
+support_tickets,customer_id,TEXT,No,,customers.customer_id,Foreign key linking to the customer who raised this ticket,CUST0034,Must exist in customers table
+support_tickets,category,TEXT,No,,,Business area the ticket relates to,Technical Issue,One of 7 defined categories
+support_tickets,priority,TEXT,No,,,Urgency level assigned at ticket creation,High,One of: Low / Medium / High / Critical
+support_tickets,status,TEXT,No,,,Current resolution state of the ticket,Resolved,One of: Open / In Progress / Resolved / Escalated
+support_tickets,created_date,DATE,No,,,Date the ticket was submitted by the customer,2024-06-12,ISO 8601 format (YYYY-MM-DD)
+support_tickets,resolved_date,DATE,No,,,Date the ticket was marked as resolved,2024-06-14,ISO 8601 format (YYYY-MM-DD)
+support_tickets,resolution_time_hours,REAL,No,,,Hours elapsed between ticket creation and resolution,18.5,SLA targets: Critical≤8h / High≤24h / Medium≤48h / Low≤96h
+support_tickets,satisfaction_score,INTEGER,Yes,,,Customer satisfaction rating submitted after resolution (1-5). NULL if not rated,4,1=Very Unsatisfied. 5=Very Satisfied. NULL if customer did not rate.
+support_tickets,description,TEXT,No,,,Free-text description of the issue as reported by the customer,Dashboard loading slowly with multiple filters,Captured verbatim from customer submission
+product_usage,usage_id,TEXT,No,Yes,,Unique identifier for each product usage session,USG00231,Format: USG + 5-digit number
+product_usage,customer_id,TEXT,No,,customers.customer_id,Foreign key linking to the customer who generated this usage event,CUST0012,Must exist in customers table
+product_usage,usage_date,DATE,No,,,Date the usage session occurred,2024-08-22,ISO 8601 format (YYYY-MM-DD)
+product_usage,feature,TEXT,No,,,Name of the product feature used during this session,Reporting,One of 10 defined feature names
+product_usage,session_minutes,REAL,No,,,Duration of the usage session in minutes,24.5,Capped at 120 minutes per session
+product_usage,actions_count,INTEGER,No,,,Number of user actions performed during this session,34,Clicks, form submissions, exports counted as actions
+onboarding,onboarding_id,TEXT,No,Yes,,Unique identifier for each customer onboarding record,ONB0042,Format: ONB + 4-digit number. One record per customer.
+onboarding,customer_id,TEXT,No,,customers.customer_id,Foreign key linking to the customer. One-to-one relationship.,CUST0042,Each customer has exactly one onboarding record
+onboarding,stage,TEXT,No,,,Current or final onboarding stage reached by the customer,Data Migration,One of 5 stages: Account Setup / Data Migration / User Training / Integration Config / Go-Live
+onboarding,start_date,DATE,No,,,Date the onboarding process was initiated. Equals contract_start date.,2023-04-15,ISO 8601 format (YYYY-MM-DD)
+onboarding,completion_date,DATE,Yes,,,Date the customer reached Go-Live. NULL if onboarding not yet completed.,2023-05-18,NULL for customers who have not completed onboarding
+onboarding,completed,INTEGER,No,,,Boolean flag indicating whether onboarding reached Go-Live stage,1,1 = Completed. 0 = Incomplete / In Progress
+onboarding,days_to_complete,INTEGER,Yes,,,Number of calendar days from start_date to completion_date. NULL if not completed.,33,NULL if completed = 0
+onboarding,blocker,TEXT,No,,,Primary reason onboarding is stalled or was delayed. 'None' if completed smoothly.,IT approval delay,One of 6 defined blocker types or 'None'
+employees,employee_id,TEXT,No,Yes,,Unique identifier for each internal employee,EMP0034,Format: EMP + 4-digit number
+employees,name,TEXT,No,,,Full legal name of the employee,Sarah Johnson,First Name + Last Name
+employees,department,TEXT,No,,,Business department the employee belongs to,Customer Success,One of 8 defined departments
+employees,role,TEXT,No,,,Job title of the employee,Senior CSM,Role titles are defined per department
+employees,hire_date,DATE,No,,,Date the employee joined the company,2021-09-01,ISO 8601 format (YYYY-MM-DD)
+employees,salary,REAL,No,,,Annual base salary in USD,95000.00,Excludes bonus and equity compensation
+employees,location,TEXT,No,,,Primary work location of the employee,New York,One of 7 defined locations including Remote
