@@ -32,26 +32,29 @@ st.markdown("""
 
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-/* Hide default streamlit elements */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
+/* Hide Streamlit chrome — keep sidebar toggle functional */
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
 
-/* Blend header into dark background instead of hiding it — keeps sidebar toggle functional */
+/* Style the header bar to match our dark theme (do NOT visibility:hidden — breaks sidebar toggle) */
 header[data-testid="stHeader"] {
-    background-color: #0f1117 !important;
-    border-bottom: none !important;
+    background: #0f1117 !important;
+    border-bottom: 1px solid #0f1117 !important;
+    height: 2.875rem;
 }
-/* Hide the toolbar deploy/share buttons but keep sidebar toggle */
-[data-testid="stToolbar"] { visibility: hidden; }
-[data-testid="stToolbar"] * { visibility: hidden; }
-/* Sidebar toggle stays visible */
+/* Hide deploy/share toolbar items specifically */
+[data-testid="stToolbar"] {
+    right: 0; opacity: 0; pointer-events: none;
+}
+/* The sidebar toggle button — must remain clickable */
+[data-testid="stSidebarCollapsedControl"],
 [data-testid="collapsedControl"] {
-    visibility: visible !important;
+    background: #1a2d40 !important;
+    border-radius: 0 8px 8px 0 !important;
     opacity: 1 !important;
-}
-[data-testid="collapsedControl"] * {
     visibility: visible !important;
-    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 999999 !important;
 }
 
 /* Main background */
