@@ -32,29 +32,17 @@ st.markdown("""
 
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-/* Hide Streamlit chrome — keep sidebar toggle functional */
+/* Hide Streamlit chrome */
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
+header { visibility: hidden; }
 
-/* Style the header bar to match our dark theme (do NOT visibility:hidden — breaks sidebar toggle) */
-header[data-testid="stHeader"] {
-    background: #0f1117 !important;
-    border-bottom: 1px solid #0f1117 !important;
-    height: 2.875rem;
-}
-/* Hide deploy/share toolbar items specifically */
-[data-testid="stToolbar"] {
-    right: 0; opacity: 0; pointer-events: none;
-}
-/* The sidebar toggle button — must remain clickable */
-[data-testid="stSidebarCollapsedControl"],
-[data-testid="collapsedControl"] {
-    background: #1a2d40 !important;
-    border-radius: 0 8px 8px 0 !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    z-index: 999999 !important;
+/* Hide the collapse arrow INSIDE the sidebar so it can never be accidentally closed */
+[data-testid="stSidebar"] button[data-testid="stBaseButton-header"],
+[data-testid="stSidebar"] [data-testid="stSidebarHeader"] button,
+[data-testid="stSidebarNavCloseButton"],
+[data-testid="stSidebar"] button[kind="header"] {
+    display: none !important;
 }
 
 /* Main background */
