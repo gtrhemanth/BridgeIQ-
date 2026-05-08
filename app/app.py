@@ -591,7 +591,29 @@ elif page == "📊 Executive Dashboard":
     st.markdown('<div class="page-title">Executive Dashboard</div>', unsafe_allow_html=True)
     st.markdown('<div class="page-subtitle">Apex Solutions · B2B SaaS · Real-time business intelligence across 500 customers and 16,000+ data points</div>', unsafe_allow_html=True)
 
-    kpi = query("""
+    # ── Inline filters ─────────────────────────────────────────────────────────
+    with st.expander("🔽  Filter Dashboard", expanded=True):
+        _f1, _f2, _f3 = st.columns(3)
+        d_plan     = _f1.selectbox("Plan Type",  ["All","Starter","Growth","Enterprise"], key="d_plan")
+        d_region   = _f2.selectbox("Region",     ["All","North America","Europe","Asia Pacific","Latin America","Middle East"], key="d_region")
+        d_industry = _f3.selectbox("Industry",   ["All","Healthcare","Finance","Retail","Manufacturing","Education","Logistics","Real Estate","Legal","Technology","Consulting"], key="d_industry")
+
+    # Build filter clauses from selections
+    def _wc(prefix="c"):
+        parts = []
+        if d_plan != "All":
+            parts.append(f"{prefix}.plan_type = '{d_plan}'")
+        if d_region != "All":
+            parts.append(f"{prefix}.region = '{d_region}'")
+        if d_industry != "All":
+            parts.append(f"{prefix}.industry = '{d_industry}'")
+        return ("WHERE " + " AND ".join(parts)) if parts else ""
+
+    def _ac(prefix="c"):
+        wc = _wc(prefix)
+        return wc.replace("WHERE ", "AND ") if wc else ""
+
+    kpi = query(f"""
         SELECT
             COUNT(CASE WHEN status='Active' THEN 1 END) AS active_customers,
             COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned_customers,
@@ -599,12 +621,12 @@ elif page == "📊 Executive Dashboard":
             ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
             ROUND(AVG(CASE WHEN status='Active' THEN health_score END),1) AS avg_health,
             ROUND(AVG(CASE WHEN status='Active' THEN nps_score END),1) AS avg_nps
-        FROM customers
+        FROM customers c {_wc()}
     """).iloc[0]
 
     open_tickets = query("SELECT COUNT(*) AS cnt FROM support_tickets WHERE status IN ('Open','In Progress')").iloc[0]["cnt"]
     onb_pct      = query("SELECT ROUND(COUNT(CASE WHEN completed=1 THEN 1 END)*100.0/COUNT(*),1) AS pct FROM onboarding").iloc[0]["pct"]
-    at_risk_n    = query("""SELECT COUNT(*) AS n FROM (
+    at_risk_n    = query(f"""SELECT COUNT(*) AS n FROM (
         WITH t AS (SELECT customer_id,COUNT(*) tc FROM support_tickets GROUP BY customer_id),
              u AS (SELECT customer_id,COUNT(*) uc FROM product_usage GROUP BY customer_id),
              o AS (SELECT customer_id,completed FROM onboarding)
@@ -616,7 +638,7 @@ elif page == "📊 Executive Dashboard":
             (CASE WHEN c.nps_score<5 THEN 10 ELSE 0 END) AS rs
         FROM customers c LEFT JOIN t ON c.customer_id=t.customer_id
         LEFT JOIN u ON c.customer_id=u.customer_id LEFT JOIN o ON c.customer_id=o.customer_id
-        WHERE c.status='Active') WHERE rs>=50""").iloc[0]["n"]
+        WHERE c.status='Active' {_ac()}) WHERE rs>=50""").iloc[0]["n"]
 
     arr = int(kpi["total_mrr"]) * 12
     mrr_at_risk = round(int(kpi["total_mrr"]) * float(kpi["churn_rate"]) / 100)
@@ -702,7 +724,7 @@ elif page == "📊 Executive Dashboard":
                        ROUND(SUM(t.amount),0) AS net_revenue,
                        ROUND(SUM(CASE WHEN t.amount>0 THEN t.amount ELSE 0 END),0) AS gross_revenue
                 FROM transactions t JOIN customers c ON t.customer_id=c.customer_id
-                WHERE t.status='Completed' 
+                WHERE t.status='Completed' {_ac()}
                 GROUP BY month ORDER BY month
             """)
             fig = go.Figure()
@@ -751,7 +773,7 @@ elif page == "📊 Executive Dashboard":
             st.markdown('<div class="section-header">Customer Mix</div>', unsafe_allow_html=True)
             mix = query(f"""
                 SELECT plan_type, COUNT(*) AS count, ROUND(SUM(mrr),0) AS mrr
-                FROM customers c 
+                FROM customers c {_wc()}
                 GROUP BY plan_type
             """)
             fig_donut = go.Figure(go.Pie(
@@ -796,7 +818,7 @@ elif page == "📊 Executive Dashboard":
             LEFT JOIN t ON c.customer_id=t.customer_id
             LEFT JOIN u ON c.customer_id=u.customer_id
             LEFT JOIN o ON c.customer_id=o.customer_id
-            WHERE c.status='Active' 
+            WHERE c.status='Active' {_ac()}
             ORDER BY Risk DESC LIMIT 15
         """)
 
@@ -834,7 +856,7 @@ elif page == "📊 Executive Dashboard":
                 SELECT strftime('%Y-%m', t.transaction_date) AS month, c.plan_type,
                        ROUND(SUM(t.amount),0) AS revenue
                 FROM transactions t JOIN customers c ON t.customer_id=c.customer_id
-                WHERE t.status='Completed' 
+                WHERE t.status='Completed' {_ac()}
                 GROUP BY month, c.plan_type ORDER BY month
             """)
             fig = px.area(rev_plan, x="month", y="revenue", color="plan_type",
@@ -849,7 +871,7 @@ elif page == "📊 Executive Dashboard":
                 SELECT t.transaction_type, ROUND(SUM(t.amount),0) AS total,
                        COUNT(*) AS count
                 FROM transactions t JOIN customers c ON t.customer_id=c.customer_id
-                WHERE t.status='Completed' 
+                WHERE t.status='Completed' {_ac()}
                 GROUP BY t.transaction_type ORDER BY total DESC
             """)
             fig2 = px.bar(tx_type, x="transaction_type", y="total",
@@ -867,7 +889,7 @@ elif page == "📊 Executive Dashboard":
                 SELECT c.company_name, c.plan_type, ROUND(SUM(t.amount),0) AS ltv,
                        COUNT(t.transaction_id) AS txns, c.status
                 FROM customers c JOIN transactions t ON c.customer_id=t.customer_id
-                WHERE t.status='Completed' 
+                WHERE t.status='Completed' {_ac()}
                 GROUP BY c.customer_id ORDER BY ltv DESC LIMIT 10
             """)
             fig3 = px.bar(top_cust, x="ltv", y="company_name", orientation="h",
@@ -883,7 +905,7 @@ elif page == "📊 Executive Dashboard":
             st.markdown('<div class="section-header">MRR Distribution by Region</div>', unsafe_allow_html=True)
             reg_mrr = query(f"""
                 SELECT region, ROUND(SUM(mrr),0) AS total_mrr, COUNT(*) AS customers
-                FROM customers c WHERE status='Active' 
+                FROM customers c WHERE status='Active' {_ac()}
                 GROUP BY region ORDER BY total_mrr DESC
             """)
             fig4 = px.treemap(reg_mrr, path=["region"], values="total_mrr",
@@ -907,7 +929,7 @@ elif page == "📊 Executive Dashboard":
                        COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned,
                        ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
                        ROUND(SUM(CASE WHEN status='Churned' THEN mrr ELSE 0 END),0) AS mrr_lost
-                FROM customers c 
+                FROM customers c {_wc()}
                 GROUP BY industry ORDER BY churn_rate DESC
             """)
             fig = px.bar(ind_churn, x="churn_rate", y="industry", orientation="h",
@@ -923,7 +945,7 @@ elif page == "📊 Executive Dashboard":
 
         with c2:
             st.markdown('<div class="section-header">Health Score: Active vs Churned</div>', unsafe_allow_html=True)
-            health_df = query(f"SELECT status, health_score FROM customers c ")
+            health_df = query(f"SELECT status, health_score FROM customers c {_wc()}")
             fig2 = go.Figure()
             for status, color in [("Active", PRIMARY), ("Churned", DANGER)]:
                 d = health_df[health_df["status"] == status]["health_score"]
@@ -944,7 +966,7 @@ elif page == "📊 Executive Dashboard":
             heatmap_df = query(f"""
                 SELECT plan_type, region,
                        ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate
-                FROM customers c 
+                FROM customers c {_wc()}
                 GROUP BY plan_type, region
             """)
             pivot = heatmap_df.pivot(index="plan_type", columns="region", values="churn_rate").fillna(0)
@@ -966,7 +988,7 @@ elif page == "📊 Executive Dashboard":
                 FROM customers c
                 LEFT JOIN (SELECT customer_id, COUNT(*) AS sessions FROM product_usage GROUP BY customer_id) u
                     ON c.customer_id=u.customer_id
-                
+                {_wc()}
             """)
             fig4 = px.scatter(scatter_df, x="sessions", y="health_score",
                               color="status", size="mrr",
@@ -1132,7 +1154,7 @@ elif page == "📊 Executive Dashboard":
                        ROUND(COUNT(CASE WHEN o.completed=1 THEN 1 END)*100.0/COUNT(*),1) AS pct,
                        ROUND(AVG(CASE WHEN o.completed=1 THEN o.days_to_complete END),1) AS avg_days
                 FROM onboarding o JOIN customers c ON o.customer_id=c.customer_id
-                
+                {_ac("c")}
                 GROUP BY c.plan_type
             """)
             fig3 = go.Figure()
