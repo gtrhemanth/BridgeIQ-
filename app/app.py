@@ -10,8 +10,16 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import sqlite3
 import os
+import io
 import anthropic
 from dotenv import load_dotenv
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, roc_auc_score
+import numpy as np
+from fpdf import FPDF
+from textblob import TextBlob
 
 load_dotenv()
 
@@ -427,12 +435,22 @@ PAGES = [
     "🔍 Customer 360",
     "📐 BA Artifacts",
     "💡 What-If Simulator",
+    "🔮 Churn Predictor",
+    "💻 SQL Playground",
     "👤 About the Analyst",
 ]
 
 # Programmatic navigation: buttons set go_to_page, we consume it here before rendering the selectbox
 if "go_to_page" not in st.session_state:
     st.session_state["go_to_page"] = None
+
+# Deep link: honour ?page=<name> in the URL
+_qp = st.query_params.get("page", None)
+if _qp and not st.session_state["go_to_page"]:
+    for _p in PAGES:
+        if _qp.lower() in _p.lower():
+            st.session_state["go_to_page"] = _p
+            break
 
 _nav_index = 0
 if st.session_state["go_to_page"] and st.session_state["go_to_page"] in PAGES:
@@ -444,6 +462,9 @@ with nav_col:
     page = st.selectbox("Navigate", PAGES, index=_nav_index, label_visibility="collapsed")
 with info_col:
     st.markdown('<div style="text-align:right;font-size:11px;color:#64748b;padding-top:8px">Apex Solutions · B2B SaaS Demo · Built by <b>Sai Hemanth</b></div>', unsafe_allow_html=True)
+
+# Update URL query param so every page is deep-linkable
+st.query_params["page"] = page.split(" ", 1)[1] if " " in page else page
 
 st.markdown("---")
 
@@ -709,12 +730,90 @@ elif page == "📊 Executive Dashboard":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Tabs ──────────────────────────────────────────────────────────────────
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(["📈 Overview", "💰 Revenue", "👥 Customer Health", "🎫 Support", "🚀 Onboarding", "📊 Cohort Retention", "🏆 SaaS Benchmarks", "🔍 Anomaly Detector"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs(["📈 Overview", "💰 Revenue", "👥 Customer Health", "🎫 Support", "🚀 Onboarding", "📊 Cohort Retention", "🏆 SaaS Benchmarks", "🔍 Anomaly Detector", "📐 Capacity Planning"])
 
     # ════════════════════════════════════════════════════════════════════════
     # TAB 1 — OVERVIEW
     # ════════════════════════════════════════════════════════════════════════
     with tab1:
+        # ── PDF Export ────────────────────────────────────────────────────
+        def build_pdf_report(kpi_data, arr_val, churn_rt, health_v, onb_v):
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_fill_color(13, 27, 42)
+            pdf.rect(0, 0, 210, 297, "F")
+            pdf.set_font("Helvetica", "B", 24)
+            pdf.set_text_color(79, 142, 247)
+            pdf.cell(0, 20, "BridgeIQ", ln=True, align="C")
+            pdf.set_font("Helvetica", "", 11)
+            pdf.set_text_color(100, 116, 139)
+            pdf.cell(0, 8, "Executive Intelligence Report  -  Apex Solutions B2B SaaS", ln=True, align="C")
+            pdf.cell(0, 6, f"Generated: {pd.Timestamp.now().strftime('%B %d, %Y')}", ln=True, align="C")
+            pdf.ln(6)
+            pdf.set_draw_color(30, 58, 95)
+            pdf.line(15, pdf.get_y(), 195, pdf.get_y())
+            pdf.ln(6)
+            pdf.set_font("Helvetica", "B", 13)
+            pdf.set_text_color(241, 245, 249)
+            pdf.cell(0, 10, "Key Performance Indicators", ln=True)
+            rows = [
+                ("Total ARR",         f"${arr_val:,}"),
+                ("Active Customers",  str(int(kpi_data["active_customers"]))),
+                ("Churn Rate",        f"{churn_rt}%"),
+                ("Avg Health Score",  f"{health_v}/100"),
+                ("Onboarding Rate",   f"{onb_v}%"),
+                ("MRR",               f"${int(kpi_data['total_mrr']):,}"),
+            ]
+            pdf.set_font("Helvetica", "", 11)
+            for label, val in rows:
+                pdf.set_text_color(100, 116, 139)
+                pdf.cell(80, 9, label + ":", ln=False)
+                pdf.set_text_color(241, 245, 249)
+                pdf.cell(0, 9, val, ln=True)
+            pdf.ln(4)
+            pdf.line(15, pdf.get_y(), 195, pdf.get_y())
+            pdf.ln(6)
+            pdf.set_font("Helvetica", "B", 13)
+            pdf.set_text_color(241, 245, 249)
+            pdf.cell(0, 10, "Business Summary", ln=True)
+            summary_lines = [
+                f"Apex Solutions currently serves {int(kpi_data['active_customers'])} active customers generating",
+                f"${arr_val:,} ARR. The {churn_rt}% churn rate is 17% above the SaaS industry benchmark of",
+                f"~9%, putting approximately ${round(arr_val*churn_rt/100):,} ARR at risk annually.",
+                "",
+                f"Average customer health score of {health_v}/100 indicates moderate account stability.",
+                f"Onboarding completion at {onb_v}% — incomplete onboarding customers are 2.4x more",
+                "likely to churn within 6 months.",
+                "",
+                "Recommended immediate actions:",
+                "  1. Deploy automated churn early-warning alerts for risk score >= 50",
+                "  2. Assign dedicated CSMs to customers stuck in onboarding",
+                "  3. Target SLA compliance improvement for Critical/High priority tickets",
+            ]
+            pdf.set_font("Helvetica", "", 10)
+            pdf.set_text_color(148, 163, 184)
+            for line in summary_lines:
+                pdf.multi_cell(0, 7, line)
+            pdf.ln(4)
+            pdf.line(15, pdf.get_y(), 195, pdf.get_y())
+            pdf.ln(4)
+            pdf.set_font("Helvetica", "I", 8)
+            pdf.set_text_color(55, 65, 81)
+            pdf.cell(0, 6, "BridgeIQ  |  Built by Sai Hemanth  |  gtrhemanth14@gmail.com  |  github.com/gtrhemanth", align="C")
+            return bytes(pdf.output())
+
+        _pdf_col, _spacer = st.columns([1, 4])
+        with _pdf_col:
+            if st.button("📄 Download Executive Report PDF", type="primary"):
+                pdf_bytes = build_pdf_report(kpi, arr, float(kpi["churn_rate"]), float(kpi["avg_health"]), onb_pct)
+                st.download_button(
+                    label="⬇ Save PDF",
+                    data=pdf_bytes,
+                    file_name="BridgeIQ_Executive_Report.pdf",
+                    mime="application/pdf",
+                    key="pdf_dl"
+                )
+
         c1, c2, c3 = st.columns([2, 1, 1])
 
         with c1:
@@ -1002,6 +1101,42 @@ elif page == "📊 Executive Dashboard":
             chart_layout(fig4, 280)
             st.plotly_chart(fig4, use_container_width=True)
 
+        st.markdown('<div class="section-header">3D Customer Segmentation — MRR × Health × Usage</div>', unsafe_allow_html=True)
+        seg3d = query(f"""
+            SELECT c.customer_id, c.mrr, c.health_score, c.status, c.plan_type,
+                   COALESCE(u.sessions,0) AS sessions,
+                   CASE WHEN c.health_score<60 THEN 'High Risk'
+                        WHEN c.health_score<75 THEN 'Medium Risk'
+                        ELSE 'Low Risk' END AS risk_tier
+            FROM customers c
+            LEFT JOIN (SELECT customer_id, COUNT(*) AS sessions FROM product_usage GROUP BY customer_id) u
+                ON c.customer_id=u.customer_id
+            {_wc()}
+        """)
+        if not seg3d.empty:
+            fig3d = px.scatter_3d(
+                seg3d, x="mrr", y="health_score", z="sessions",
+                color="risk_tier",
+                color_discrete_map={"High Risk": DANGER, "Medium Risk": WARNING, "Low Risk": SUCCESS},
+                size="mrr", size_max=18,
+                symbol="plan_type",
+                hover_data={"customer_id": True, "status": True, "plan_type": True},
+                labels={"mrr": "MRR ($)", "health_score": "Health Score", "sessions": "Usage Sessions"},
+                opacity=0.85,
+            )
+            fig3d.update_layout(
+                template=PLOTLY_THEME, paper_bgcolor="rgba(0,0,0,0)",
+                scene=dict(
+                    bgcolor="rgba(0,0,0,0)",
+                    xaxis=dict(backgroundcolor="rgba(0,0,0,0)", gridcolor="#1e3a5f", color="#94a3b8"),
+                    yaxis=dict(backgroundcolor="rgba(0,0,0,0)", gridcolor="#1e3a5f", color="#94a3b8"),
+                    zaxis=dict(backgroundcolor="rgba(0,0,0,0)", gridcolor="#1e3a5f", color="#94a3b8"),
+                ),
+                height=480, margin=dict(t=10, b=10, l=0, r=0),
+                legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(color="#94a3b8")),
+            )
+            st.plotly_chart(fig3d, use_container_width=True)
+
     # ════════════════════════════════════════════════════════════════════════
     # TAB 4 — SUPPORT
     # ════════════════════════════════════════════════════════════════════════
@@ -1098,6 +1233,48 @@ elif page == "📊 Executive Dashboard":
             chart_layout(fig4, 300)
             fig4.update_layout(showlegend=False)
             st.plotly_chart(fig4, use_container_width=True)
+
+        st.markdown('<div class="section-header">Ticket Sentiment Analysis</div>', unsafe_allow_html=True)
+        @st.cache_data(ttl=3600)
+        def get_sentiment_df():
+            raw = query("SELECT ticket_id, category, priority, description FROM support_tickets LIMIT 500")
+            raw["polarity"] = raw["description"].apply(lambda t: TextBlob(str(t)).sentiment.polarity)
+            raw["sentiment"] = raw["polarity"].apply(lambda p: "Positive" if p > 0.05 else ("Negative" if p < -0.05 else "Neutral"))
+            return raw
+        sent_df = get_sentiment_df()
+        sc1, sc2, sc3 = st.columns(3)
+        with sc1:
+            dist = sent_df["sentiment"].value_counts().reset_index()
+            dist.columns = ["Sentiment", "Count"]
+            fig_s1 = px.pie(dist, values="Count", names="Sentiment", hole=0.55,
+                            color="Sentiment",
+                            color_discrete_map={"Positive": SUCCESS, "Neutral": PRIMARY, "Negative": DANGER})
+            fig_s1.update_traces(textposition="outside", textinfo="label+percent")
+            chart_layout(fig_s1, 280)
+            fig_s1.update_layout(showlegend=False, title=dict(text="Overall Sentiment", font=dict(color="#f1f5f9"), x=0.5))
+            st.plotly_chart(fig_s1, use_container_width=True)
+        with sc2:
+            cat_sent = sent_df.groupby("category")["polarity"].mean().reset_index().sort_values("polarity")
+            cat_sent["color"] = cat_sent["polarity"].apply(lambda p: DANGER if p < -0.05 else (SUCCESS if p > 0.05 else PRIMARY))
+            fig_s2 = go.Figure(go.Bar(
+                x=cat_sent["polarity"], y=cat_sent["category"], orientation="h",
+                marker_color=cat_sent["color"].tolist(),
+                text=cat_sent["polarity"].round(2), textposition="outside",
+            ))
+            chart_layout(fig_s2, 280)
+            fig_s2.update_layout(title=dict(text="Avg Sentiment by Category", font=dict(color="#f1f5f9"), x=0.5))
+            st.plotly_chart(fig_s2, use_container_width=True)
+        with sc3:
+            pri_sent = sent_df.groupby("priority")["polarity"].mean().reset_index()
+            fig_s3 = px.bar(pri_sent, x="priority", y="polarity",
+                            color="polarity", color_continuous_scale=[DANGER, WARNING, SUCCESS],
+                            text=pri_sent["polarity"].round(2),
+                            category_orders={"priority": ["Critical","High","Medium","Low"]})
+            fig_s3.update_traces(textposition="outside")
+            fig_s3.update_layout(coloraxis_showscale=False)
+            chart_layout(fig_s3, 280)
+            fig_s3.update_layout(title=dict(text="Avg Sentiment by Priority", font=dict(color="#f1f5f9"), x=0.5))
+            st.plotly_chart(fig_s3, use_container_width=True)
 
     # ════════════════════════════════════════════════════════════════════════
     # TAB 5 — ONBOARDING
@@ -1542,6 +1719,92 @@ Which should leadership address first? Why?
                         st.markdown(anom_msg.content[0].text)
                     except Exception as e:
                         st.error(f"API Error: {e}")
+
+
+    # ════════════════════════════════════════════════════════════════════════
+    # TAB 9 — CAPACITY PLANNING
+    # ════════════════════════════════════════════════════════════════════════
+    with tab9:
+        st.markdown('<div class="section-header">Current Headcount vs Customer Load</div>', unsafe_allow_html=True)
+        emp_dept = query("SELECT department, COUNT(*) AS headcount FROM employees GROUP BY department ORDER BY headcount DESC")
+        cs_hc    = int(emp_dept[emp_dept["department"]=="Customer Success"]["headcount"].sum()) if "Customer Success" in emp_dept["department"].values else 8
+        sup_hc   = int(emp_dept[emp_dept["department"]=="Support"]["headcount"].sum()) if "Support" in emp_dept["department"].values else 12
+
+        active_now = query("SELECT COUNT(*) AS n FROM customers WHERE status='Active'").iloc[0]["n"]
+        churn_rt   = float(query("SELECT ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS r FROM customers").iloc[0]["r"])
+        open_tix   = query("SELECT COUNT(*) AS n FROM support_tickets WHERE status IN ('Open','In Progress')").iloc[0]["n"]
+
+        cs_ratio    = round(active_now / cs_hc)   # customers per CSM
+        sup_ratio   = round(open_tix / sup_hc)    # open tickets per support agent
+        target_cs_r = 50   # industry benchmark: 1 CSM per 50 customers
+        target_sup_r= 20   # target tickets per agent
+
+        cp1, cp2, cp3, cp4 = st.columns(4)
+        for col, (lbl, val, bench, color) in zip([cp1,cp2,cp3,cp4],[
+            ("CS Headcount",          cs_hc,        "—",                PRIMARY),
+            ("Customers / CSM",       cs_ratio,     f"Benchmark: {target_cs_r}", WARNING if cs_ratio>target_cs_r else SUCCESS),
+            ("Open Tickets / Agent",  sup_ratio,    f"Target: {target_sup_r}",   DANGER  if sup_ratio>target_sup_r else SUCCESS),
+            ("Support Headcount",     sup_hc,       "—",                PRIMARY),
+        ]):
+            col.markdown(f"""<div class="kpi-card" style="border-left-color:{color}">
+                <div class="kpi-label">{lbl}</div>
+                <div class="kpi-value" style="color:{color}">{val}</div>
+                <div class="kpi-delta-neutral">{bench}</div></div>""", unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown('<div class="section-header">12-Month Growth Projection</div>', unsafe_allow_html=True)
+
+        months = list(range(1, 13))
+        monthly_growth = 0.025  # assume 2.5% MoM net growth after churn
+        projected_customers = [round(active_now * ((1 + monthly_growth) ** m)) for m in months]
+        csm_needed = [max(cs_hc, round(c / target_cs_r)) for c in projected_customers]
+        csm_gap    = [max(0, n - cs_hc) for n in csm_needed]
+
+        proj_df = pd.DataFrame({
+            "Month": [f"M+{m}" for m in months],
+            "Projected Customers": projected_customers,
+            "CSMs Needed": csm_needed,
+            "CSM Gap": csm_gap,
+        })
+
+        pc1, pc2 = st.columns(2)
+        with pc1:
+            fig_proj = go.Figure()
+            fig_proj.add_trace(go.Scatter(
+                x=proj_df["Month"], y=proj_df["Projected Customers"],
+                fill="tozeroy", name="Customers",
+                line=dict(color=PRIMARY, width=2),
+                fillcolor="rgba(79,142,247,0.1)",
+            ))
+            chart_layout(fig_proj, 300)
+            fig_proj.update_layout(title=dict(text="Customer Growth (2.5% MoM)", font=dict(color="#f1f5f9"), x=0.5))
+            st.plotly_chart(fig_proj, use_container_width=True)
+        with pc2:
+            fig_csm = go.Figure()
+            fig_csm.add_trace(go.Bar(x=proj_df["Month"], y=proj_df["CSMs Needed"], name="CSMs Needed", marker_color=WARNING))
+            fig_csm.add_trace(go.Scatter(x=proj_df["Month"], y=[cs_hc]*12, name="Current Headcount",
+                                         line=dict(color=DANGER, dash="dash", width=2)))
+            chart_layout(fig_csm, 300)
+            fig_csm.update_layout(title=dict(text="CSM Capacity Gap", font=dict(color="#f1f5f9"), x=0.5))
+            st.plotly_chart(fig_csm, use_container_width=True)
+
+        gap_q4 = csm_gap[-1]
+        st.markdown(f"""
+        <div class="alert-warning" style="margin-top:16px">
+            <b>Capacity Forecast:</b> At 2.5% MoM net growth, Apex Solutions will need
+            <b>{csm_needed[-1]} CSMs</b> by Month 12 — a gap of <b>{gap_q4} additional hires</b> vs current headcount of {cs_hc}.
+            Hiring should begin by <b>Month {max(1, 12-gap_q4*2)}</b> to avoid service degradation.
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown('<div class="section-header">Department Headcount Overview</div>', unsafe_allow_html=True)
+        fig_emp = px.bar(emp_dept, x="department", y="headcount",
+                         color="headcount", color_continuous_scale=["#1e3a5f", PRIMARY],
+                         text="headcount")
+        fig_emp.update_traces(textposition="outside")
+        fig_emp.update_layout(coloraxis_showscale=False, xaxis_tickangle=-20)
+        chart_layout(fig_emp, 300)
+        st.plotly_chart(fig_emp, use_container_width=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -2148,6 +2411,41 @@ elif page == "🔍 Customer 360":
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+    # ── Customer Journey Timeline ──────────────────────────────────────────
+    st.markdown('<div class="section-header">Customer Journey Timeline</div>', unsafe_allow_html=True)
+    journey_events = []
+    # Contract start
+    journey_events.append(dict(Task="Contract", Start=cust["contract_start"], Finish=cust["contract_start"], Resource="Contract"))
+    # Onboarding
+    if not onb.empty:
+        ob = onb.iloc[0]
+        ob_end = ob["completion_date"] if ob["completion_date"] else ob["start_date"]
+        journey_events.append(dict(Task="Onboarding", Start=ob["start_date"], Finish=ob_end, Resource="Onboarding"))
+    # Transactions (show first + last)
+    if not txns.empty:
+        txns_raw = query(f"SELECT transaction_date, transaction_type FROM transactions WHERE customer_id='{sid}' ORDER BY transaction_date")
+        for _, tr in txns_raw.iterrows():
+            journey_events.append(dict(Task=tr["transaction_type"], Start=tr["transaction_date"], Finish=tr["transaction_date"], Resource="Transaction"))
+    # Support tickets (show most recent 10)
+    if not tickets.empty:
+        tix_raw = query(f"SELECT created_date, priority FROM support_tickets WHERE customer_id='{sid}' ORDER BY created_date LIMIT 10")
+        for _, tk in tix_raw.iterrows():
+            journey_events.append(dict(Task=f"{tk['priority']} Ticket", Start=tk["created_date"], Finish=tk["created_date"], Resource="Support"))
+
+    if journey_events:
+        jdf = pd.DataFrame(journey_events)
+        jdf["Start"] = pd.to_datetime(jdf["Start"])
+        jdf["Finish"] = jdf["Start"] + pd.Timedelta(days=2)  # give point events a 2-day width
+        color_map = {"Contract": PRIMARY, "Onboarding": "#a78bfa", "Transaction": SUCCESS, "Support": WARNING}
+        fig_jt = px.timeline(jdf, x_start="Start", x_end="Finish", y="Task",
+                              color="Resource",
+                              color_discrete_map=color_map,
+                              hover_name="Task")
+        fig_jt.update_yaxes(autorange="reversed")
+        chart_layout(fig_jt, 320)
+        fig_jt.update_layout(showlegend=True)
+        st.plotly_chart(fig_jt, use_container_width=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("Generate AI Account Intelligence Summary", type="primary"):
@@ -2780,3 +3078,168 @@ elif page == "👤 About the Analyst":
         <div style="font-size:11px;color:#374151;margin-top:20px">gtrhemanth14@gmail.com · github.com/gtrhemanth</div>
     </div>
     """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 10 — CHURN PREDICTOR
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "🔮 Churn Predictor":
+    st.markdown('<div class="page-title">Churn Predictor</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Machine learning model trained on Apex Solutions data — predicts churn probability per customer with feature importance breakdown</div>', unsafe_allow_html=True)
+    st.markdown("---")
+
+    @st.cache_data(ttl=3600)
+    def train_churn_model():
+        df = query("""
+            SELECT c.customer_id, c.company_name, c.plan_type, c.industry, c.region,
+                   c.mrr, c.health_score, c.nps_score,
+                   COALESCE(u.sessions,0) AS usage_sessions,
+                   COALESCE(t.ticket_count,0) AS ticket_count,
+                   COALESCE(o.completed,0) AS onboarding_done,
+                   COALESCE(o.days_to_complete,60) AS days_to_complete,
+                   CASE WHEN c.status='Churned' THEN 1 ELSE 0 END AS churned
+            FROM customers c
+            LEFT JOIN (SELECT customer_id, COUNT(*) AS sessions FROM product_usage GROUP BY customer_id) u
+                ON c.customer_id=u.customer_id
+            LEFT JOIN (SELECT customer_id, COUNT(*) AS ticket_count FROM support_tickets GROUP BY customer_id) t
+                ON c.customer_id=t.customer_id
+            LEFT JOIN onboarding o ON c.customer_id=o.customer_id
+        """)
+        features = ["mrr","health_score","nps_score","usage_sessions","ticket_count","onboarding_done","days_to_complete"]
+        X = df[features].fillna(0)
+        y = df["churned"]
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+        X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42, stratify=y)
+        model = LogisticRegression(max_iter=1000, random_state=42)
+        model.fit(X_train, y_train)
+        acc = round(accuracy_score(y_test, model.predict(X_test)) * 100, 1)
+        auc = round(roc_auc_score(y_test, model.predict_proba(X_test)[:,1]), 3)
+        df["churn_prob"] = (model.predict_proba(X_scaled)[:,1] * 100).round(1)
+        importances = dict(zip(features, abs(model.coef_[0])))
+        return df, acc, auc, importances, features
+
+    with st.spinner("Training churn model on live data..."):
+        pred_df, acc, auc, importances, feat_names = train_churn_model()
+
+    m1, m2, m3, m4 = st.columns(4)
+    for col, (lbl, val, sub, color) in zip([m1,m2,m3,m4],[
+        ("Model Accuracy",   f"{acc}%",         "Logistic Regression",    SUCCESS if acc>80 else WARNING),
+        ("ROC-AUC Score",    str(auc),           "1.0 = perfect",          SUCCESS if auc>0.8 else WARNING),
+        ("Training Samples", str(len(pred_df)),  "All 500 customers",       PRIMARY),
+        ("Features Used",    str(len(feat_names)),"Behavioral + financial",  PRIMARY),
+    ]):
+        col.markdown(f"""<div class="kpi-card" style="border-left-color:{color}">
+            <div class="kpi-label">{lbl}</div>
+            <div class="kpi-value" style="color:{color}">{val}</div>
+            <div class="kpi-delta-neutral">{sub}</div></div>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    pc1, pc2 = st.columns([1, 2])
+
+    with pc1:
+        st.markdown('<div class="section-header">Feature Importance</div>', unsafe_allow_html=True)
+        imp_df = pd.DataFrame({"Feature": list(importances.keys()), "Importance": list(importances.values())})
+        imp_df = imp_df.sort_values("Importance", ascending=True)
+        feat_labels = {"mrr":"MRR","health_score":"Health Score","nps_score":"NPS Score",
+                       "usage_sessions":"Usage Sessions","ticket_count":"Ticket Count",
+                       "onboarding_done":"Onboarding Done","days_to_complete":"Days to Complete"}
+        imp_df["Feature"] = imp_df["Feature"].map(feat_labels)
+        fig_imp = go.Figure(go.Bar(
+            x=imp_df["Importance"], y=imp_df["Feature"], orientation="h",
+            marker_color=[PRIMARY if v == imp_df["Importance"].max() else MUTED for v in imp_df["Importance"]],
+            text=imp_df["Importance"].round(3), textposition="outside",
+        ))
+        chart_layout(fig_imp, 320)
+        fig_imp.update_layout(margin=dict(t=10,b=10,l=10,r=60))
+        st.plotly_chart(fig_imp, use_container_width=True)
+
+    with pc2:
+        st.markdown('<div class="section-header">Churn Probability Distribution</div>', unsafe_allow_html=True)
+        fig_dist = px.histogram(pred_df, x="churn_prob", color="churned",
+                                color_discrete_map={1: DANGER, 0: SUCCESS},
+                                nbins=20, barmode="overlay", opacity=0.75,
+                                labels={"churn_prob":"Churn Probability (%)", "churned":"Actually Churned"})
+        chart_layout(fig_dist, 320)
+        st.plotly_chart(fig_dist, use_container_width=True)
+
+    st.markdown('<div class="section-header">Customer Predictions — Highest Risk</div>', unsafe_allow_html=True)
+    risk_filter = st.select_slider("Show customers with churn probability ≥", options=[0,10,20,30,40,50,60,70,80,90], value=50)
+    display_cols = ["company_name","plan_type","industry","churn_prob","health_score","nps_score","usage_sessions","ticket_count","churned"]
+    high_risk = pred_df[pred_df["churn_prob"] >= risk_filter][display_cols].sort_values("churn_prob", ascending=False)
+    high_risk.columns = ["Company","Plan","Industry","Churn Prob %","Health","NPS","Usage Sessions","Tickets","Churned?"]
+
+    def color_prob(v):
+        if isinstance(v, float):
+            if v >= 70: return "color:#ef4444;font-weight:700"
+            if v >= 50: return "color:#f59e0b;font-weight:600"
+            return "color:#22c55e"
+        return ""
+
+    st.dataframe(
+        high_risk.style.map(color_prob, subset=["Churn Prob %"]),
+        use_container_width=True, hide_index=True, height=400
+    )
+    st.caption(f"Showing {len(high_risk)} customers with churn probability ≥ {risk_filter}%")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 11 — SQL PLAYGROUND
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "💻 SQL Playground":
+    st.markdown('<div class="page-title">SQL Playground</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Run live SQL against the Apex Solutions database — 500 customers, 16,000+ rows across 6 tables</div>', unsafe_allow_html=True)
+    st.markdown("---")
+
+    schema_col, query_col = st.columns([1, 2])
+
+    with schema_col:
+        st.markdown('<div class="section-header">Schema Reference</div>', unsafe_allow_html=True)
+        schema_info = {
+            "customers": ["customer_id","company_name","industry","plan_type","mrr","region","company_size","contract_start","churn_date","status","health_score","nps_score"],
+            "transactions": ["transaction_id","customer_id","amount","transaction_date","transaction_type","status","payment_method"],
+            "support_tickets": ["ticket_id","customer_id","category","priority","status","created_date","resolved_date","resolution_time_hours","satisfaction_score","description"],
+            "product_usage": ["usage_id","customer_id","usage_date","feature","session_minutes","actions_count"],
+            "onboarding": ["onboarding_id","customer_id","stage","start_date","completion_date","completed","days_to_complete","blocker"],
+            "employees": ["employee_id","name","department","role","hire_date","salary","location"],
+        }
+        for tbl, cols in schema_info.items():
+            with st.expander(f"📋 {tbl}", expanded=False):
+                for c in cols:
+                    st.markdown(f"`{c}`")
+
+    with query_col:
+        st.markdown('<div class="section-header">Query Editor</div>', unsafe_allow_html=True)
+
+        example_queries = {
+            "Top 10 highest-MRR customers": "SELECT company_name, plan_type, mrr, health_score, status\nFROM customers\nORDER BY mrr DESC\nLIMIT 10",
+            "Churn rate by industry": "SELECT industry,\n       COUNT(*) AS total,\n       COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned,\n       ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate\nFROM customers\nGROUP BY industry\nORDER BY churn_rate DESC",
+            "SLA breach by priority": "SELECT priority,\n       COUNT(*) AS total_tickets,\n       COUNT(CASE\n           WHEN priority='Critical' AND resolution_time_hours>8 THEN 1\n           WHEN priority='High' AND resolution_time_hours>24 THEN 1\n           WHEN priority='Medium' AND resolution_time_hours>48 THEN 1\n           WHEN priority='Low' AND resolution_time_hours>96 THEN 1\n       END) AS breaches\nFROM support_tickets\nGROUP BY priority\nORDER BY CASE priority WHEN 'Critical' THEN 1 WHEN 'High' THEN 2 WHEN 'Medium' THEN 3 ELSE 4 END",
+            "Top 5 features by usage": "SELECT feature,\n       COUNT(*) AS sessions,\n       ROUND(AVG(session_minutes),1) AS avg_mins,\n       SUM(actions_count) AS total_actions\nFROM product_usage\nGROUP BY feature\nORDER BY sessions DESC\nLIMIT 5",
+            "Onboarding blockers": "SELECT blocker, COUNT(*) AS count\nFROM onboarding\nWHERE completed=0 AND blocker!='None'\nGROUP BY blocker\nORDER BY count DESC",
+        }
+
+        selected_example = st.selectbox("Load example query", ["(write your own)"] + list(example_queries.keys()))
+        default_sql = example_queries.get(selected_example, "SELECT * FROM customers LIMIT 10")
+
+        sql_input = st.text_area("SQL Query", value=default_sql, height=200, key="sql_input",
+                                  placeholder="SELECT * FROM customers LIMIT 10")
+
+        run_col, dl_col = st.columns([1, 3])
+        run_clicked = run_col.button("▶ Run Query", type="primary")
+
+        if run_clicked and sql_input.strip():
+            forbidden = ["drop","delete","insert","update","alter","create","truncate"]
+            if any(kw in sql_input.lower() for kw in forbidden):
+                st.error("Read-only mode: only SELECT queries are allowed.")
+            else:
+                try:
+                    result_df = query(sql_input)
+                    st.success(f"Returned {len(result_df)} rows · {len(result_df.columns)} columns")
+                    st.dataframe(result_df, use_container_width=True, hide_index=True, height=350)
+                    csv_bytes = result_df.to_csv(index=False).encode()
+                    dl_col.download_button("⬇ Download CSV", data=csv_bytes,
+                                           file_name="bridgeiq_query_result.csv",
+                                           mime="text/csv", key="sql_csv")
+                except Exception as e:
+                    st.error(f"Query error: {e}")

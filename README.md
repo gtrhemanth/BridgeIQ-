@@ -31,18 +31,21 @@ As the Technical BA, I diagnosed these problems using data analysis, redesigned 
 
 ---
 
-## App Pages (9 total)
+## App Pages (12 total)
 
 | Page | What It Shows |
 |---|---|
-| 📊 Executive Dashboard | 8-tab BI dashboard: KPIs, revenue, churn, support, onboarding, cohort retention, SaaS benchmarks, anomaly detection |
+| 🏠 Home | Landing page: scenario context, 3 business problems, feature grid with navigation |
+| 📊 Executive Dashboard | 9-tab BI dashboard: KPIs, revenue, churn, support, onboarding, cohort retention, SaaS benchmarks, anomaly detection, **capacity planning** · PDF export · inline filters |
 | 🧠 AI Insights Engine | Claude Sonnet reads live data → generates executive intelligence brief (McKinsey-style) |
 | 🤖 AI Feedback Analyzer | Paste customer feedback → structured pain points + auto-generated user stories |
 | 📋 AI Requirements Generator | Describe a business problem → BRD + user stories + UAT cases + risk register |
 | 🎯 Interview Simulator | Paste any BA job description → tailored talking points + 8 likely questions + 60-second pitch |
-| 🔍 Customer 360 | Full account intelligence view: risk score, usage, tickets, transactions, AI account summary |
+| 🔍 Customer 360 | Full account intelligence: risk score, usage, tickets, **customer journey timeline**, AI account summary |
 | 📐 BA Artifacts | Live in-app: 15 user stories, risk register, RACI matrix, process maps, traceability matrix |
 | 💡 What-If Simulator | Move sliders (churn %, onboarding %, resolution time) → see live ARR impact waterfall |
+| 🔮 Churn Predictor | **ML model** (Logistic Regression) trained on live data → churn probability per customer + feature importances + risk table |
+| 💻 SQL Playground | Live SQL editor against the SQLite DB — 5 example queries, schema reference, CSV export |
 | 👤 About the Analyst | Project timeline, stats, skills grid, ROI calculator, CTA |
 
 ---
@@ -84,13 +87,21 @@ As the Technical BA, I diagnosed these problems using data analysis, redesigned 
 - **SaaS Benchmarks** — live data vs Baremetrics, Gainsight, Zendesk, Totango
 
 ### Layer 3 — Live AI Application
-- **Executive Dashboard** — 8-tab Plotly dashboard with real data and global filters
+- **Executive Dashboard** — 9-tab Plotly dashboard with inline filters, PDF export, capacity planning
 - **Statistical Anomaly Detector** — identifies churn spikes, ticket surges, ghost accounts, SLA concentration
+- **Ticket Sentiment Analysis** — TextBlob NLP on 4,000 ticket descriptions → polarity by category + priority
+- **3D Customer Segmentation** — Plotly 3D scatter: MRR × Health × Usage, colored by risk tier
+- **Capacity Planning** — headcount gap analysis, 12-month CSM hire forecast from cohort growth
 - **What-If Revenue Simulator** — interactive ARR impact model (churn × onboarding × resolution)
 - **AI Feedback Analyzer** — Claude API → structured pain points + user stories
 - **AI Requirements Generator** — Claude API → BRD + user stories + UAT + risk register
 - **AI Insights Engine** — Claude Sonnet → McKinsey-style executive intelligence brief
 - **Interview Simulator** — JD → tailored prep, talking points, 8 questions + model answers
+- **Churn Predictor** — Logistic Regression trained on live data → per-customer churn probability + feature importances
+- **SQL Playground** — live SQL editor on SQLite DB with schema reference + CSV export
+- **Customer Journey Timeline** — Plotly Gantt per customer: contract → onboarding → transactions → support
+- **PDF Executive Report** — one-click styled PDF of KPIs + business summary + recommendations
+- **Deep Links** — every page URL-addressable via `?page=` query param
 
 ---
 
