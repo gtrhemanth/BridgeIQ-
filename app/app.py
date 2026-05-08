@@ -444,13 +444,15 @@ PAGES = [
 if "go_to_page" not in st.session_state:
     st.session_state["go_to_page"] = None
 
-# Deep link: honour ?page=<name> in the URL
-_qp = st.query_params.get("page", None)
-if _qp and not st.session_state["go_to_page"]:
-    for _p in PAGES:
-        if _qp.lower() in _p.lower():
-            st.session_state["go_to_page"] = _p
-            break
+# Deep link: only read ?page= once on first load, never on reruns (avoids overriding user selection)
+if "deep_link_consumed" not in st.session_state:
+    st.session_state["deep_link_consumed"] = True
+    _qp = st.query_params.get("page", None)
+    if _qp and not st.session_state["go_to_page"]:
+        for _p in PAGES:
+            if _qp.lower() in _p.lower():
+                st.session_state["go_to_page"] = _p
+                break
 
 _nav_index = 0
 if st.session_state["go_to_page"] and st.session_state["go_to_page"] in PAGES:
@@ -462,9 +464,6 @@ with nav_col:
     page = st.selectbox("Navigate", PAGES, index=_nav_index, label_visibility="collapsed")
 with info_col:
     st.markdown('<div style="text-align:right;font-size:11px;color:#64748b;padding-top:8px">Apex Solutions · B2B SaaS Demo · Built by <b>Sai Hemanth</b></div>', unsafe_allow_html=True)
-
-# Update URL query param so every page is deep-linkable
-st.query_params["page"] = page.split(" ", 1)[1] if " " in page else page
 
 st.markdown("---")
 
