@@ -53,13 +53,10 @@ header[data-testid="stHeader"] { background: #0f1117 !important; }
 /* Main background */
 .stApp { background-color: #0f1117; }
 
-/* Remove default top padding so nav bar sits flush */
+/* Reduce top padding — small gap only, not full removal */
 .main .block-container {
-    padding-top: 0rem !important;
+    padding-top: 0.5rem !important;
     padding-bottom: 1rem !important;
-}
-section[data-testid="stMain"] > div:first-child {
-    padding-top: 0 !important;
 }
 
 /* Sidebar */
@@ -298,7 +295,7 @@ def query_filtered(sql: str, plans=None, regions=None, industries=None) -> pd.Da
 # ── Top Navigation Bar (always visible, no sidebar dependency) ─────────────────
 st.markdown("""
 <div style="background:linear-gradient(90deg,#0d1b2a,#1a2d40);border-bottom:1px solid #1e3a5f;
-     padding:10px 20px;margin:-1rem -1rem 1.5rem -1rem;display:flex;align-items:center;gap:16px">
+     padding:10px 20px;margin:-0.5rem -1rem 1rem -1rem;display:flex;align-items:center;gap:16px">
     <div style="font-size:20px;font-weight:700;color:#4F8EF7;white-space:nowrap">BridgeIQ</div>
     <div style="font-size:10px;color:#64748b;letter-spacing:1px;white-space:nowrap">AI-POWERED BUSINESS INTELLIGENCE</div>
 </div>
