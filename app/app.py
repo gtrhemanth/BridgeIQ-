@@ -26,17 +26,6 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "bridgeiq.db")
 API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 # Force sidebar open via JavaScript on every page load
-import streamlit.components.v1 as components
-components.html("""
-<script>
-setTimeout(function() {
-    var btn = window.parent.document.querySelector('[data-testid="stSidebarCollapsedControl"] button');
-    if (!btn) btn = window.parent.document.querySelector('[data-testid="collapsedControl"] button');
-    if (btn) btn.click();
-}, 300);
-</script>
-""", height=0)
-
 # ── Custom CSS ─────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
@@ -44,14 +33,16 @@ st.markdown("""
 
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-/* Hide Streamlit chrome — header stays visible so sidebar toggle always works */
+/* Hide Streamlit chrome */
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
-header { background: #0f1117 !important; }
-header * { color: #0f1117 !important; }
-[data-testid="stToolbar"] { opacity: 0 !important; pointer-events: none; }
 
-/* Hide the collapse arrow inside sidebar — sidebar stays permanently open */
+/* Style header to match dark theme — DO NOT change color of children (breaks sidebar toggle icon) */
+header[data-testid="stHeader"] { background: #0f1117 !important; }
+[data-testid="stToolbar"] { visibility: hidden; }
+[data-testid="stDecoration"] { display: none; }
+
+/* Hide the collapse arrow INSIDE sidebar so it can never be accidentally closed */
 [data-testid="stSidebar"] button[data-testid="stBaseButton-header"],
 [data-testid="stSidebar"] [data-testid="stSidebarHeader"] button,
 [data-testid="stSidebarNavCloseButton"],
