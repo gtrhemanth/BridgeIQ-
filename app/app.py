@@ -436,8 +436,8 @@ if page == "📊 Executive Dashboard":
                 return "background-color:#0a2e1a;color:#22c55e"
             return ""
 
-        styled = at_risk.style.applymap(style_risk, subset=["Risk"]) \
-                              .applymap(lambda v: "color:#ef4444;font-weight:600" if v == "No" else "color:#22c55e", subset=["Onboarded"])
+        styled = at_risk.style.map(style_risk, subset=["Risk"]) \
+                              .map(lambda v: "color:#ef4444;font-weight:600" if v == "No" else "color:#22c55e", subset=["Onboarded"])
         st.dataframe(styled, use_container_width=True, hide_index=True, height=420)
 
     # ════════════════════════════════════════════════════════════════════════
