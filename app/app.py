@@ -3062,7 +3062,7 @@ elif page == "👤 About the Analyst":
                       box-shadow:0 4px 15px rgba(79,142,247,0.3)">
                 ✉ Email Me
             </a>
-            <a href="https://github.com/gtrhemanth/BridgeIQ"
+            <a href="https://github.com/gtrhemanth/BridgeIQ-"
                style="background:transparent;color:#4F8EF7;text-decoration:none;
                       padding:14px 32px;border-radius:10px;font-weight:700;font-size:14px;border:1px solid #4F8EF7;display:inline-flex;align-items:center;gap:8px">
                 ⭐ View on GitHub
