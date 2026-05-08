@@ -32,12 +32,14 @@ st.markdown("""
 
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-/* Hide Streamlit chrome */
+/* Hide Streamlit chrome — header stays visible so sidebar toggle always works */
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
-header { visibility: hidden; }
+header { background: #0f1117 !important; }
+header * { color: #0f1117 !important; }
+[data-testid="stToolbar"] { opacity: 0 !important; pointer-events: none; }
 
-/* Hide the collapse arrow INSIDE the sidebar so it can never be accidentally closed */
+/* Hide the collapse arrow inside sidebar — sidebar stays permanently open */
 [data-testid="stSidebar"] button[data-testid="stBaseButton-header"],
 [data-testid="stSidebar"] [data-testid="stSidebarHeader"] button,
 [data-testid="stSidebarNavCloseButton"],
