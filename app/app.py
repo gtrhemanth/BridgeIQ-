@@ -155,6 +155,65 @@ header[data-testid="stHeader"] { background: #0f1117 !important; }
 /* Dataframe */
 [data-testid="stDataFrame"] { border: 1px solid #1e3a5f; border-radius: 8px; }
 
+/* ── Dropdowns & Selects ─────────────────────────────────────────────────────── */
+/* Selectbox and multiselect control box */
+[data-baseweb="select"] > div:first-child,
+[data-baseweb="select"] > div {
+    background-color: #1a2d40 !important;
+    border: 1px solid #4F8EF7 !important;
+    border-radius: 8px !important;
+    color: #f1f5f9 !important;
+}
+/* Hover state */
+[data-baseweb="select"] > div:first-child:hover {
+    border-color: #7bb3ff !important;
+    background-color: #1e3a5f !important;
+}
+/* The selected text inside dropdown */
+[data-baseweb="select"] span,
+[data-baseweb="select"] div[class*="placeholder"] {
+    color: #f1f5f9 !important;
+}
+/* Dropdown arrow icon */
+[data-baseweb="select"] svg { fill: #4F8EF7 !important; }
+
+/* Dropdown menu (open list) */
+[data-baseweb="popover"] [role="listbox"],
+[data-baseweb="menu"] {
+    background-color: #0d1b2a !important;
+    border: 1px solid #1e3a5f !important;
+    border-radius: 8px !important;
+}
+/* Dropdown list items */
+[data-baseweb="menu"] li,
+[role="option"] {
+    background-color: #0d1b2a !important;
+    color: #e2e8f0 !important;
+}
+[data-baseweb="menu"] li:hover,
+[role="option"]:hover,
+[aria-selected="true"] {
+    background-color: #1e3a5f !important;
+    color: #4F8EF7 !important;
+}
+
+/* Multiselect tags */
+[data-baseweb="tag"] {
+    background-color: #1e3a5f !important;
+    border-radius: 6px !important;
+}
+[data-baseweb="tag"] span { color: #4F8EF7 !important; }
+
+/* Text input fields */
+[data-baseweb="input"] > div,
+[data-testid="stTextInput"] input,
+[data-testid="stTextArea"] textarea {
+    background-color: #1a2d40 !important;
+    border: 1px solid #4F8EF7 !important;
+    border-radius: 8px !important;
+    color: #f1f5f9 !important;
+}
+
 /* Filter label */
 .filter-label {
     font-size: 11px;
