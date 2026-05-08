@@ -334,6 +334,28 @@ header[data-testid="stHeader"] { background: #0f1117 !important; }
     color: #4F8EF7 !important;
 }
 .brand-subtitle { font-size: 11px; color: #64748b !important; letter-spacing: 0.5px; }
+
+/* Home page feature card nav buttons */
+.home-card-btn button {
+    background: transparent !important;
+    border: none !important;
+    border-top: 1px solid #1e3a5f !important;
+    border-radius: 0 0 12px 12px !important;
+    color: #4F8EF7 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    width: 100% !important;
+    padding: 8px 16px !important;
+    text-align: left !important;
+    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    margin-top: -4px !important;
+}
+.home-card-btn button:hover {
+    background: rgba(79,142,247,0.08) !important;
+    color: #7bb3ff !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -413,7 +435,7 @@ PAGES = [
 
 nav_col, info_col = st.columns([3, 1])
 with nav_col:
-    page = st.selectbox("Navigate", PAGES, label_visibility="collapsed")
+    page = st.selectbox("Navigate", PAGES, label_visibility="collapsed", key="main_nav")
 with info_col:
     st.markdown('<div style="text-align:right;font-size:11px;color:#64748b;padding-top:8px">Apex Solutions · B2B SaaS Demo · Built by <b>Sai Hemanth</b></div>', unsafe_allow_html=True)
 
@@ -540,12 +562,17 @@ if page == "🏠 Home":
     grid_cols = [r1c1, r1c2, r1c3, r2c1, r2c2, r2c3]
     for col, (icon, title, desc, nav_target, color) in zip(grid_cols, layers):
         col.markdown(f"""
-        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:3px solid {color};border-radius:12px;padding:20px;margin-bottom:8px;transition:all 0.3s ease">
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:3px solid {color};border-bottom:none;border-radius:12px 12px 0 0;padding:20px 20px 14px;transition:all 0.3s ease">
             <div style="font-size:24px;margin-bottom:10px">{icon}</div>
             <div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:8px">{title}</div>
             <div style="font-size:12px;color:#64748b;line-height:1.7">{desc}</div>
         </div>
         """, unsafe_allow_html=True)
+        col.markdown('<div class="home-card-btn">', unsafe_allow_html=True)
+        if col.button(f"→ Open {title}", key=f"hn_{nav_target}"):
+            st.session_state["main_nav"] = nav_target
+            st.rerun()
+        col.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("---")
 
