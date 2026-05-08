@@ -399,6 +399,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 PAGES = [
+    "🏠 Home",
     "📊 Executive Dashboard",
     "🧠 AI Insights Engine",
     "🤖 AI Feedback Analyzer",
@@ -450,9 +451,127 @@ with st.sidebar:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# PAGE 0 — HOME / LANDING
+# ══════════════════════════════════════════════════════════════════════════════
+if page == "🏠 Home":
+
+    # Hero section
+    st.markdown("""
+    <div style="text-align:center;padding:60px 20px 40px;position:relative">
+        <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);border-radius:20px;padding:5px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:#4F8EF7;text-transform:uppercase;margin-bottom:24px">
+            <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block;animation:pulse-dot 2s ease-in-out infinite"></span>
+            Live BA Portfolio · Technical Business Analyst
+        </div>
+        <div style="font-size:56px;font-weight:900;letter-spacing:-2px;line-height:1.1;margin-bottom:16px;
+             background:linear-gradient(270deg,#4F8EF7,#7bb3ff,#a5f3fc,#22c55e,#4F8EF7);
+             background-size:400% 400%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+             animation:gradient-x 6s ease infinite">
+            BridgeIQ
+        </div>
+        <div style="font-size:20px;font-weight:600;color:#94a3b8;margin-bottom:12px;letter-spacing:-0.3px">
+            AI-Powered Business Intelligence &amp; Process Transformation
+        </div>
+        <div style="font-size:14px;color:#64748b;max-width:560px;margin:0 auto 36px;line-height:1.8">
+            A full Technical BA engagement — simulated end-to-end. Real data, real analysis, live AI, and every deliverable a hiring manager would ask for.
+        </div>
+        <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+            <span style="background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#4F8EF7">16,000+ Data Rows</span>
+            <span style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#22c55e">10 SQL Queries</span>
+            <span style="background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#a78bfa">6 AI Features</span>
+            <span style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#f59e0b">15 User Stories</span>
+            <span style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#ef4444">Live on Streamlit Cloud</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # The scenario
+    st.markdown('<div class="section-header">The Scenario</div>', unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:14px;padding:28px 32px;margin-bottom:24px">
+        <div style="font-size:16px;font-weight:700;color:#f1f5f9;margin-bottom:8px">Apex Solutions — B2B SaaS Company</div>
+        <div style="font-size:14px;color:#94a3b8;line-height:1.9;max-width:720px">
+            Apex Solutions is a fictional B2B SaaS company with 500 customers, $X MRR, and a Customer Success team
+            that is drowning in manual spreadsheet work. Three critical problems are destroying revenue —
+            and leadership has brought in a Technical Business Analyst to diagnose, redesign, and deliver a solution.
+            <br><br>
+            That analyst is me. This platform is the result.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 3 Problems
+    st.markdown('<div class="section-header">Three Critical Business Problems</div>', unsafe_allow_html=True)
+    p1, p2, p3 = st.columns(3)
+    problems = [
+        ("🔴", "22% Annual Churn Rate", "110 of 500 customers lost last year. Each churned customer represents revenue that cannot be recovered. The CS team had no early warning system — they found out after the customer decided to leave.", f"~$1.8M ARR at risk", "#ef4444"),
+        ("🟡", "18% Onboarding Failure Rate", "90 customers never completed onboarding. Customers who don't onboard have 2.4× higher churn probability. The process was manual, inconsistent, and had no automated tracking of blockers.", "2.4× churn probability", "#f59e0b"),
+        ("🟠", "28hr Avg Ticket Resolution", "The SLA target for critical tickets is 8 hours. 35% of critical tickets breach that SLA. Every missed SLA erodes CSAT, trust, and renewal probability — while support costs keep rising.", "35% SLA breach rate", "#f97316"),
+    ]
+    for col, (icon, title, desc, impact, color) in zip([p1,p2,p3], problems):
+        col.markdown(f"""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-top:3px solid {color};border-radius:14px;padding:22px;height:100%">
+            <div style="font-size:28px;margin-bottom:12px">{icon}</div>
+            <div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:10px;line-height:1.3">{title}</div>
+            <div style="font-size:12px;color:#94a3b8;line-height:1.7;margin-bottom:14px">{desc}</div>
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:8px 12px">
+                <span style="font-size:11px;font-weight:700;color:{color}">{impact}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("---")
+
+    # What I built
+    st.markdown('<div class="section-header">What This Platform Contains</div>', unsafe_allow_html=True)
+    layers = [
+        ("📊", "Executive Dashboard", "8-tab live BI dashboard — KPIs, revenue, churn, support, onboarding, cohort retention, SaaS benchmarks, and statistical anomaly detection. Powered by 16,000+ rows of SQLite data.", "📊 Executive Dashboard", "#4F8EF7"),
+        ("🧠", "AI Intelligence Suite", "Three Claude-powered tools: executive insights engine (reads live data → McKinsey-style brief), feedback analyzer (feedback → user stories), and requirements generator (problem → full BRD package).", "🧠 AI Insights Engine", "#a78bfa"),
+        ("💡", "Revenue Simulator", "Drag sliders for churn rate, onboarding completion, and resolution time — see the live dollar impact as a waterfall chart. Shows exactly what fixing each problem is worth in ARR.", "💡 What-If Simulator", "#22c55e"),
+        ("🔍", "Customer 360", "Full account intelligence: risk score breakdown, product usage, transaction history, support tickets, onboarding status, and a one-click AI account summary for any of the 500 customers.", "🔍 Customer 360", "#f59e0b"),
+        ("📐", "BA Artifacts Library", "Every deliverable live in the app: 15 user stories as Jira cards, risk register with scoring, RACI matrix, AS-IS/TO-BE process maps, requirements traceability matrix.", "📐 BA Artifacts", "#ef4444"),
+        ("🎯", "Interview Simulator", "Paste any BA job description → Claude generates JD match score, tailored talking points, 8 likely questions with model answers, and a 60-second pitch grounded in BridgeIQ.", "🎯 Interview Simulator", "#f97316"),
+    ]
+
+    r1c1, r1c2, r1c3 = st.columns(3)
+    r2c1, r2c2, r2c3 = st.columns(3)
+    grid_cols = [r1c1, r1c2, r1c3, r2c1, r2c2, r2c3]
+    for col, (icon, title, desc, nav_target, color) in zip(grid_cols, layers):
+        col.markdown(f"""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:3px solid {color};border-radius:12px;padding:20px;margin-bottom:8px;transition:all 0.3s ease">
+            <div style="font-size:24px;margin-bottom:10px">{icon}</div>
+            <div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:8px">{title}</div>
+            <div style="font-size:12px;color:#64748b;line-height:1.7">{desc}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # CTA
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#051525,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:16px;
+         padding:40px;text-align:center;position:relative;overflow:hidden;animation:border-glow 4s ease-in-out infinite">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4F8EF7,#22c55e,#4F8EF7,transparent)"></div>
+        <div style="font-size:22px;font-weight:800;color:#f1f5f9;margin-bottom:8px">
+            Start with the Executive Dashboard
+        </div>
+        <div style="font-size:13px;color:#64748b;max-width:480px;margin:0 auto 20px;line-height:1.8">
+            Select any page from the navigation above to explore. The Executive Dashboard shows the live data.
+            The AI pages show what happens when BA meets Claude.
+        </div>
+        <div style="font-size:12px;color:#374151">
+            Built by <span style="color:#4F8EF7;font-weight:700">Sai Hemanth</span> · gtrhemanth14@gmail.com · github.com/gtrhemanth
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # PAGE 1 — EXECUTIVE DASHBOARD
 # ══════════════════════════════════════════════════════════════════════════════
-if page == "📊 Executive Dashboard":
+elif page == "📊 Executive Dashboard":
 
     st.markdown('<div class="page-title">Executive Dashboard</div>', unsafe_allow_html=True)
     st.markdown('<div class="page-subtitle">Apex Solutions · B2B SaaS · Real-time business intelligence · All metrics update with filters</div>', unsafe_allow_html=True)
