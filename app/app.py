@@ -220,8 +220,14 @@ with st.sidebar:
     st.markdown('<div class="brand-subtitle">AI-POWERED BUSINESS INTELLIGENCE</div>', unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    page = st.radio("", ["📊 Executive Dashboard", "🤖 AI Feedback Analyzer", "📋 AI Requirements Generator"],
-                    label_visibility="collapsed")
+    page = st.radio("", [
+        "📊 Executive Dashboard",
+        "🧠 AI Insights Engine",
+        "🤖 AI Feedback Analyzer",
+        "📋 AI Requirements Generator",
+        "🎯 Interview Simulator",
+        "👤 About the Analyst",
+    ], label_visibility="collapsed")
 
     if page == "📊 Executive Dashboard":
         st.markdown("---")
@@ -970,3 +976,442 @@ Be specific, professional, and grounded in real BA practice."""
         for title, text in examples.items():
             if st.button(f"Load: {title}"):
                 st.info(f"Copy into the text box above:\n\n{text}")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 4 — AI INSIGHTS ENGINE
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "🧠 AI Insights Engine":
+    st.markdown('<div class="page-title">AI Insights Engine</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Claude AI reads the live business data and generates a real executive intelligence brief — just like a McKinsey consultant would</div>', unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        focus_area = st.selectbox("Focus Area", [
+            "Full Business Health Review",
+            "Churn Risk & Revenue Impact",
+            "Customer Success Performance",
+            "Support Operations Analysis",
+            "Onboarding Process Effectiveness",
+        ])
+    with col2:
+        audience = st.selectbox("Report For", ["CEO / Board", "VP Customer Success", "Product Manager", "Operations Manager"])
+
+    generate_insights = st.button("Generate AI Executive Brief", type="primary", use_container_width=False)
+
+    if generate_insights:
+        if not API_KEY:
+            st.error("ANTHROPIC_API_KEY not configured.")
+        else:
+            with st.spinner("Claude is analyzing your business data..."):
+
+                # Pull live metrics
+                kpi = query("""
+                    SELECT
+                        COUNT(CASE WHEN status='Active' THEN 1 END) AS active,
+                        COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned,
+                        ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
+                        ROUND(SUM(CASE WHEN status='Active' THEN mrr ELSE 0 END),0) AS mrr,
+                        ROUND(AVG(CASE WHEN status='Active' THEN health_score END),1) AS avg_health,
+                        ROUND(AVG(CASE WHEN status='Active' THEN nps_score END),1) AS avg_nps
+                    FROM customers
+                """).iloc[0]
+
+                churn_by_plan = query("""
+                    SELECT plan_type,
+                           ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
+                           ROUND(SUM(CASE WHEN status='Churned' THEN mrr ELSE 0 END),0) AS mrr_lost
+                    FROM customers GROUP BY plan_type ORDER BY churn_rate DESC
+                """).to_string(index=False)
+
+                top_industries = query("""
+                    SELECT industry,
+                           ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate
+                    FROM customers GROUP BY industry ORDER BY churn_rate DESC LIMIT 5
+                """).to_string(index=False)
+
+                support = query("""
+                    SELECT COUNT(*) AS total_tickets,
+                           COUNT(CASE WHEN status IN ('Open','In Progress') THEN 1 END) AS open_tickets,
+                           ROUND(AVG(resolution_time_hours),1) AS avg_resolution_hrs,
+                           ROUND(AVG(satisfaction_score),2) AS avg_csat,
+                           COUNT(CASE WHEN priority='Critical' AND resolution_time_hours>8 THEN 1 END) AS sla_breaches
+                    FROM support_tickets
+                """).iloc[0]
+
+                onboarding = query("""
+                    SELECT ROUND(COUNT(CASE WHEN completed=1 THEN 1 END)*100.0/COUNT(*),1) AS completion_rate,
+                           COUNT(CASE WHEN completed=0 THEN 1 END) AS incomplete_count,
+                           ROUND(AVG(CASE WHEN completed=1 THEN days_to_complete END),1) AS avg_days
+                    FROM onboarding
+                """).iloc[0]
+
+                top_blockers = query("""
+                    SELECT blocker, COUNT(*) AS count FROM onboarding
+                    WHERE completed=0 AND blocker!='None'
+                    GROUP BY blocker ORDER BY count DESC LIMIT 3
+                """).to_string(index=False)
+
+                at_risk_count = query("""
+                    SELECT COUNT(*) AS cnt FROM (
+                        WITH t AS (SELECT customer_id, COUNT(*) AS tickets FROM support_tickets GROUP BY customer_id),
+                             u AS (SELECT customer_id, COUNT(*) AS sessions FROM product_usage GROUP BY customer_id),
+                             o AS (SELECT customer_id, completed FROM onboarding)
+                        SELECT c.customer_id,
+                            (CASE WHEN c.health_score<60 THEN 30 WHEN c.health_score<75 THEN 15 ELSE 0 END)
+                            +(CASE WHEN COALESCE(t.tickets,0)>15 THEN 20 WHEN COALESCE(t.tickets,0)>8 THEN 10 ELSE 0 END)
+                            +(CASE WHEN COALESCE(u.sessions,0)<3 THEN 25 WHEN COALESCE(u.sessions,0)<8 THEN 12 ELSE 0 END)
+                            +(CASE WHEN COALESCE(o.completed,0)=0 THEN 15 ELSE 0 END)
+                            +(CASE WHEN c.nps_score<5 THEN 10 ELSE 0 END) AS risk_score
+                        FROM customers c
+                        LEFT JOIN t ON c.customer_id=t.customer_id
+                        LEFT JOIN u ON c.customer_id=u.customer_id
+                        LEFT JOIN o ON c.customer_id=o.customer_id
+                        WHERE c.status='Active'
+                    ) WHERE risk_score >= 50
+                """).iloc[0]["cnt"]
+
+                data_summary = f"""
+LIVE BUSINESS DATA — APEX SOLUTIONS B2B SAAS:
+
+CUSTOMER METRICS:
+- Active customers: {int(kpi['active'])}
+- Churned customers: {int(kpi['churned'])}
+- Overall churn rate: {kpi['churn_rate']}%
+- Total MRR: ${int(kpi['mrr']):,}
+- Total ARR: ${int(kpi['mrr'])*12:,}
+- Avg customer health score: {kpi['avg_health']}/100
+- Avg NPS score: {kpi['avg_nps']}/10
+- At-risk customers (score ≥50): {int(at_risk_count)} active accounts
+
+CHURN BY PLAN:
+{churn_by_plan}
+
+TOP CHURNING INDUSTRIES:
+{top_industries}
+
+SUPPORT OPERATIONS:
+- Total tickets: {int(support['total_tickets']):,}
+- Open/In-Progress tickets: {int(support['open_tickets']):,}
+- Avg resolution time: {support['avg_resolution_hrs']} hours
+- Avg CSAT score: {support['avg_csat']}/5
+- Critical SLA breaches: {int(support['sla_breaches'])}
+
+ONBOARDING:
+- Completion rate: {onboarding['completion_rate']}%
+- Incomplete onboardings: {int(onboarding['incomplete_count'])}
+- Avg days to complete: {onboarding['avg_days']} days
+- Top blockers: {top_blockers}
+"""
+
+                client = anthropic.Anthropic(api_key=API_KEY)
+                prompt = f"""You are a Principal Business Analyst and Strategy Consultant preparing an executive intelligence brief for {audience} at Apex Solutions, a B2B SaaS company.
+
+Focus Area: {focus_area}
+
+{data_summary}
+
+Write a sharp, data-driven executive brief. No fluff. Think McKinsey slide narrative meets BA precision.
+
+Structure:
+## EXECUTIVE SUMMARY
+2-3 sentences. The single most important thing leadership needs to know RIGHT NOW.
+
+## KEY FINDINGS
+5-7 specific, numbered findings. Each must cite an actual number from the data. Bold the metric.
+
+## ROOT CAUSE ANALYSIS
+What's actually driving these numbers? Go 2 levels deep. Don't just describe symptoms.
+
+## BUSINESS IMPACT QUANTIFICATION
+Calculate the real dollar/business impact of the top 2-3 problems. Show your math.
+Example: "22% churn rate on ${int(kpi['mrr']):,} MRR = $X ARR at risk annually."
+
+## STRATEGIC RECOMMENDATIONS
+4-5 prioritized recommendations. For each: action, owner, timeline, expected outcome with metric.
+Format: Priority (P1/P2/P3) | Action | Owner | Timeline | Expected Impact
+
+## EARLY WARNING SIGNALS
+What leading indicators should {audience} watch weekly? List 4-5 specific metrics with thresholds.
+
+Write with authority. Use active voice. Every sentence must earn its place."""
+
+                try:
+                    message = client.messages.create(
+                        model="claude-sonnet-4-6",
+                        max_tokens=3000,
+                        messages=[{"role": "user", "content": prompt}],
+                    )
+                    result = message.content[0].text
+
+                    st.markdown("---")
+                    st.markdown(f"### Executive Intelligence Brief — {focus_area}")
+                    st.caption(f"Generated for: {audience} · Based on live data from {int(kpi['active'])} active customers")
+                    st.markdown(result)
+
+                    col_dl1, col_dl2 = st.columns(2)
+                    with col_dl1:
+                        st.download_button("Download Brief (.txt)", data=result,
+                                           file_name="executive_brief.txt", mime="text/plain", use_container_width=True)
+                    with col_dl2:
+                        linkedin_prompt = f"Write a short LinkedIn post (150 words max) announcing an insight from this analysis. Make it professional, data-driven, and end with a question to drive engagement:\n\n{result[:1000]}"
+                        st.session_state["linkedin_prompt"] = linkedin_prompt
+                        st.info("Tip: Use this brief in your next interview. Say: 'Here's the kind of insight I'd deliver in week one.'")
+                except Exception as e:
+                    st.error(f"API Error: {e}")
+    else:
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:32px;text-align:center;margin-top:20px">
+            <div style="font-size:48px;margin-bottom:16px">🧠</div>
+            <div style="font-size:18px;font-weight:600;color:#f1f5f9;margin-bottom:8px">AI reads your data. You present the insight.</div>
+            <div style="font-size:13px;color:#64748b;max-width:500px;margin:0 auto">
+                Select a focus area, choose your audience, and Claude will analyze the live database —
+                customer health, churn signals, support performance, onboarding gaps —
+                and produce an executive brief you can present in any interview or boardroom.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 5 — INTERVIEW SIMULATOR
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "🎯 Interview Simulator":
+    st.markdown('<div class="page-title">Interview Simulator</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Paste any Technical BA job description → Claude generates tailored talking points, likely questions, and rehearsal answers — all grounded in BridgeIQ</div>', unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    jd_input = st.text_area("Paste the Job Description here", height=250,
+        placeholder="Paste the full job description from LinkedIn, Indeed, or any job board...\n\nExample:\nWe are looking for a Technical Business Analyst with 3-5 years of experience...\nRequirements: SQL, Agile, stakeholder management, process mapping, Jira...\nNice to have: Power BI, AI/ML familiarity, Salesforce...")
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        company_name = st.text_input("Company Name (optional)", placeholder="e.g. Goldman Sachs, Stripe, Uber")
+    with col_b:
+        role_title = st.text_input("Role Title (optional)", placeholder="e.g. Technical Business Analyst")
+
+    simulate_btn = st.button("Simulate Interview with Claude", type="primary")
+
+    if simulate_btn:
+        if not jd_input.strip():
+            st.warning("Paste a job description first.")
+        elif not API_KEY:
+            st.error("ANTHROPIC_API_KEY not configured.")
+        else:
+            with st.spinner("Claude is preparing your interview prep..."):
+                client = anthropic.Anthropic(api_key=API_KEY)
+
+                project_summary = """
+CANDIDATE'S PROJECT — BRIDGEIQ:
+- Built end-to-end AI-powered BI platform for a fictional B2B SaaS company (Apex Solutions)
+- Designed 6-table data model from scratch, generated 16,000+ rows synthetic data
+- Wrote 10 SQL queries covering: churn analysis, revenue trends, SLA compliance, cohort retention, at-risk scoring (CTEs + window functions)
+- Built 3-page Streamlit app with Plotly dashboards deployed live on Streamlit Cloud
+- Integrated Claude AI API for: feedback analysis (→ user stories), requirements generation (→ BRD + UAT), executive intelligence briefs
+- Delivered full BA artifact suite: BRD (11 sections), 15 Agile user stories, AS-IS/TO-BE process maps, risk register, data dictionary (48 columns), RACI matrix, 10-slide exec deck
+- Stack: Python 3.11, SQLite, Anthropic Claude API, Streamlit, Plotly, pandas, Git/GitHub
+- Background: CS Bachelor's + CS Master's, IEEE-published researcher in AI/ML
+"""
+
+                prompt = f"""You are a senior interview coach preparing a Technical BA candidate for a specific job interview.
+
+JOB DESCRIPTION:
+{jd_input}
+
+COMPANY: {company_name or 'the company'}
+ROLE: {role_title or 'Technical Business Analyst'}
+
+{project_summary}
+
+Generate a complete interview preparation guide. Be specific. Tie EVERYTHING back to the BridgeIQ project.
+
+## JD MATCH ANALYSIS
+Score the candidate's fit: X/10. List top 5 matching skills with evidence from the project. List 1-2 gaps and how to address them.
+
+## 5 KILLER TALKING POINTS
+For each JD requirement, craft a 2-3 sentence talking point that connects BridgeIQ to that requirement.
+Format: **JD Requirement** → Talking Point
+
+## 8 LIKELY INTERVIEW QUESTIONS
+Mix of: behavioral (Tell me about a time...), technical (How would you...), and situational (What would you do if...).
+For each: the question + a 3-4 sentence model answer grounded in BridgeIQ.
+
+## KEYWORDS TO WEAVE IN
+15 keywords/phrases from the JD that the candidate should naturally use in their answers.
+
+## OPENING PITCH (60 seconds)
+Write the candidate's opening "Tell me about yourself" answer tailored to THIS specific role and company.
+
+## QUESTIONS TO ASK THE INTERVIEWER
+5 smart questions that show strategic thinking. Avoid generic questions.
+
+Be direct, specific, and brutally useful."""
+
+                try:
+                    message = client.messages.create(
+                        model="claude-sonnet-4-6",
+                        max_tokens=4000,
+                        messages=[{"role": "user", "content": prompt}],
+                    )
+                    result = message.content[0].text
+
+                    st.markdown("---")
+                    st.markdown(f"### Interview Prep — {role_title or 'Technical BA'} at {company_name or 'the company'}")
+                    st.markdown(result)
+
+                    st.download_button("Download Interview Prep (.txt)", data=result,
+                                       file_name=f"interview_prep_{company_name or 'company'}.txt",
+                                       mime="text/plain", use_container_width=False)
+                except Exception as e:
+                    st.error(f"API Error: {e}")
+    else:
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:32px;text-align:center;margin-top:20px">
+            <div style="font-size:48px;margin-bottom:16px">🎯</div>
+            <div style="font-size:18px;font-weight:600;color:#f1f5f9;margin-bottom:8px">Walk into every interview prepared.</div>
+            <div style="font-size:13px;color:#64748b;max-width:520px;margin:0 auto">
+                Paste any BA job description. Claude analyzes the requirements, matches them to your BridgeIQ project,
+                and generates tailored talking points, model answers, and a 60-second pitch — specific to that company and role.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 6 — ABOUT THE ANALYST
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "👤 About the Analyst":
+    st.markdown('<div class="page-title">About the Analyst</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">The person behind BridgeIQ — bridging computer science and business strategy</div>', unsafe_allow_html=True)
+    st.markdown("---")
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:28px;margin-bottom:16px">
+            <div style="font-size:24px;font-weight:700;color:#f1f5f9;margin-bottom:4px">Sai Hemanth</div>
+            <div style="font-size:13px;color:#4F8EF7;margin-bottom:16px">Technical Business Analyst · AI/ML Researcher · IEEE-Published Author</div>
+            <div style="font-size:14px;color:#94a3b8;line-height:1.8">
+                I hold a Bachelor's and Master's degree in Computer Science — which means I've spent years
+                thinking like an engineer. But what I discovered is that the hardest problems in tech aren't
+                technical. They're translational. Getting a data engineer and a VP of Sales to agree on what
+                "customer health" means. Getting a product team to build the right thing instead of the easy thing.
+                Turning messy data into a decision a CFO will act on.
+                <br><br>
+                That's what I do. And BridgeIQ is how I prove it.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:28px;margin-bottom:16px">
+            <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:16px">Why I Built BridgeIQ</div>
+            <div style="font-size:14px;color:#94a3b8;line-height:1.8">
+                Most BA portfolios are PDFs. A BRD written in isolation, user stories no one will implement,
+                process maps that live in a Confluence page nobody reads.
+                <br><br>
+                I wanted to build something a recruiter could <em>click</em>. Something that shows — not tells —
+                that I can take a business problem, go deep on the data, design a solution, spec it in Agile,
+                and deliver a live working product. All of it. Not just one piece.
+                <br><br>
+                BridgeIQ is that proof. It's a fake company with real problems. And I solved them end-to-end.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:24px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px">Education</div>
+            <div style="margin-bottom:12px">
+                <div style="font-size:13px;font-weight:600;color:#f1f5f9">M.S. Computer Science</div>
+                <div style="font-size:12px;color:#64748b">Graduate · AI/ML Specialization</div>
+            </div>
+            <div>
+                <div style="font-size:13px;font-weight:600;color:#f1f5f9">B.S. Computer Science</div>
+                <div style="font-size:12px;color:#64748b">Undergraduate</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:24px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px">Research</div>
+            <div style="font-size:13px;color:#f1f5f9;margin-bottom:4px">IEEE-Published Researcher</div>
+            <div style="font-size:12px;color:#64748b">AI/ML · Computer Vision · Data Science</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:24px">
+            <div style="font-size:13px;font-weight:600;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px">Contact</div>
+            <div style="font-size:13px;color:#4F8EF7;margin-bottom:8px">gtrhemanth14@gmail.com</div>
+            <div style="font-size:13px;color:#4F8EF7">github.com/gtrhemanth</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Skills grid
+    st.markdown("---")
+    st.markdown('<div class="section-header">What BridgeIQ Demonstrates</div>', unsafe_allow_html=True)
+
+    skills = {
+        "Business Analysis": ["Business Requirements Document (BRD)", "Agile User Stories + Acceptance Criteria",
+                               "AS-IS / TO-BE Process Mapping", "Stakeholder Analysis + RACI Matrix",
+                               "Risk Register", "UAT Test Framework", "Data Dictionary (48 columns)"],
+        "Technical Skills": ["6-table relational data model (ERD)", "10 SQL queries — CTEs, window functions, cohort analysis",
+                              "Python 3.11 — data generation, API integration", "Streamlit multi-page web application",
+                              "Plotly — interactive charts, gauges, treemaps", "Git / GitHub version control"],
+        "AI Integration": ["Anthropic Claude API (Sonnet + Haiku)", "Structured prompt engineering",
+                            "AI Feedback Analyzer — feedback → user stories", "AI Requirements Generator — problem → BRD",
+                            "AI Insights Engine — data → executive brief", "Interview Simulator — JD → tailored prep"],
+    }
+
+    cols = st.columns(3)
+    skill_colors = [PRIMARY, "#22c55e", "#a78bfa"]
+    for col, (category, items), color in zip(cols, skills.items(), skill_colors):
+        items_html = "".join([f'<div style="padding:6px 0;border-bottom:1px solid #1e3a5f;font-size:13px;color:#94a3b8">→ {item}</div>' for item in items])
+        col.markdown(f"""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-top:3px solid {color};border-radius:12px;padding:20px">
+            <div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:12px">{category}</div>
+            {items_html}
+        </div>
+        """, unsafe_allow_html=True)
+
+    # ROI section
+    st.markdown("---")
+    st.markdown('<div class="section-header">Business Impact — If BridgeIQ Were Real</div>', unsafe_allow_html=True)
+
+    impact_data = query("""
+        SELECT
+            ROUND(SUM(CASE WHEN status='Active' THEN mrr ELSE 0 END),0) AS mrr,
+            COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned,
+            ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate
+        FROM customers
+    """).iloc[0]
+
+    mrr = int(impact_data["mrr"])
+    churn = float(impact_data["churn_rate"])
+    arr = mrr * 12
+    mrr_at_risk = round(mrr * churn / 100)
+    potential_save = round(mrr_at_risk * 0.35)
+
+    impact_cards = [
+        ("Current ARR", f"${arr:,}", "Active customer base"),
+        ("MRR at Churn Risk", f"${mrr_at_risk:,}/mo", f"{churn}% churn rate"),
+        ("Recoverable with BridgeIQ", f"${potential_save:,}/mo", "35% early intervention success rate"),
+        ("Annual ROI", f"${potential_save*12:,}", "If deployed for 12 months"),
+    ]
+
+    cols = st.columns(4)
+    for col, (label, value, sub) in zip(cols, impact_cards):
+        col.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-label">{label}</div>
+            <div class="kpi-value">{value}</div>
+            <div class="kpi-delta-neutral">{sub}</div>
+        </div>
+        """, unsafe_allow_html=True)

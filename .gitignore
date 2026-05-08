@@ -13,9 +13,7 @@ dist/
 build/
 .eggs/
 
-# Data (too large for GitHub — regenerate with generate_data.py)
-data/*.csv
-data/bridgeiq.db
+# Data files are included for Streamlit Cloud deployment
 
 # OS
 .DS_Store
