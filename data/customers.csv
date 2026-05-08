@@ -1,0 +1,501 @@
+customer_id,company_name,industry,plan_type,mrr,region,company_size,contract_start,churn_date,status,health_score,nps_score
+CUST0001,"Carroll, Murphy and Moreno",Retail,Enterprise,5889.65,North America,1000+,2023-07-18,,Active,92.7,6
+CUST0002,Wilson and Sons,Technology,Starter,342.73,Europe,1000+,2024-10-31,,Active,88.5,9
+CUST0003,"Mathis, Richards and Martinez",Healthcare,Starter,388.84,Europe,501-1000,2023-07-24,,Active,78.3,8
+CUST0004,"Jordan, Gillespie and Campos",Logistics,Starter,317.55,Middle East,201-500,2022-07-18,,Active,87.9,6
+CUST0005,Simpson-Bryant,Real Estate,Enterprise,8674.4,North America,1000+,2022-09-13,,Active,77.5,8
+CUST0006,Manning Inc,Education,Enterprise,6537.31,North America,51-200,2022-05-23,2023-02-10,Churned,84.3,6
+CUST0007,"Rangel, Nelson and Daniels",Logistics,Starter,375.03,Europe,201-500,2024-07-17,,Active,71.0,6
+CUST0008,Baxter Group,Retail,Enterprise,10078.83,Latin America,501-1000,2024-12-29,,Active,96.1,8
+CUST0009,King and Sons,Healthcare,Enterprise,10504.3,Europe,1-50,2023-03-26,,Active,86.1,6
+CUST0010,Brooks Inc,Logistics,Starter,481.63,Europe,501-1000,2025-03-07,,Active,70.6,9
+CUST0011,"Boyd, White and Thomas",Technology,Enterprise,8669.81,Asia Pacific,1000+,2023-06-27,2025-02-20,Churned,53.7,2
+CUST0012,Edwards-Wilson,Finance,Starter,498.47,North America,1-50,2022-10-11,,Active,88.9,7
+CUST0013,"Bailey, Bailey and Obrien",Real Estate,Enterprise,6278.86,Latin America,1000+,2024-05-14,,Active,96.7,10
+CUST0014,Chen-Gill,Technology,Starter,435.06,Asia Pacific,201-500,2022-08-23,,Active,81.6,6
+CUST0015,Compton and Sons,Education,Growth,1651.15,Middle East,51-200,2024-07-18,2025-08-21,Churned,62.3,5
+CUST0016,"Jones, Taylor and Park",Retail,Growth,2261.5,Asia Pacific,51-200,2024-11-05,,Active,81.7,10
+CUST0017,Thomas Inc,Healthcare,Enterprise,12346.95,North America,201-500,2025-05-11,,Active,98.4,8
+CUST0018,"Brown, Rodriguez and Stephens",Finance,Starter,310.59,Latin America,1-50,2025-03-07,,Active,66.4,10
+CUST0019,Coleman-Levy,Retail,Starter,324.68,Asia Pacific,1000+,2024-08-31,,Active,90.8,7
+CUST0020,Schmidt-Lewis,Real Estate,Enterprise,11041.12,Asia Pacific,501-1000,2023-02-16,,Active,73.0,10
+CUST0021,"Hutchinson, Garcia and Sharp",Consulting,Growth,1180.51,Middle East,51-200,2023-04-06,2023-05-27,Churned,66.8,5
+CUST0022,"Pineda, Brandt and Freeman",Logistics,Enterprise,5469.99,North America,1000+,2022-05-19,,Active,81.2,7
+CUST0023,Gonzalez-Arroyo,Consulting,Growth,2002.47,Middle East,501-1000,2023-03-15,,Active,82.6,9
+CUST0024,"Swanson, Miles and Johnson",Real Estate,Starter,317.87,Latin America,1-50,2024-06-01,,Active,95.6,6
+CUST0025,Gay-Nguyen,Finance,Starter,379.52,Europe,51-200,2023-11-26,,Active,86.8,9
+CUST0026,Price-Stuart,Finance,Starter,354.71,Latin America,1000+,2023-05-27,,Active,94.2,6
+CUST0027,Ramsey-Garcia,Finance,Starter,429.43,Europe,51-200,2025-01-12,,Active,70.6,9
+CUST0028,Strong-Blair,Education,Starter,331.93,Latin America,201-500,2022-01-05,,Active,89.6,9
+CUST0029,"Kemp, Willis and Cooper",Legal,Enterprise,12657.54,Europe,51-200,2025-02-12,,Active,72.9,10
+CUST0030,"Lewis, Harper and Alexander",Legal,Enterprise,9336.56,Middle East,1000+,2023-10-05,2025-06-24,Churned,98.2,1
+CUST0031,Sanchez-Adams,Finance,Starter,491.16,Middle East,1-50,2022-06-14,,Active,78.0,6
+CUST0032,"Schroeder, Kim and Elliott",Real Estate,Enterprise,6968.72,Middle East,1000+,2025-05-02,2025-06-21,Churned,60.2,4
+CUST0033,Rose PLC,Logistics,Growth,2401.06,Europe,201-500,2023-02-23,,Active,67.8,8
+CUST0034,"Smith, Gray and Atkins",Consulting,Growth,1473.27,North America,1-50,2022-05-29,2024-03-25,Churned,78.9,4
+CUST0035,Shaw PLC,Finance,Starter,400.18,Europe,201-500,2022-09-29,,Active,79.2,10
+CUST0036,"Jenkins, Archer and Jones",Education,Enterprise,7419.14,North America,51-200,2024-12-19,2025-10-28,Churned,80.6,2
+CUST0037,Harris-Elliott,Consulting,Starter,476.94,Europe,201-500,2025-02-07,2025-07-31,Churned,72.9,2
+CUST0038,"Watson, Campos and Holt",Education,Enterprise,8907.25,North America,1-50,2022-04-15,2023-07-22,Churned,84.3,2
+CUST0039,"Chung, Clark and Jenkins",Technology,Starter,426.42,Latin America,1000+,2023-06-21,2024-10-15,Churned,72.7,5
+CUST0040,Smith and Sons,Retail,Starter,408.12,Latin America,51-200,2024-01-27,,Active,82.3,6
+CUST0041,Miller LLC,Manufacturing,Growth,1545.98,Europe,1-50,2022-03-23,,Active,72.7,9
+CUST0042,Mcdaniel-Edwards,Retail,Enterprise,10994.82,Latin America,1-50,2023-04-30,,Active,94.2,7
+CUST0043,Miller PLC,Manufacturing,Enterprise,12394.9,Asia Pacific,51-200,2024-04-23,,Active,83.3,6
+CUST0044,Beltran-Vega,Manufacturing,Growth,1332.65,Europe,1-50,2024-07-31,,Active,76.4,7
+CUST0045,West-Sullivan,Education,Growth,1491.39,Asia Pacific,1000+,2022-05-23,,Active,54.7,10
+CUST0046,"Carpenter, Oneal and Webb",Education,Growth,2407.86,Europe,1000+,2022-08-25,,Active,101.9,8
+CUST0047,Moore-Wilson,Logistics,Starter,320.68,Latin America,1000+,2024-06-08,,Active,87.9,10
+CUST0048,Strickland Group,Logistics,Starter,349.94,Latin America,1-50,2024-06-12,2025-01-29,Churned,67.4,5
+CUST0049,Davis LLC,Education,Growth,1933.73,Middle East,201-500,2022-09-13,,Active,76.7,8
+CUST0050,"Ford, Chan and Williams",Real Estate,Enterprise,6017.3,Europe,1000+,2024-05-11,,Active,72.8,10
+CUST0051,Cross-Castillo,Manufacturing,Growth,1608.11,Latin America,1000+,2022-01-01,,Active,73.7,9
+CUST0052,"Miller, Farmer and Jacobs",Retail,Growth,2012.44,North America,201-500,2024-11-12,,Active,75.4,10
+CUST0053,Pham-Brown,Education,Enterprise,10062.53,Europe,51-200,2023-11-18,2024-08-14,Churned,70.2,3
+CUST0054,Hernandez-Vega,Consulting,Enterprise,11796.9,Europe,501-1000,2022-05-30,,Active,84.9,9
+CUST0055,Ruiz-Palmer,Finance,Growth,1364.98,Latin America,51-200,2022-01-12,,Active,95.6,10
+CUST0056,Murphy LLC,Finance,Growth,1074.33,Latin America,51-200,2023-05-26,,Active,109.0,9
+CUST0057,"Douglas, Taylor and Washington",Legal,Enterprise,9248.06,Middle East,1000+,2025-02-18,,Active,58.6,9
+CUST0058,Giles LLC,Manufacturing,Starter,447.73,Asia Pacific,1000+,2024-08-30,,Active,93.6,9
+CUST0059,"Smith, Mitchell and Salazar",Manufacturing,Enterprise,6912.97,Asia Pacific,201-500,2024-06-19,2025-05-07,Churned,61.7,1
+CUST0060,"Long, Murray and Cooper",Finance,Starter,345.25,Latin America,501-1000,2022-11-09,,Active,95.5,8
+CUST0061,"Diaz, Hudson and Hooper",Real Estate,Enterprise,8726.39,Middle East,1-50,2022-05-08,2023-08-11,Churned,80.7,3
+CUST0062,"Flores, Mueller and Le",Real Estate,Growth,1007.84,Latin America,1000+,2023-12-22,,Active,66.0,10
+CUST0063,Fisher PLC,Legal,Enterprise,12181.49,North America,501-1000,2024-09-26,2025-06-06,Churned,58.7,3
+CUST0064,Hernandez-Ramirez,Consulting,Enterprise,6319.36,Middle East,1-50,2024-08-15,,Active,97.5,9
+CUST0065,Nguyen-Martin,Retail,Enterprise,9514.14,Latin America,51-200,2022-02-25,2023-06-08,Churned,79.1,1
+CUST0066,Yang Ltd,Real Estate,Growth,1489.27,Asia Pacific,1-50,2024-02-16,,Active,85.6,9
+CUST0067,Brock-Potts,Logistics,Starter,448.8,Europe,1-50,2022-04-17,,Active,85.4,6
+CUST0068,"Barnes, Allison and Thomas",Manufacturing,Starter,338.87,Europe,501-1000,2022-02-11,,Active,64.9,6
+CUST0069,Keller-Tanner,Logistics,Enterprise,12581.06,Europe,1000+,2024-08-10,,Active,66.4,6
+CUST0070,Bell-Hill,Education,Starter,491.94,Middle East,501-1000,2022-08-10,,Active,69.6,9
+CUST0071,Craig Ltd,Manufacturing,Enterprise,6585.64,North America,201-500,2025-04-27,,Active,91.6,6
+CUST0072,Gonzalez and Sons,Logistics,Enterprise,11260.08,North America,1000+,2023-12-13,,Active,68.9,8
+CUST0073,Harris Inc,Legal,Starter,468.92,Europe,501-1000,2024-09-30,2025-05-03,Churned,74.5,5
+CUST0074,Garrett LLC,Legal,Growth,1922.87,Latin America,1000+,2025-01-07,,Active,95.0,8
+CUST0075,Brooks-Boyer,Legal,Growth,2276.57,Europe,501-1000,2022-06-27,,Active,65.9,8
+CUST0076,Duncan and Sons,Logistics,Starter,397.86,Asia Pacific,201-500,2023-10-28,2024-07-01,Churned,60.4,2
+CUST0077,Church and Sons,Technology,Enterprise,10608.47,Europe,1-50,2023-07-20,,Active,82.7,10
+CUST0078,Andrews-Drake,Healthcare,Starter,437.12,North America,201-500,2024-10-02,,Active,94.2,7
+CUST0079,Miller Group,Logistics,Growth,2036.68,Latin America,1000+,2023-09-20,,Active,69.6,10
+CUST0080,Hayes Inc,Education,Growth,1526.72,Europe,1-50,2024-07-18,,Active,79.6,7
+CUST0081,"Ochoa, Rogers and Watts",Retail,Growth,1178.33,Europe,51-200,2025-01-02,,Active,81.3,10
+CUST0082,Hammond Ltd,Education,Enterprise,9773.33,Europe,201-500,2022-07-25,,Active,72.4,7
+CUST0083,Miller and Sons,Healthcare,Growth,1020.22,Middle East,201-500,2024-12-29,2025-02-20,Churned,66.0,6
+CUST0084,"Brown, Garcia and Martin",Legal,Growth,1152.88,Latin America,501-1000,2022-01-26,,Active,76.1,8
+CUST0085,Smith and Sons,Legal,Starter,492.1,North America,1-50,2023-06-02,,Active,78.2,6
+CUST0086,"Mcfarland, Smith and Bright",Finance,Starter,328.84,Europe,1-50,2025-02-26,,Active,84.8,10
+CUST0087,Hall Ltd,Technology,Growth,1908.48,Latin America,501-1000,2025-06-20,,Active,90.5,10
+CUST0088,Ortiz-Jenkins,Manufacturing,Growth,1457.07,Europe,201-500,2025-06-25,2025-08-19,Churned,62.5,5
+CUST0089,"Guerrero, Blankenship and Holmes",Retail,Starter,330.41,North America,501-1000,2022-12-22,,Active,66.7,8
+CUST0090,"Walters, Chavez and Harper",Legal,Starter,345.3,North America,51-200,2023-08-03,,Active,86.9,8
+CUST0091,Brown-Kirby,Technology,Enterprise,9717.32,Europe,51-200,2023-02-10,,Active,100.8,6
+CUST0092,Rodriguez and Sons,Consulting,Starter,332.18,Asia Pacific,501-1000,2023-09-22,,Active,69.8,6
+CUST0093,Nelson-Howard,Technology,Growth,2032.02,Middle East,501-1000,2024-04-04,,Active,67.0,9
+CUST0094,Hodge-Roberson,Consulting,Enterprise,7577.57,Middle East,1-50,2023-05-28,2024-02-16,Churned,74.2,6
+CUST0095,"Wright, Melton and Aguilar",Retail,Enterprise,11570.37,Latin America,1000+,2025-03-26,2025-11-04,Churned,52.5,1
+CUST0096,Cabrera Ltd,Legal,Enterprise,8486.08,Asia Pacific,501-1000,2024-10-04,,Active,60.2,8
+CUST0097,"Young, Olson and Rojas",Legal,Growth,2004.2,Asia Pacific,501-1000,2022-11-26,,Active,87.9,9
+CUST0098,Hunter-Fisher,Technology,Starter,361.9,North America,1000+,2023-10-25,2025-01-10,Churned,54.0,3
+CUST0099,Lynch Ltd,Legal,Growth,1080.31,Latin America,1-50,2024-11-27,,Active,86.4,8
+CUST0100,Woodward-Bell,Consulting,Growth,2320.27,Europe,51-200,2024-09-19,2025-09-06,Churned,82.5,2
+CUST0101,"Butler, Watson and Walker",Legal,Enterprise,5108.4,North America,51-200,2024-04-15,2024-09-08,Churned,48.9,4
+CUST0102,Wall LLC,Manufacturing,Enterprise,7186.4,Latin America,1000+,2024-09-15,,Active,82.2,7
+CUST0103,Hernandez Ltd,Retail,Growth,1284.92,North America,201-500,2025-05-12,,Active,85.3,8
+CUST0104,Robbins PLC,Education,Enterprise,7136.38,Middle East,1000+,2022-01-06,,Active,58.7,9
+CUST0105,Morris-Gross,Technology,Starter,388.31,Middle East,501-1000,2024-09-18,,Active,71.8,7
+CUST0106,Montgomery-Nguyen,Real Estate,Enterprise,6909.44,North America,201-500,2024-02-24,,Active,84.9,9
+CUST0107,Howell LLC,Retail,Enterprise,12306.44,Latin America,1-50,2024-02-20,,Active,103.8,8
+CUST0108,Callahan-Hess,Healthcare,Starter,473.84,Europe,501-1000,2024-06-20,2025-10-30,Churned,90.2,6
+CUST0109,Mason Ltd,Education,Enterprise,12758.65,Asia Pacific,1000+,2022-06-03,,Active,75.9,8
+CUST0110,"Smith, Christian and Martin",Legal,Enterprise,11873.74,Middle East,1-50,2024-02-18,,Active,65.7,10
+CUST0111,Reyes PLC,Finance,Starter,345.95,Latin America,1-50,2023-08-12,,Active,83.2,6
+CUST0112,"Carter, Murphy and Lee",Healthcare,Growth,1248.55,Asia Pacific,1-50,2023-09-06,,Active,63.3,8
+CUST0113,"Peters, Hendrix and Martin",Real Estate,Growth,1561.26,Middle East,51-200,2022-10-26,,Active,84.3,9
+CUST0114,Parsons PLC,Retail,Enterprise,10464.08,Europe,501-1000,2024-10-16,,Active,86.3,8
+CUST0115,Torres Group,Legal,Growth,1381.99,Asia Pacific,1000+,2022-01-20,,Active,89.1,8
+CUST0116,Ryan-Lawrence,Legal,Enterprise,7392.23,Asia Pacific,51-200,2024-05-18,,Active,92.9,9
+CUST0117,Rich Inc,Consulting,Growth,1158.98,Asia Pacific,201-500,2024-02-21,,Active,104.4,9
+CUST0118,Miller-Brown,Legal,Growth,1011.15,Asia Pacific,51-200,2022-04-11,,Active,85.1,10
+CUST0119,"Montoya, Rice and Spencer",Retail,Growth,1327.51,North America,1-50,2023-01-25,,Active,77.3,10
+CUST0120,Gonzalez Group,Logistics,Growth,2097.54,Latin America,51-200,2022-07-04,,Active,94.1,7
+CUST0121,"George, Mcconnell and Welch",Education,Starter,456.3,Europe,201-500,2024-01-20,,Active,106.7,8
+CUST0122,Williams-Tucker,Finance,Enterprise,11962.18,Europe,51-200,2022-08-24,,Active,67.2,9
+CUST0123,"Fowler, Green and Mitchell",Finance,Enterprise,7925.2,Latin America,201-500,2024-03-19,2025-10-19,Churned,59.6,4
+CUST0124,Maynard-Cline,Legal,Growth,2232.63,North America,1000+,2024-01-31,2024-10-26,Churned,52.1,4
+CUST0125,"Bowen, Ashley and Gonzales",Legal,Growth,2371.88,Asia Pacific,501-1000,2023-03-30,,Active,84.7,6
+CUST0126,Townsend Ltd,Retail,Growth,2492.89,Latin America,501-1000,2022-08-26,2024-03-28,Churned,70.4,2
+CUST0127,"Mcdonald, Andersen and Little",Retail,Enterprise,12594.05,Latin America,1-50,2025-01-11,,Active,90.3,8
+CUST0128,"Webster, Ball and Hernandez",Manufacturing,Starter,437.06,Asia Pacific,1-50,2023-03-21,,Active,67.6,8
+CUST0129,"Mendez, Walker and Flores",Manufacturing,Enterprise,12212.57,North America,501-1000,2024-01-05,2024-11-12,Churned,74.9,5
+CUST0130,"Rodriguez, Taylor and Solomon",Manufacturing,Enterprise,12767.75,Europe,1000+,2022-04-14,,Active,86.5,7
+CUST0131,Mckenzie and Sons,Manufacturing,Starter,464.96,Asia Pacific,51-200,2025-02-09,2025-06-29,Churned,71.9,2
+CUST0132,Jones and Sons,Retail,Starter,496.51,North America,1-50,2025-01-11,,Active,66.3,7
+CUST0133,Richardson Ltd,Healthcare,Starter,370.65,Europe,201-500,2023-05-03,,Active,100.7,10
+CUST0134,Wilkinson-Martinez,Logistics,Starter,448.13,Middle East,1000+,2024-09-02,,Active,88.4,6
+CUST0135,"Rivera, Brown and Freeman",Technology,Growth,1754.76,Asia Pacific,501-1000,2025-06-13,2025-12-28,Churned,66.1,3
+CUST0136,"Myers, Estrada and Edwards",Legal,Growth,1638.41,North America,1-50,2022-08-10,,Active,79.6,8
+CUST0137,Richardson PLC,Consulting,Enterprise,6185.67,Middle East,201-500,2022-09-16,,Active,70.1,8
+CUST0138,Osborn-Garcia,Technology,Growth,1757.33,Europe,501-1000,2024-05-31,2024-10-25,Churned,79.0,3
+CUST0139,Walker-Kelly,Finance,Starter,381.76,Asia Pacific,501-1000,2024-07-17,,Active,78.5,7
+CUST0140,Moran-Johnson,Finance,Enterprise,12382.88,Latin America,1-50,2022-05-18,2022-09-12,Churned,76.5,5
+CUST0141,"Walls, Gonzales and Johnson",Consulting,Enterprise,7980.17,Middle East,1000+,2022-09-24,,Active,79.1,8
+CUST0142,Livingston LLC,Healthcare,Enterprise,12528.04,Asia Pacific,1000+,2024-05-16,,Active,87.4,8
+CUST0143,Anderson-Guzman,Legal,Growth,1154.4,Europe,1-50,2024-11-05,2025-11-06,Churned,59.0,0
+CUST0144,Flores-Freeman,Consulting,Growth,1860.15,Middle East,1000+,2024-05-28,,Active,94.4,6
+CUST0145,Dennis-Costa,Education,Enterprise,12431.67,Asia Pacific,201-500,2023-07-02,2024-05-06,Churned,92.2,4
+CUST0146,Herrera-Graham,Healthcare,Enterprise,8205.27,North America,1000+,2022-10-18,,Active,82.9,7
+CUST0147,Davenport-Lopez,Logistics,Growth,1628.75,Middle East,1000+,2023-11-30,2024-11-13,Churned,71.4,1
+CUST0148,"Greene, Austin and Douglas",Real Estate,Enterprise,5397.1,Latin America,1000+,2022-06-17,,Active,84.0,9
+CUST0149,Howe-Evans,Finance,Growth,1408.75,Asia Pacific,1000+,2024-11-15,2025-07-23,Churned,50.3,0
+CUST0150,"Barron, Mitchell and Ortiz",Education,Starter,378.05,Europe,51-200,2025-05-12,2025-08-02,Churned,69.5,6
+CUST0151,Neal-Johnson,Retail,Growth,1433.17,Europe,501-1000,2022-09-03,2023-12-17,Churned,59.5,4
+CUST0152,"Joseph, Miller and Fernandez",Healthcare,Enterprise,11448.6,Latin America,1-50,2022-05-28,,Active,80.2,9
+CUST0153,"Lambert, Rodriguez and Smith",Real Estate,Starter,471.42,Latin America,201-500,2025-03-25,,Active,83.8,8
+CUST0154,"Lewis, Knapp and Davis",Logistics,Starter,459.26,North America,501-1000,2025-06-19,,Active,83.6,6
+CUST0155,"Haney, Ramsey and Gibson",Real Estate,Starter,386.14,Asia Pacific,201-500,2024-03-31,,Active,85.7,6
+CUST0156,"Lynn, Irwin and Malone",Logistics,Enterprise,10064.8,Asia Pacific,51-200,2024-12-22,,Active,102.5,7
+CUST0157,Jones-Garza,Finance,Starter,328.29,Europe,501-1000,2023-02-09,2023-08-14,Churned,52.9,4
+CUST0158,Dunn Ltd,Consulting,Growth,2020.7,Asia Pacific,201-500,2025-03-02,,Active,85.5,7
+CUST0159,Davis-Palmer,Education,Growth,1101.43,Middle East,1-50,2024-06-24,,Active,79.2,9
+CUST0160,"Snyder, Anderson and Alvarez",Finance,Growth,1055.41,North America,1000+,2024-01-26,,Active,85.8,10
+CUST0161,"Harrell, Williams and Lee",Healthcare,Enterprise,8074.86,Latin America,1000+,2025-04-03,,Active,75.9,9
+CUST0162,Gonzalez and Sons,Logistics,Enterprise,6205.89,North America,1000+,2022-05-07,,Active,73.4,7
+CUST0163,Jackson-Watts,Technology,Starter,348.55,Middle East,1000+,2024-06-15,,Active,88.3,8
+CUST0164,"Brown, Bolton and Reese",Healthcare,Growth,1612.15,Asia Pacific,1-50,2023-11-24,,Active,91.7,8
+CUST0165,"Rangel, Livingston and Anderson",Consulting,Starter,410.59,Europe,201-500,2024-03-02,,Active,97.4,8
+CUST0166,"Craig, Paul and Weiss",Education,Growth,2450.54,Middle East,501-1000,2024-03-13,2024-07-07,Churned,76.7,5
+CUST0167,Olson-Rodriguez,Real Estate,Growth,2218.78,Middle East,201-500,2024-12-14,2025-12-22,Churned,78.2,1
+CUST0168,Miller Group,Retail,Growth,2420.5,North America,201-500,2024-09-22,2024-12-31,Churned,69.2,6
+CUST0169,"Hernandez, Curry and Summers",Technology,Starter,400.54,North America,201-500,2025-01-10,,Active,93.9,10
+CUST0170,Martinez Ltd,Consulting,Growth,1230.38,Europe,501-1000,2023-01-06,,Active,70.3,6
+CUST0171,White PLC,Consulting,Growth,1545.45,Asia Pacific,501-1000,2023-05-02,,Active,82.9,9
+CUST0172,Joseph Group,Legal,Starter,372.57,Asia Pacific,501-1000,2025-03-14,,Active,90.8,10
+CUST0173,"Palmer, Ruiz and Moore",Consulting,Enterprise,8348.29,Europe,201-500,2022-11-28,,Active,95.0,8
+CUST0174,Taylor-Barton,Education,Enterprise,12473.35,North America,51-200,2024-11-22,,Active,86.4,8
+CUST0175,Adams and Sons,Finance,Growth,2356.96,Europe,501-1000,2022-10-29,,Active,102.7,9
+CUST0176,Saunders LLC,Finance,Starter,378.29,Asia Pacific,51-200,2024-02-05,,Active,63.6,6
+CUST0177,Jackson Inc,Retail,Growth,2395.24,North America,201-500,2023-11-18,,Active,93.8,7
+CUST0178,"Williams, Johnson and Perez",Healthcare,Enterprise,8751.88,Asia Pacific,51-200,2025-06-14,2025-08-03,Churned,61.3,6
+CUST0179,Gonzalez and Sons,Finance,Starter,408.76,Asia Pacific,51-200,2025-05-31,,Active,80.8,9
+CUST0180,Gonzalez and Sons,Legal,Enterprise,11350.19,Middle East,1000+,2024-07-25,2025-10-26,Churned,71.6,0
+CUST0181,Crawford LLC,Education,Enterprise,9122.01,Latin America,1-50,2023-05-11,,Active,75.3,9
+CUST0182,Ward-Parks,Logistics,Starter,431.87,North America,1000+,2022-06-25,,Active,76.1,10
+CUST0183,Jones PLC,Real Estate,Enterprise,11290.3,Latin America,1-50,2024-11-05,,Active,59.8,8
+CUST0184,Humphrey-Macias,Finance,Enterprise,5128.94,Middle East,201-500,2022-05-19,,Active,56.6,7
+CUST0185,Brown-Figueroa,Retail,Starter,369.46,Latin America,501-1000,2023-11-25,,Active,67.2,6
+CUST0186,"Ward, Moses and Harris",Healthcare,Enterprise,11208.52,Europe,1-50,2024-07-26,2024-12-06,Churned,51.9,2
+CUST0187,Garcia and Sons,Healthcare,Growth,1772.08,Europe,201-500,2025-01-17,,Active,69.0,8
+CUST0188,Jones-Long,Real Estate,Growth,1185.71,Latin America,501-1000,2024-01-24,,Active,98.4,8
+CUST0189,Mccoy Inc,Technology,Starter,398.24,Asia Pacific,1-50,2024-10-15,,Active,81.3,10
+CUST0190,Mitchell PLC,Education,Starter,408.09,Asia Pacific,501-1000,2023-10-20,2024-10-19,Churned,63.2,4
+CUST0191,Wolfe Ltd,Healthcare,Enterprise,8407.93,Asia Pacific,1000+,2024-06-28,,Active,91.6,6
+CUST0192,Rodriguez Group,Retail,Starter,433.24,North America,51-200,2024-04-11,,Active,81.9,10
+CUST0193,Riley-Owens,Logistics,Enterprise,11249.5,Asia Pacific,501-1000,2022-03-13,2022-12-09,Churned,70.9,1
+CUST0194,Mcknight-Cowan,Finance,Enterprise,8598.38,Middle East,51-200,2024-01-30,,Active,81.0,10
+CUST0195,Hamilton-Wilson,Finance,Growth,1596.05,North America,51-200,2023-07-25,,Active,70.1,10
+CUST0196,Palmer-Clarke,Manufacturing,Starter,351.36,Middle East,201-500,2023-06-18,,Active,82.1,9
+CUST0197,Foster-Sanders,Legal,Starter,323.53,North America,201-500,2022-06-01,,Active,72.7,10
+CUST0198,Lopez Ltd,Retail,Enterprise,7321.9,Asia Pacific,1000+,2023-09-07,,Active,65.6,7
+CUST0199,"Craig, Beltran and Conley",Legal,Starter,496.03,North America,201-500,2022-10-12,,Active,71.1,10
+CUST0200,Allen LLC,Legal,Starter,421.39,Middle East,501-1000,2022-06-26,2023-09-06,Churned,64.2,6
+CUST0201,Gonzales-Todd,Finance,Growth,2234.01,Latin America,501-1000,2022-06-01,2023-05-21,Churned,63.3,6
+CUST0202,"Gould, Webb and Mccullough",Retail,Enterprise,10117.35,Latin America,1000+,2023-01-08,,Active,72.0,6
+CUST0203,Smith-Williams,Manufacturing,Starter,402.62,Asia Pacific,1000+,2023-09-15,2024-09-09,Churned,86.3,2
+CUST0204,Levine-Smith,Education,Starter,426.01,Middle East,1000+,2025-02-02,,Active,67.8,6
+CUST0205,"Duncan, Perry and Alvarado",Retail,Enterprise,10126.9,Europe,1000+,2025-04-27,,Active,79.0,10
+CUST0206,Davis-Turner,Consulting,Starter,464.05,Asia Pacific,51-200,2022-02-28,2024-01-15,Churned,51.9,6
+CUST0207,Peck-Robinson,Technology,Enterprise,8331.69,Asia Pacific,201-500,2022-03-04,,Active,60.4,9
+CUST0208,Avery-Brown,Legal,Growth,1679.32,Latin America,51-200,2022-05-03,2023-08-01,Churned,70.3,2
+CUST0209,Cox-Avila,Logistics,Enterprise,6148.35,Latin America,51-200,2023-10-16,,Active,83.0,6
+CUST0210,"Rice, Gregory and Owen",Manufacturing,Growth,1361.61,Europe,1-50,2022-09-08,,Active,67.6,6
+CUST0211,Freeman LLC,Retail,Growth,2417.08,Asia Pacific,1000+,2025-06-14,,Active,80.6,7
+CUST0212,Sullivan-Phillips,Education,Growth,2492.95,Latin America,1-50,2024-08-14,,Active,74.3,6
+CUST0213,"Jones, Harmon and Miller",Healthcare,Growth,1757.17,North America,201-500,2023-05-09,2024-06-03,Churned,43.2,5
+CUST0214,"Wright, Roy and Ross",Real Estate,Enterprise,8763.69,Europe,201-500,2025-01-04,2025-03-30,Churned,68.8,5
+CUST0215,"Martin, Martinez and Perez",Consulting,Growth,2144.79,Middle East,51-200,2024-01-20,2024-04-11,Churned,61.6,3
+CUST0216,Barton-Watson,Consulting,Enterprise,8601.84,Middle East,1-50,2025-01-31,,Active,89.5,7
+CUST0217,"Schroeder, Campos and Bennett",Logistics,Starter,377.78,Europe,51-200,2023-11-26,,Active,72.3,6
+CUST0218,Clarke-Rogers,Technology,Starter,306.78,Latin America,51-200,2023-11-14,,Active,74.7,10
+CUST0219,"Silva, Larson and Powell",Real Estate,Enterprise,6117.25,Middle East,201-500,2025-06-09,,Active,70.1,10
+CUST0220,"Marquez, Johnston and Serrano",Healthcare,Enterprise,8917.77,Asia Pacific,201-500,2025-02-26,,Active,74.1,6
+CUST0221,Burnett-Warner,Education,Growth,1874.55,Middle East,1000+,2022-02-24,,Active,82.5,9
+CUST0222,Ryan Inc,Real Estate,Starter,403.85,Europe,51-200,2025-06-23,,Active,85.9,6
+CUST0223,"Ellison, Cox and Lucas",Logistics,Enterprise,12584.64,Latin America,51-200,2022-08-14,2023-12-08,Churned,61.1,4
+CUST0224,Campbell-Ortiz,Technology,Enterprise,12363.17,Europe,1000+,2022-05-08,,Active,86.2,8
+CUST0225,"Cruz, Harris and Olson",Retail,Enterprise,8825.97,Latin America,1000+,2024-02-11,,Active,75.8,8
+CUST0226,Mcmillan-Carrillo,Education,Enterprise,8872.44,Europe,201-500,2023-05-20,,Active,91.4,8
+CUST0227,"Gonzales, Bass and Ramirez",Logistics,Enterprise,6657.22,Middle East,201-500,2024-09-28,,Active,78.3,10
+CUST0228,Carter LLC,Retail,Growth,2342.64,Asia Pacific,1-50,2024-03-19,,Active,97.2,8
+CUST0229,Silva-Roberts,Legal,Enterprise,5631.24,Europe,51-200,2024-06-24,,Active,86.5,10
+CUST0230,Cooper-Sanchez,Consulting,Enterprise,7171.97,Europe,51-200,2022-08-12,,Active,73.6,6
+CUST0231,"Pacheco, Yates and Martin",Healthcare,Enterprise,12240.47,North America,501-1000,2023-04-08,,Active,75.4,7
+CUST0232,Robinson-Hanna,Legal,Starter,491.9,Latin America,51-200,2022-11-20,,Active,93.9,8
+CUST0233,Perez-Davenport,Finance,Growth,1427.12,Middle East,51-200,2022-05-02,,Active,63.2,6
+CUST0234,Williams Ltd,Healthcare,Starter,382.58,Latin America,501-1000,2022-12-27,,Active,77.8,7
+CUST0235,Bennett PLC,Healthcare,Enterprise,12696.05,Asia Pacific,1000+,2023-08-16,,Active,60.0,8
+CUST0236,"Brown, Kramer and Marshall",Retail,Growth,1680.52,Middle East,501-1000,2025-01-17,,Active,65.4,8
+CUST0237,"Smith, Watkins and Howell",Education,Starter,460.76,Europe,1-50,2023-11-09,2025-03-22,Churned,66.2,4
+CUST0238,Walls-Allison,Real Estate,Enterprise,11057.26,Latin America,1000+,2022-12-26,,Active,60.8,8
+CUST0239,"Harris, West and Cruz",Legal,Starter,379.17,Asia Pacific,51-200,2022-07-15,2023-01-04,Churned,79.8,3
+CUST0240,Ramirez Group,Consulting,Growth,2430.05,North America,201-500,2023-09-11,,Active,82.5,8
+CUST0241,"Scott, Vargas and Roberson",Retail,Enterprise,6889.42,Latin America,1000+,2022-08-31,,Active,104.2,8
+CUST0242,Griffith PLC,Manufacturing,Enterprise,5938.33,Europe,51-200,2023-08-28,,Active,70.3,9
+CUST0243,Fisher LLC,Technology,Starter,390.0,Latin America,1000+,2025-05-25,,Active,89.2,7
+CUST0244,Burke-Brown,Technology,Enterprise,11036.92,Asia Pacific,1-50,2022-06-17,,Active,60.8,10
+CUST0245,"Stewart, Brady and Odonnell",Manufacturing,Starter,311.35,Middle East,1000+,2025-01-26,,Active,88.3,10
+CUST0246,Juarez Inc,Legal,Growth,1173.36,North America,1000+,2023-02-25,,Active,90.7,9
+CUST0247,"Roman, Lin and Brooks",Consulting,Starter,389.69,North America,1000+,2024-11-17,,Active,60.8,6
+CUST0248,Arnold-Hoffman,Consulting,Growth,1380.69,North America,1-50,2022-01-07,,Active,87.1,9
+CUST0249,Cervantes-Singleton,Finance,Growth,2049.58,Latin America,1-50,2025-01-13,,Active,80.3,7
+CUST0250,Myers and Sons,Real Estate,Enterprise,12825.67,Latin America,501-1000,2024-05-10,,Active,89.4,9
+CUST0251,Hernandez-Cherry,Finance,Starter,435.55,Europe,1000+,2025-01-09,2025-08-05,Churned,63.1,1
+CUST0252,"Anderson, Hicks and Harvey",Technology,Starter,450.24,Latin America,1000+,2023-09-04,,Active,85.9,9
+CUST0253,Evans PLC,Finance,Starter,348.5,North America,501-1000,2023-12-10,2024-07-20,Churned,46.9,0
+CUST0254,Brown Inc,Legal,Starter,340.22,Middle East,1-50,2022-07-26,,Active,63.4,7
+CUST0255,"Knight, Atkins and Davis",Manufacturing,Enterprise,5352.89,North America,51-200,2024-06-17,,Active,72.1,10
+CUST0256,"Cantrell, Burnett and Evans",Retail,Growth,1865.21,Middle East,51-200,2023-10-19,,Active,81.8,9
+CUST0257,Wright-Butler,Retail,Growth,1411.73,Latin America,1000+,2025-02-14,,Active,49.9,9
+CUST0258,"Rodriguez, Taylor and Sanchez",Education,Enterprise,7548.88,Latin America,51-200,2024-05-02,,Active,82.9,10
+CUST0259,Guzman PLC,Retail,Growth,1360.45,Latin America,1-50,2023-04-07,,Active,52.9,10
+CUST0260,"Glover, Thomas and Smith",Logistics,Enterprise,6071.74,North America,501-1000,2023-05-13,,Active,70.0,8
+CUST0261,"Hall, Walker and Greene",Consulting,Starter,406.13,Middle East,1-50,2023-01-26,2024-03-17,Churned,73.4,6
+CUST0262,Ortega Group,Logistics,Enterprise,10793.44,Asia Pacific,1-50,2025-02-18,2025-07-04,Churned,62.5,1
+CUST0263,"Ferguson, Owens and Matthews",Legal,Starter,491.42,Europe,1000+,2022-08-29,,Active,78.5,7
+CUST0264,Osborn-Stewart,Technology,Enterprise,7571.92,Asia Pacific,201-500,2023-08-03,,Active,70.4,8
+CUST0265,Reyes LLC,Legal,Growth,1768.22,Asia Pacific,51-200,2024-10-15,,Active,73.5,10
+CUST0266,Garcia LLC,Consulting,Starter,447.25,Middle East,501-1000,2022-02-03,,Active,91.0,8
+CUST0267,Klein-Douglas,Manufacturing,Starter,338.24,Latin America,1000+,2023-04-17,,Active,71.7,8
+CUST0268,Garcia and Sons,Logistics,Growth,2448.76,Europe,51-200,2024-10-01,,Active,66.9,10
+CUST0269,Brock-Sandoval,Healthcare,Growth,1275.07,Middle East,1-50,2025-01-15,,Active,84.5,6
+CUST0270,"Richardson, Guerra and Harper",Healthcare,Starter,381.48,Europe,1000+,2023-04-19,2023-10-20,Churned,64.0,3
+CUST0271,Cochran PLC,Legal,Growth,1089.68,North America,1-50,2025-06-16,,Active,69.9,6
+CUST0272,Davis-Tucker,Healthcare,Enterprise,10776.54,Middle East,501-1000,2025-01-02,,Active,79.5,7
+CUST0273,Stewart Ltd,Consulting,Starter,482.61,Middle East,201-500,2024-12-09,2025-04-16,Churned,71.8,3
+CUST0274,"Johnson, Baxter and Johnson",Manufacturing,Starter,373.61,Europe,201-500,2024-04-11,,Active,73.3,6
+CUST0275,"Garcia, Perkins and Stewart",Real Estate,Enterprise,12932.4,Middle East,501-1000,2022-03-06,2023-04-28,Churned,69.6,1
+CUST0276,Brown LLC,Logistics,Starter,398.97,Middle East,1-50,2024-06-07,,Active,82.6,10
+CUST0277,Haley-Williams,Healthcare,Starter,344.95,North America,201-500,2025-03-06,,Active,94.5,6
+CUST0278,"Harrison, Benson and Johnson",Consulting,Starter,484.75,Europe,501-1000,2023-10-07,2024-06-05,Churned,58.9,0
+CUST0279,"Rojas, Washington and Hanson",Real Estate,Growth,1242.68,Middle East,201-500,2023-05-08,,Active,67.3,6
+CUST0280,"Perez, Baxter and Jones",Manufacturing,Enterprise,10962.65,North America,201-500,2023-12-10,2025-03-31,Churned,81.1,4
+CUST0281,Brown-Barrett,Logistics,Enterprise,12637.87,North America,201-500,2024-03-23,,Active,84.7,7
+CUST0282,"Perez, Butler and Andrade",Consulting,Growth,1828.56,Latin America,1-50,2024-02-08,,Active,69.2,10
+CUST0283,Warren-Hart,Real Estate,Growth,2196.08,Europe,501-1000,2022-05-31,2022-12-04,Churned,65.7,0
+CUST0284,Mooney LLC,Retail,Growth,1666.1,Latin America,501-1000,2023-07-07,2023-11-03,Churned,73.2,4
+CUST0285,"Powers, Simmons and Nelson",Technology,Enterprise,9098.53,North America,1000+,2022-07-31,2023-08-27,Churned,59.3,3
+CUST0286,"Blair, Davila and Rogers",Technology,Starter,357.37,Europe,1000+,2024-03-05,,Active,75.9,10
+CUST0287,Jimenez Ltd,Education,Starter,436.06,Latin America,51-200,2022-12-14,2023-11-17,Churned,79.8,3
+CUST0288,Rojas-Curtis,Manufacturing,Growth,1725.35,Latin America,1000+,2022-06-07,,Active,87.0,10
+CUST0289,Coleman-Russell,Real Estate,Starter,390.57,Asia Pacific,1000+,2022-10-05,,Active,64.6,9
+CUST0290,"Savage, Davis and Garcia",Consulting,Growth,1644.92,Europe,501-1000,2025-05-02,2025-08-22,Churned,84.4,2
+CUST0291,Allen-Grant,Legal,Starter,491.91,Middle East,51-200,2023-10-16,,Active,77.5,9
+CUST0292,"Sullivan, Hebert and Edwards",Technology,Growth,1169.83,North America,501-1000,2025-02-28,2025-06-30,Churned,76.6,5
+CUST0293,Strickland PLC,Finance,Starter,386.69,Latin America,501-1000,2023-08-20,,Active,88.5,8
+CUST0294,Williams Group,Finance,Enterprise,6232.15,Latin America,1000+,2024-05-16,,Active,89.8,9
+CUST0295,Alvarez Group,Real Estate,Enterprise,8205.44,Middle East,1-50,2024-11-03,,Active,84.9,10
+CUST0296,Howard-Dougherty,Logistics,Enterprise,10104.44,Europe,1000+,2022-06-24,2023-04-04,Churned,57.0,0
+CUST0297,Nelson LLC,Logistics,Enterprise,12867.87,Latin America,1-50,2024-03-29,,Active,91.3,10
+CUST0298,"Pacheco, Cruz and Warren",Manufacturing,Enterprise,9149.38,Latin America,201-500,2025-04-03,,Active,82.6,9
+CUST0299,Lee-Mcdonald,Retail,Growth,2157.51,Asia Pacific,1-50,2025-04-20,,Active,72.0,6
+CUST0300,Rhodes-Thomas,Logistics,Starter,465.26,Latin America,51-200,2022-10-18,,Active,83.1,10
+CUST0301,"Goodman, Fritz and Garza",Legal,Growth,1521.45,Asia Pacific,1-50,2022-07-19,,Active,75.2,6
+CUST0302,Goodman-Pope,Retail,Starter,468.84,Europe,1000+,2022-08-12,,Active,102.8,7
+CUST0303,Calderon Group,Legal,Enterprise,6280.09,Europe,501-1000,2025-02-20,,Active,76.7,9
+CUST0304,Perez LLC,Legal,Growth,1042.79,Middle East,501-1000,2025-06-11,,Active,76.4,9
+CUST0305,Stevens Inc,Finance,Starter,439.95,Middle East,1-50,2023-02-26,,Active,86.6,8
+CUST0306,Mendoza-Cooper,Legal,Growth,1294.61,Middle East,201-500,2022-08-22,,Active,67.8,10
+CUST0307,Lawson Ltd,Legal,Growth,1915.96,Middle East,51-200,2025-04-17,2025-08-15,Churned,75.3,2
+CUST0308,Hickman Ltd,Manufacturing,Enterprise,9720.35,Asia Pacific,1-50,2022-10-02,,Active,64.7,7
+CUST0309,Jones-Alexander,Consulting,Growth,2039.15,Europe,1000+,2024-11-12,,Active,76.3,10
+CUST0310,"Parks, Carroll and Torres",Legal,Enterprise,12352.29,Asia Pacific,51-200,2022-12-21,,Active,87.1,7
+CUST0311,"May, Smith and Carney",Healthcare,Growth,2261.98,Latin America,51-200,2025-06-22,2025-10-21,Churned,72.0,4
+CUST0312,Tapia-Gutierrez,Real Estate,Enterprise,10223.56,Latin America,501-1000,2024-04-17,,Active,93.1,7
+CUST0313,Buchanan PLC,Education,Starter,412.08,Europe,1000+,2023-03-28,,Active,77.0,10
+CUST0314,Bullock Group,Finance,Enterprise,11179.38,Middle East,1-50,2024-10-11,,Active,102.3,8
+CUST0315,Lindsey-Jackson,Healthcare,Enterprise,11585.26,Latin America,1000+,2024-01-22,,Active,84.5,7
+CUST0316,Martin-Miles,Logistics,Growth,2311.21,North America,501-1000,2022-03-08,,Active,94.4,6
+CUST0317,Graham-Hess,Consulting,Starter,340.98,Latin America,51-200,2025-04-19,,Active,66.3,7
+CUST0318,"Ryan, Robertson and Walls",Technology,Starter,413.01,Europe,201-500,2024-12-26,,Active,68.0,8
+CUST0319,"Solomon, Jones and Garcia",Finance,Growth,1858.1,Europe,501-1000,2024-11-19,,Active,114.7,7
+CUST0320,Sullivan Group,Manufacturing,Enterprise,11927.63,Latin America,501-1000,2023-05-27,2024-05-20,Churned,49.7,1
+CUST0321,Horne-Logan,Finance,Enterprise,10058.22,North America,501-1000,2024-04-28,,Active,72.4,8
+CUST0322,"Foley, Prince and Fisher",Finance,Growth,2424.38,Latin America,201-500,2023-11-02,,Active,81.1,6
+CUST0323,"James, Zavala and Smith",Legal,Enterprise,8180.73,Asia Pacific,201-500,2024-05-29,,Active,87.1,10
+CUST0324,Alvarez-Bailey,Healthcare,Starter,412.23,North America,1-50,2024-09-20,,Active,72.4,9
+CUST0325,Moreno-Elliott,Healthcare,Starter,323.85,Latin America,51-200,2022-11-20,,Active,108.3,8
+CUST0326,Woodard Group,Education,Starter,473.88,North America,201-500,2023-07-16,2024-08-18,Churned,67.3,5
+CUST0327,Burton-Ford,Manufacturing,Enterprise,6323.2,Latin America,1-50,2024-03-22,,Active,81.8,9
+CUST0328,"Clay, Collins and Hunt",Legal,Starter,325.54,North America,1-50,2023-04-09,,Active,81.5,8
+CUST0329,Adkins-Combs,Legal,Starter,496.63,North America,51-200,2024-05-14,,Active,67.6,6
+CUST0330,Mason-Hebert,Retail,Starter,361.67,North America,1000+,2023-09-05,2024-02-18,Churned,81.0,4
+CUST0331,Sanchez-Gilbert,Manufacturing,Starter,421.06,Europe,501-1000,2022-12-03,,Active,72.3,7
+CUST0332,Roberts-Ellis,Consulting,Starter,478.32,Latin America,201-500,2022-10-14,,Active,73.4,9
+CUST0333,Weaver Group,Finance,Growth,2185.61,Europe,1000+,2023-05-23,,Active,66.6,8
+CUST0334,Mathews PLC,Technology,Enterprise,5213.6,Europe,501-1000,2023-09-10,2025-06-22,Churned,56.6,2
+CUST0335,"Murphy, Green and Parker",Finance,Enterprise,5435.55,Europe,501-1000,2023-05-06,,Active,79.0,6
+CUST0336,Hall Ltd,Consulting,Growth,2399.89,Latin America,201-500,2022-09-28,,Active,78.5,10
+CUST0337,Harrington Inc,Finance,Enterprise,6381.16,North America,1000+,2024-08-22,,Active,90.5,6
+CUST0338,"Butler, Mueller and Nelson",Technology,Starter,488.74,Latin America,501-1000,2024-03-26,,Active,85.9,9
+CUST0339,Munoz Ltd,Education,Starter,427.11,North America,201-500,2025-01-06,,Active,105.8,7
+CUST0340,Hughes Inc,Finance,Enterprise,7613.0,Asia Pacific,501-1000,2025-04-16,,Active,94.9,7
+CUST0341,"Smith, Robinson and Young",Education,Starter,347.9,Europe,1-50,2024-06-08,2024-09-02,Churned,74.5,0
+CUST0342,Ramirez Inc,Education,Starter,398.28,Europe,201-500,2023-12-12,,Active,82.5,7
+CUST0343,"Baker, Anderson and Espinoza",Finance,Enterprise,11247.99,North America,201-500,2023-07-05,,Active,85.4,6
+CUST0344,Smith-Kent,Legal,Growth,2067.48,Latin America,1000+,2025-03-26,,Active,73.0,8
+CUST0345,"Ellis, Rowe and Mendez",Education,Starter,398.92,North America,1000+,2025-03-06,2025-06-24,Churned,65.3,5
+CUST0346,Martinez-Norris,Legal,Enterprise,5019.55,Asia Pacific,501-1000,2022-01-26,,Active,76.7,7
+CUST0347,Johnson LLC,Real Estate,Starter,485.23,Europe,201-500,2022-03-14,,Active,82.3,8
+CUST0348,Ross-Washington,Technology,Growth,2238.0,North America,51-200,2025-03-16,,Active,108.7,7
+CUST0349,Wright-Harding,Education,Enterprise,12850.31,Asia Pacific,201-500,2024-04-01,2025-08-20,Churned,79.4,2
+CUST0350,"Smith, Johnson and Rogers",Manufacturing,Starter,357.32,Latin America,201-500,2023-09-15,,Active,88.8,10
+CUST0351,"Hawkins, White and Davis",Technology,Growth,2495.68,Europe,51-200,2023-02-05,,Active,94.3,7
+CUST0352,Osborne and Sons,Healthcare,Enterprise,7770.39,Latin America,201-500,2022-01-20,,Active,82.5,6
+CUST0353,"Gray, Smith and Bradford",Healthcare,Starter,404.96,Europe,201-500,2023-05-03,,Active,104.6,10
+CUST0354,"Smith, Vasquez and Moore",Finance,Growth,2050.27,Middle East,1-50,2024-02-02,,Active,96.9,10
+CUST0355,Anderson-Lopez,Healthcare,Starter,426.44,Latin America,51-200,2024-03-18,2025-11-19,Churned,68.8,2
+CUST0356,Allen and Sons,Education,Growth,2050.09,Europe,1-50,2023-10-31,,Active,91.3,7
+CUST0357,Howell-Wilcox,Retail,Starter,454.99,Latin America,501-1000,2025-04-12,2025-06-08,Churned,65.6,2
+CUST0358,"Thompson, Frey and Wilson",Finance,Starter,389.38,North America,51-200,2024-08-06,,Active,87.6,8
+CUST0359,Lynn-Moore,Retail,Enterprise,10574.02,North America,51-200,2022-03-24,2023-03-24,Churned,79.8,0
+CUST0360,"Bowman, Hamilton and Pearson",Legal,Enterprise,7389.73,Middle East,1000+,2022-12-23,2024-03-11,Churned,65.6,1
+CUST0361,"Fleming, Doyle and Bush",Manufacturing,Starter,391.41,Europe,51-200,2022-10-14,2023-01-15,Churned,73.2,5
+CUST0362,Butler PLC,Finance,Enterprise,5671.32,North America,1-50,2025-04-15,,Active,71.6,7
+CUST0363,Murphy LLC,Finance,Enterprise,8546.45,North America,501-1000,2022-09-21,2023-09-25,Churned,93.9,3
+CUST0364,Sampson-Wells,Real Estate,Enterprise,8158.99,Europe,201-500,2022-03-02,,Active,90.5,7
+CUST0365,Brown and Sons,Healthcare,Starter,354.0,Middle East,1000+,2024-07-02,,Active,69.1,9
+CUST0366,"Cooley, White and Mitchell",Real Estate,Growth,2323.17,Europe,501-1000,2024-09-08,2025-02-28,Churned,56.4,1
+CUST0367,"Hoover, Austin and Wilson",Technology,Enterprise,12076.22,North America,501-1000,2024-12-12,,Active,84.3,10
+CUST0368,Wagner-Sawyer,Real Estate,Growth,1515.05,Asia Pacific,51-200,2025-03-04,,Active,70.9,6
+CUST0369,Nichols Ltd,Education,Growth,1894.67,North America,501-1000,2022-03-02,,Active,61.9,7
+CUST0370,Robertson-Gonzalez,Healthcare,Starter,319.03,Europe,1000+,2023-05-09,,Active,78.2,9
+CUST0371,Sullivan-Stevenson,Logistics,Growth,2401.81,Asia Pacific,1000+,2022-12-22,2024-09-18,Churned,86.3,4
+CUST0372,"King, Flores and Moore",Legal,Enterprise,6135.82,Middle East,201-500,2023-01-21,,Active,85.3,7
+CUST0373,Copeland-Hayes,Manufacturing,Growth,1055.95,North America,1000+,2022-04-26,,Active,71.3,10
+CUST0374,"Bailey, Porter and Cook",Logistics,Starter,460.29,North America,1-50,2023-11-29,,Active,83.5,7
+CUST0375,Gordon and Sons,Technology,Enterprise,10636.57,Asia Pacific,1-50,2022-10-18,,Active,61.9,9
+CUST0376,Stephens LLC,Retail,Enterprise,5807.26,Latin America,501-1000,2023-09-11,,Active,102.4,8
+CUST0377,Hernandez-Delgado,Consulting,Starter,440.44,Asia Pacific,51-200,2025-02-24,,Active,70.9,9
+CUST0378,"Hawkins, Palmer and Long",Consulting,Growth,2099.99,Latin America,1000+,2023-08-27,2023-09-27,Churned,49.0,0
+CUST0379,"Bowen, Davis and Jones",Consulting,Starter,419.48,North America,501-1000,2025-06-06,,Active,94.6,7
+CUST0380,Clark-Brooks,Finance,Growth,2472.57,Asia Pacific,501-1000,2022-12-10,,Active,97.3,6
+CUST0381,Turner PLC,Finance,Growth,1313.53,North America,1-50,2022-05-19,,Active,67.3,7
+CUST0382,Ortiz-Robinson,Real Estate,Growth,1738.62,North America,501-1000,2024-02-15,,Active,94.8,10
+CUST0383,Buchanan-Mitchell,Healthcare,Enterprise,11064.95,Asia Pacific,1-50,2023-04-07,2023-07-21,Churned,55.6,0
+CUST0384,Cox LLC,Technology,Growth,1254.16,North America,201-500,2024-02-08,2024-05-24,Churned,94.8,4
+CUST0385,Morton and Sons,Retail,Enterprise,12144.81,Middle East,501-1000,2022-03-05,,Active,85.1,7
+CUST0386,Francis-Webb,Technology,Starter,380.86,Asia Pacific,201-500,2025-02-08,,Active,86.6,8
+CUST0387,"Simpson, Kane and Mcclure",Legal,Starter,318.18,Europe,1-50,2024-03-15,,Active,73.9,8
+CUST0388,"Marshall, Bowman and Green",Manufacturing,Enterprise,9999.73,Europe,201-500,2024-09-10,2024-10-23,Churned,77.7,0
+CUST0389,"Page, Taylor and Rice",Legal,Growth,2264.65,Latin America,201-500,2023-09-24,,Active,94.6,7
+CUST0390,"Rodriguez, Adams and Lamb",Education,Growth,2327.24,Latin America,501-1000,2024-01-27,2024-04-11,Churned,76.1,2
+CUST0391,"Rios, Miller and Brown",Finance,Starter,466.42,Asia Pacific,1000+,2025-03-01,2025-05-19,Churned,50.7,1
+CUST0392,Howard PLC,Real Estate,Enterprise,5486.87,Middle East,501-1000,2024-03-03,,Active,92.4,10
+CUST0393,Phillips-Kennedy,Healthcare,Starter,394.25,Middle East,1000+,2022-06-11,,Active,99.5,10
+CUST0394,Fernandez PLC,Manufacturing,Starter,323.06,Europe,51-200,2024-07-08,2025-01-25,Churned,55.4,0
+CUST0395,Cole Inc,Consulting,Growth,1116.55,Asia Pacific,201-500,2024-06-10,2024-12-08,Churned,90.5,0
+CUST0396,Morgan-Macias,Education,Starter,376.62,Middle East,501-1000,2024-03-24,,Active,67.9,6
+CUST0397,Warner and Sons,Finance,Enterprise,9983.46,Latin America,51-200,2024-12-06,,Active,91.5,6
+CUST0398,"Griffin, Hodge and Nelson",Technology,Starter,411.54,Asia Pacific,501-1000,2022-07-26,,Active,94.8,8
+CUST0399,Fuentes-Mitchell,Healthcare,Growth,1981.18,Europe,201-500,2025-03-17,,Active,68.3,9
+CUST0400,Schneider-Nelson,Healthcare,Starter,378.16,Latin America,201-500,2023-11-10,,Active,91.5,8
+CUST0401,"Carter, Rodriguez and Barnes",Legal,Starter,366.57,North America,51-200,2023-09-13,,Active,103.6,9
+CUST0402,Cowan-Buckley,Finance,Growth,1403.13,Europe,501-1000,2024-05-03,,Active,106.3,7
+CUST0403,Fields LLC,Healthcare,Growth,2110.42,Middle East,51-200,2024-11-23,,Active,99.3,9
+CUST0404,Davis-Mcdonald,Healthcare,Starter,455.1,Europe,51-200,2024-12-09,,Active,89.6,7
+CUST0405,"Clayton, Wolf and Vaughn",Manufacturing,Starter,348.9,Asia Pacific,201-500,2024-07-23,2025-02-22,Churned,74.3,5
+CUST0406,Chandler-Castro,Consulting,Starter,435.23,Latin America,51-200,2023-05-11,,Active,69.3,9
+CUST0407,Woodward-Murphy,Finance,Enterprise,9409.67,Asia Pacific,1-50,2023-12-07,2024-09-26,Churned,62.6,4
+CUST0408,Lowe LLC,Education,Starter,470.42,Latin America,1000+,2023-04-07,,Active,86.7,6
+CUST0409,Lee-Benson,Consulting,Enterprise,5070.18,North America,51-200,2022-09-28,,Active,81.7,8
+CUST0410,Miles-Simpson,Real Estate,Enterprise,12735.2,Asia Pacific,501-1000,2023-07-18,,Active,103.7,8
+CUST0411,"Barron, Carrillo and Bright",Real Estate,Starter,392.34,Middle East,1-50,2024-12-02,,Active,128.3,8
+CUST0412,Boyd-Nelson,Finance,Enterprise,10177.74,Latin America,1-50,2025-06-01,,Active,84.1,8
+CUST0413,"Williams, Taylor and White",Education,Growth,1959.89,Europe,51-200,2023-07-22,,Active,73.2,6
+CUST0414,Moore and Sons,Healthcare,Enterprise,8231.79,Latin America,201-500,2023-10-17,,Active,81.0,8
+CUST0415,Barry and Sons,Consulting,Growth,1605.9,Europe,201-500,2022-03-14,,Active,80.8,10
+CUST0416,"Fuentes, Hernandez and Cobb",Retail,Enterprise,11278.18,Middle East,51-200,2024-01-05,,Active,73.6,8
+CUST0417,Brennan-Fernandez,Technology,Starter,393.16,Europe,201-500,2023-06-14,,Active,77.2,7
+CUST0418,Paul-Goodman,Logistics,Enterprise,11970.46,Asia Pacific,201-500,2024-05-11,,Active,75.0,10
+CUST0419,"Patton, Jackson and Copeland",Consulting,Growth,1694.64,Middle East,1000+,2022-08-30,,Active,104.7,10
+CUST0420,Thomas-Boyer,Real Estate,Starter,472.5,North America,51-200,2024-02-21,,Active,92.9,7
+CUST0421,Chase LLC,Legal,Starter,367.53,Europe,201-500,2025-03-12,,Active,86.9,6
+CUST0422,Ramsey Inc,Healthcare,Growth,1497.94,North America,501-1000,2022-12-29,,Active,76.2,8
+CUST0423,Alexander Inc,Retail,Starter,451.24,Latin America,1-50,2022-12-12,,Active,90.8,9
+CUST0424,Chang-Jimenez,Healthcare,Growth,1642.54,Middle East,51-200,2024-09-04,,Active,91.3,8
+CUST0425,"Davis, Rodriguez and Allen",Manufacturing,Starter,477.4,Europe,201-500,2024-12-23,2025-01-24,Churned,65.9,4
+CUST0426,"Estrada, Munoz and Vaughan",Education,Enterprise,7447.92,Asia Pacific,501-1000,2022-05-14,,Active,87.2,10
+CUST0427,Stark-Thompson,Retail,Enterprise,9191.94,Asia Pacific,501-1000,2024-06-07,,Active,77.1,9
+CUST0428,Gill-Weaver,Consulting,Starter,344.68,Middle East,51-200,2022-09-26,2022-11-17,Churned,74.0,0
+CUST0429,Anthony-Coleman,Education,Growth,2065.67,Middle East,1000+,2022-03-18,,Active,119.0,6
+CUST0430,Gomez Ltd,Real Estate,Enterprise,11687.96,Latin America,501-1000,2022-04-09,,Active,93.7,6
+CUST0431,Williams and Sons,Healthcare,Enterprise,7020.91,Asia Pacific,501-1000,2022-11-10,2024-09-15,Churned,58.7,2
+CUST0432,"Moreno, Welch and Butler",Finance,Enterprise,9844.07,Middle East,1000+,2022-10-08,,Active,67.0,6
+CUST0433,Rocha-Peterson,Consulting,Growth,1170.02,Europe,201-500,2022-08-06,,Active,97.8,8
+CUST0434,Diaz Ltd,Manufacturing,Enterprise,8277.05,Latin America,201-500,2022-11-25,2024-05-16,Churned,39.9,1
+CUST0435,"Eaton, Duncan and Bush",Consulting,Starter,301.55,Latin America,51-200,2022-07-02,,Active,101.8,6
+CUST0436,"Burgess, Jackson and Oconnell",Legal,Enterprise,10787.61,Asia Pacific,201-500,2023-06-09,,Active,75.5,9
+CUST0437,Fleming-Harris,Education,Starter,318.96,Asia Pacific,201-500,2022-12-24,,Active,76.7,6
+CUST0438,"Haynes, Hayes and Duncan",Legal,Starter,469.4,Middle East,201-500,2022-12-16,,Active,84.7,6
+CUST0439,"Brooks, Blake and Elliott",Legal,Growth,2221.45,Asia Pacific,501-1000,2023-01-10,2024-03-24,Churned,63.0,3
+CUST0440,Burke PLC,Retail,Enterprise,12087.99,North America,501-1000,2022-12-08,2023-03-08,Churned,55.3,4
+CUST0441,"Casey, Wolfe and Hunter",Logistics,Growth,2202.4,Middle East,1-50,2024-06-16,2025-08-08,Churned,84.1,5
+CUST0442,"Williams, Miller and Fernandez",Legal,Starter,395.62,North America,1-50,2024-09-26,2025-05-24,Churned,49.2,2
+CUST0443,Henderson-Stewart,Consulting,Enterprise,7512.9,Middle East,51-200,2024-12-10,,Active,99.7,8
+CUST0444,Hayden-Palmer,Legal,Enterprise,9183.83,Asia Pacific,501-1000,2025-06-20,2025-09-21,Churned,65.5,1
+CUST0445,Jordan-Silva,Retail,Enterprise,12135.5,Middle East,501-1000,2025-06-09,2025-12-20,Churned,82.5,0
+CUST0446,"Lopez, Cooper and Bowman",Healthcare,Growth,1479.95,Middle East,51-200,2023-11-09,,Active,62.6,10
+CUST0447,Beasley-King,Consulting,Enterprise,8028.1,Latin America,1-50,2023-04-27,2024-08-23,Churned,76.1,0
+CUST0448,Reyes Group,Healthcare,Growth,2116.86,Middle East,1000+,2022-02-06,2023-05-04,Churned,57.8,0
+CUST0449,Kramer-Nguyen,Technology,Starter,457.36,Middle East,51-200,2025-06-21,,Active,74.5,8
+CUST0450,Ortiz-Lewis,Logistics,Growth,2236.97,Middle East,1000+,2023-04-02,,Active,71.1,10
+CUST0451,Carey Group,Finance,Growth,2073.99,North America,51-200,2024-01-15,,Active,93.2,8
+CUST0452,Crane LLC,Legal,Enterprise,9174.88,Europe,501-1000,2022-08-06,2023-02-20,Churned,68.2,0
+CUST0453,Garcia-Blanchard,Manufacturing,Growth,1915.28,Latin America,51-200,2023-01-20,2024-03-27,Churned,66.8,3
+CUST0454,Hunt and Sons,Legal,Starter,484.33,Middle East,1000+,2025-04-20,2025-09-12,Churned,62.4,1
+CUST0455,Hammond Inc,Real Estate,Growth,1005.51,Middle East,501-1000,2022-04-10,,Active,100.6,7
+CUST0456,Massey-Mitchell,Consulting,Enterprise,9627.44,Middle East,201-500,2022-09-20,2024-08-23,Churned,58.4,4
+CUST0457,Pittman-Brewer,Manufacturing,Growth,1627.0,Asia Pacific,501-1000,2025-06-01,,Active,113.0,9
+CUST0458,"Jennings, Bowen and Ruiz",Technology,Starter,326.64,Asia Pacific,1000+,2025-05-18,,Active,74.8,8
+CUST0459,Barker Inc,Manufacturing,Enterprise,10893.55,Europe,1000+,2025-02-07,,Active,77.9,7
+CUST0460,Sullivan Inc,Logistics,Enterprise,10199.69,North America,201-500,2022-12-31,,Active,64.2,10
+CUST0461,Gregory-Mejia,Technology,Growth,1873.21,Asia Pacific,501-1000,2024-05-04,,Active,87.2,6
+CUST0462,"Smith, Brady and Parker",Education,Growth,1216.99,Asia Pacific,51-200,2022-04-26,2022-11-06,Churned,54.4,6
+CUST0463,"Foster, Phillips and Hale",Healthcare,Starter,437.12,Asia Pacific,501-1000,2023-08-28,2025-04-03,Churned,87.3,5
+CUST0464,"Hernandez, Morgan and Swanson",Technology,Enterprise,11917.73,Asia Pacific,1-50,2025-02-23,,Active,96.5,9
+CUST0465,"Larsen, Wise and Williams",Healthcare,Growth,1623.85,North America,201-500,2023-10-03,,Active,89.0,9
+CUST0466,"Welch, Jones and Meyer",Technology,Starter,481.3,Middle East,51-200,2024-01-24,,Active,105.1,7
+CUST0467,"Nash, Mcintosh and Johnson",Technology,Growth,1672.22,North America,501-1000,2022-06-02,2022-12-26,Churned,77.4,2
+CUST0468,Smith-Mills,Retail,Starter,331.19,North America,51-200,2023-06-07,2024-10-26,Churned,70.5,2
+CUST0469,Lamb PLC,Education,Enterprise,5405.84,Latin America,1000+,2025-06-14,,Active,77.6,8
+CUST0470,Blake LLC,Technology,Enterprise,6758.7,Europe,501-1000,2023-01-12,,Active,80.6,10
+CUST0471,Banks Group,Manufacturing,Enterprise,8226.34,Asia Pacific,201-500,2023-12-17,,Active,76.6,10
+CUST0472,Williams-Nguyen,Healthcare,Enterprise,8797.86,North America,201-500,2025-02-23,,Active,88.5,9
+CUST0473,"Brown, Braun and George",Manufacturing,Starter,479.9,North America,201-500,2025-06-10,,Active,66.3,6
+CUST0474,Johnston-Lawson,Logistics,Growth,1383.89,Middle East,1000+,2023-08-03,2025-02-12,Churned,82.5,3
+CUST0475,Davenport-Thompson,Finance,Growth,1064.78,North America,51-200,2023-01-30,,Active,102.3,10
+CUST0476,Chang Inc,Manufacturing,Starter,424.39,Latin America,1-50,2023-03-08,,Active,78.3,7
+CUST0477,Chen-Ward,Finance,Enterprise,11628.99,Europe,1-50,2024-06-10,,Active,71.6,6
+CUST0478,Austin-Wolfe,Consulting,Starter,309.85,Europe,201-500,2023-05-31,,Active,84.7,9
+CUST0479,Walker and Sons,Healthcare,Growth,1675.69,Latin America,1-50,2024-04-08,,Active,65.2,10
+CUST0480,Bennett-Li,Finance,Starter,450.19,Asia Pacific,1000+,2025-04-14,2025-12-17,Churned,64.3,0
+CUST0481,"Johnson, Vega and Nash",Education,Growth,2179.34,Latin America,501-1000,2023-09-10,,Active,68.1,9
+CUST0482,Arnold Inc,Technology,Starter,405.69,Asia Pacific,51-200,2022-10-07,,Active,92.8,8
+CUST0483,Lee-Bentley,Healthcare,Enterprise,12094.82,Middle East,1000+,2024-02-04,,Active,84.2,10
+CUST0484,"Jones, Miller and Johnson",Education,Enterprise,8151.65,Europe,201-500,2025-01-26,,Active,84.7,7
+CUST0485,"Johnson, Roberson and Hicks",Manufacturing,Growth,2357.44,Middle East,201-500,2024-11-15,2025-03-19,Churned,70.6,6
+CUST0486,"Bowers, Bryant and Tate",Technology,Enterprise,11817.01,North America,201-500,2025-01-29,,Active,89.1,6
+CUST0487,Garrison Ltd,Logistics,Growth,1146.3,Asia Pacific,51-200,2025-04-04,,Active,77.8,8
+CUST0488,Rodriguez-Mullins,Legal,Enterprise,5557.47,Asia Pacific,1000+,2023-02-01,,Active,74.3,8
+CUST0489,Morris-Anderson,Logistics,Enterprise,9672.36,Latin America,51-200,2025-03-04,,Active,91.0,7
+CUST0490,Roth-Stewart,Logistics,Enterprise,10917.53,Europe,201-500,2024-06-12,,Active,82.3,9
+CUST0491,"Anderson, Olson and Diaz",Finance,Growth,1667.04,Europe,1000+,2023-09-18,,Active,90.5,7
+CUST0492,"Castillo, Morris and Contreras",Healthcare,Enterprise,6570.46,Middle East,1-50,2022-06-06,,Active,86.8,10
+CUST0493,Lopez-Vance,Technology,Enterprise,8240.08,Asia Pacific,1000+,2025-04-23,2025-06-01,Churned,79.8,5
+CUST0494,Flowers PLC,Consulting,Starter,372.16,Asia Pacific,51-200,2023-04-03,,Active,72.8,9
+CUST0495,Parker Ltd,Healthcare,Enterprise,9082.3,Europe,1000+,2024-03-23,,Active,73.9,7
+CUST0496,"Morgan, Wilson and Scott",Retail,Growth,1237.83,Latin America,201-500,2025-03-05,,Active,63.5,6
+CUST0497,Bailey-Sanchez,Manufacturing,Starter,451.29,North America,51-200,2023-04-20,2024-06-01,Churned,46.9,3
+CUST0498,"Barrett, Clark and Chandler",Logistics,Growth,2375.85,North America,1000+,2022-04-06,2024-02-29,Churned,65.6,5
+CUST0499,Sanders-Foster,Consulting,Growth,2251.31,Europe,501-1000,2023-06-24,,Active,75.5,6
+CUST0500,Hanna-Berry,Logistics,Enterprise,7011.69,Asia Pacific,501-1000,2023-04-02,,Active,72.6,9

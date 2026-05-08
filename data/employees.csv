@@ -1,0 +1,121 @@
+employee_id,name,department,role,hire_date,salary,location
+EMP0001,William Vasquez,Product,Product Manager,2018-06-19,136445.33,Toronto
+EMP0002,Stephanie Hicks,Marketing,Marketing Manager,2024-05-02,147943.43,New York
+EMP0003,Sandra Smith,Finance,Financial Analyst,2019-08-04,81684.56,London
+EMP0004,Susan Vasquez,HR,HR Manager,2020-06-17,172828.23,Chicago
+EMP0005,Erica Ward,HR,HR Coordinator,2018-04-19,120817.93,London
+EMP0006,Melody Prince,Sales,VP Sales,2023-11-18,59128.27,Remote
+EMP0007,Elizabeth Grant,Sales,Account Executive,2020-05-03,75353.51,London
+EMP0008,Justin Brown,HR,HR Coordinator,2019-02-25,77296.52,London
+EMP0009,Allen Stone,Finance,Financial Analyst,2025-06-27,150147.78,Chicago
+EMP0010,Christopher Montgomery,HR,People Ops Lead,2023-12-15,80910.46,Chicago
+EMP0011,Mr. Andrew Delgado,Operations,COO,2019-05-08,170917.43,San Francisco
+EMP0012,William Coleman,Sales,Sales Manager,2025-06-23,62004.68,Austin
+EMP0013,Paige Wall,Marketing,Marketing Analyst,2021-02-05,60348.25,Toronto
+EMP0014,John York,Engineering,Engineering Manager,2019-12-09,115238.66,New York
+EMP0015,Trevor Pierce,Finance,Finance Manager,2019-09-04,65933.51,San Francisco
+EMP0016,Jonathan Miller,Finance,CFO,2018-07-29,105685.59,Chicago
+EMP0017,Lori Jenkins,Sales,Account Executive,2020-11-30,88328.12,Austin
+EMP0018,Megan Moreno,Engineering,Junior Dev,2024-07-15,120954.57,Austin
+EMP0019,Rachael Miller MD,Customer Success,CS Manager,2021-04-26,122132.88,London
+EMP0020,Melissa Johnson,Finance,Financial Analyst,2018-07-12,167792.88,Remote
+EMP0021,Tammy Garrett,Finance,Financial Analyst,2022-11-03,117770.65,New York
+EMP0022,James Moss,Finance,Senior Analyst,2024-05-31,85556.49,Austin
+EMP0023,Johnathan Coleman,Customer Success,CSM,2023-01-31,166773.65,San Francisco
+EMP0024,Bryan Nicholson,Operations,Operations Analyst,2018-08-07,121045.67,Remote
+EMP0025,Mary Collins,Engineering,Software Engineer,2021-12-28,110891.94,Chicago
+EMP0026,Andrew Brown DDS,Finance,Finance Manager,2025-03-01,86629.3,New York
+EMP0027,Gina Miller,HR,HR Coordinator,2025-05-07,154631.63,Toronto
+EMP0028,Joseph Baker,Marketing,Growth Manager,2022-06-06,119089.62,San Francisco
+EMP0029,James Sanders,Product,Senior PM,2018-04-13,116081.94,San Francisco
+EMP0030,Ryan Olson,HR,People Ops Lead,2022-11-30,175545.26,San Francisco
+EMP0031,Joshua Huynh,HR,HR Coordinator,2019-03-20,117871.08,Remote
+EMP0032,Gina Cohen,Sales,Account Executive,2023-11-15,161540.55,New York
+EMP0033,Nicole Jackson,Marketing,Marketing Manager,2024-12-12,56605.33,Remote
+EMP0034,Veronica Moss,Operations,Operations Analyst,2023-02-28,133683.03,San Francisco
+EMP0035,Katherine Moore,Marketing,Growth Manager,2024-03-08,141468.29,Austin
+EMP0036,Keith Adams,Marketing,Marketing Manager,2019-01-21,64105.53,Chicago
+EMP0037,Justin Campbell,Marketing,Growth Manager,2022-08-21,86266.86,Toronto
+EMP0038,John Newman,Marketing,Growth Manager,2024-02-13,127338.78,Toronto
+EMP0039,Derrick Rogers,Operations,COO,2018-06-19,129949.29,London
+EMP0040,Rebecca Sandoval,Marketing,Growth Manager,2022-04-05,95294.67,Austin
+EMP0041,Kevin Powell,Sales,Sales Rep,2018-03-28,136340.97,Toronto
+EMP0042,Austin Williamson,Sales,VP Sales,2020-09-19,100986.37,New York
+EMP0043,Jeremy Gutierrez,Finance,Senior Analyst,2021-02-07,121011.44,San Francisco
+EMP0044,Rachel Martinez,Customer Success,CS Manager,2024-04-19,127790.06,Remote
+EMP0045,Pamela Floyd,Product,Product Analyst,2024-11-18,55380.26,New York
+EMP0046,Karla Meadows,Operations,Operations Analyst,2023-01-21,59197.58,Remote
+EMP0047,Timothy Dixon,Sales,Account Executive,2023-10-11,59737.32,London
+EMP0048,Gary Young,Customer Success,Senior CSM,2020-09-23,160599.96,Chicago
+EMP0049,Stephanie Franco,Sales,Sales Rep,2018-12-24,166362.82,Toronto
+EMP0050,Laura Thomas,Customer Success,CS Manager,2023-09-27,124248.36,Chicago
+EMP0051,Whitney Cunningham,Operations,Operations Analyst,2021-11-29,160798.19,Chicago
+EMP0052,Christie Wood,Operations,Operations Analyst,2025-01-03,164868.95,Remote
+EMP0053,Mark Barnes,Finance,Finance Manager,2022-07-26,123696.66,New York
+EMP0054,Katherine Sawyer,Sales,VP Sales,2024-10-31,61518.67,Remote
+EMP0055,Christine Hayes,Marketing,Marketing Analyst,2020-03-24,123018.15,Austin
+EMP0056,Betty Buckley,Product,Senior PM,2024-05-25,102312.4,San Francisco
+EMP0057,Amy Allen,Product,Senior PM,2021-06-04,103412.55,Toronto
+EMP0058,Christina Wu,Finance,Senior Analyst,2024-01-22,80469.77,Chicago
+EMP0059,Amanda Rasmussen,Engineering,Engineering Manager,2021-09-25,114202.08,New York
+EMP0060,Anthony Reid,Finance,CFO,2024-07-13,78848.82,Chicago
+EMP0061,Daniel Ruiz,HR,HR Coordinator,2019-08-28,124922.57,Austin
+EMP0062,Alexander Chen,Finance,Senior Analyst,2024-08-10,150294.38,Toronto
+EMP0063,Paul Carter,Sales,Sales Rep,2019-06-05,166087.95,Toronto
+EMP0064,Peter Cummings,Marketing,Marketing Manager,2018-09-23,91186.38,San Francisco
+EMP0065,Elizabeth Evans,Engineering,Senior Engineer,2024-04-10,55966.46,Toronto
+EMP0066,Christine Burke,Marketing,Growth Manager,2022-01-12,147344.8,New York
+EMP0067,Paige Mills,Sales,Sales Manager,2022-02-01,127858.96,Toronto
+EMP0068,Dakota Curry,Operations,COO,2019-07-02,142625.72,Chicago
+EMP0069,Angela Flores,Marketing,Marketing Analyst,2023-12-09,171672.7,Austin
+EMP0070,Karen Edwards,HR,HR Manager,2023-12-15,119299.63,London
+EMP0071,Patrick Gentry,Product,Product Manager,2019-03-15,103409.11,San Francisco
+EMP0072,Madison Torres,Engineering,Tech Lead,2021-12-19,135539.17,Chicago
+EMP0073,Debbie Gilmore,Engineering,Senior Engineer,2020-11-15,87218.07,San Francisco
+EMP0074,Timothy Preston,Sales,VP Sales,2022-12-29,158265.55,Austin
+EMP0075,Mr. Christian Peterson,Engineering,Junior Dev,2021-04-19,129673.08,Toronto
+EMP0076,Justin Howell,Sales,Sales Manager,2023-01-21,130583.34,Toronto
+EMP0077,Adrienne Jones,Operations,COO,2022-08-03,90204.36,London
+EMP0078,Todd Parrish,Customer Success,CS Manager,2018-08-09,142190.27,Chicago
+EMP0079,Dr. Evan Thornton,Finance,Finance Manager,2020-03-13,73063.76,Chicago
+EMP0080,Daniel Warner,Engineering,Senior Engineer,2019-12-09,154286.64,Remote
+EMP0081,Alexa Parker,Operations,COO,2019-01-15,108600.84,London
+EMP0082,Kimberly Brooks,Marketing,Marketing Manager,2020-11-15,75700.81,London
+EMP0083,Robert Williams,Marketing,Growth Manager,2024-03-28,115424.0,Chicago
+EMP0084,Mark Andrews,Product,Senior PM,2023-06-08,119630.7,Chicago
+EMP0085,Jason Best,Customer Success,CSM,2020-03-24,121244.98,Austin
+EMP0086,Michael Jones,Customer Success,Senior CSM,2018-01-23,175384.92,London
+EMP0087,Maria House,Engineering,Engineering Manager,2024-12-02,152505.12,New York
+EMP0088,Cheryl Lynch,Product,Product Analyst,2020-04-16,148111.45,London
+EMP0089,Eric Leach,Operations,Operations Analyst,2018-04-18,173903.57,Austin
+EMP0090,Mark Hurley,HR,HR Coordinator,2021-11-24,156351.51,Toronto
+EMP0091,Ellen Green,Finance,CFO,2022-02-08,134324.98,New York
+EMP0092,Walter Martinez,Marketing,Growth Manager,2023-05-16,179014.23,Toronto
+EMP0093,David Oliver,Engineering,Junior Dev,2018-07-13,107822.14,Toronto
+EMP0094,Ryan Thompson,HR,HR Manager,2022-05-18,113434.82,San Francisco
+EMP0095,Richard Martinez,Operations,Ops Manager,2018-05-24,169801.49,Chicago
+EMP0096,Patricia Smith,HR,HR Coordinator,2022-11-10,142761.57,Austin
+EMP0097,Douglas Baker,Engineering,Junior Dev,2019-06-30,74031.19,Toronto
+EMP0098,Megan Shaw,Engineering,Senior Engineer,2024-01-14,120721.93,San Francisco
+EMP0099,Karen Roberts,Product,Senior PM,2019-05-23,102040.24,Austin
+EMP0100,Jennifer Smith,Operations,COO,2024-03-09,136084.91,Chicago
+EMP0101,Andrew Allen,Marketing,Marketing Analyst,2019-04-14,124739.11,Chicago
+EMP0102,Jennifer Patterson,HR,People Ops Lead,2019-04-14,172624.08,New York
+EMP0103,Brian Hall,Customer Success,CSM,2020-08-14,95823.41,London
+EMP0104,Gina Lyons,Customer Success,CS Manager,2024-09-20,163620.34,London
+EMP0105,Heather Cunningham,Marketing,Growth Manager,2024-10-02,75890.07,Chicago
+EMP0106,Peter Allen,Customer Success,CSM,2025-04-22,108187.26,Chicago
+EMP0107,Joseph West,Marketing,Marketing Manager,2023-03-29,81063.25,San Francisco
+EMP0108,Tracy Wheeler,Product,Senior PM,2019-01-20,67910.45,Toronto
+EMP0109,Jeremy Snyder,Sales,Account Executive,2023-03-29,71792.21,London
+EMP0110,Cindy Wong,Product,Senior PM,2021-12-05,126307.23,San Francisco
+EMP0111,Joseph Green,Engineering,Engineering Manager,2022-06-16,123622.88,Chicago
+EMP0112,Ricky Benson,Customer Success,VP Customer Success,2025-05-01,117342.91,Toronto
+EMP0113,Juan Bass,Sales,Account Executive,2021-01-02,118207.99,Remote
+EMP0114,Lauren Shepherd,Customer Success,Senior CSM,2018-06-02,158653.02,London
+EMP0115,Edgar Oliver,Customer Success,CS Manager,2021-10-22,169080.63,Remote
+EMP0116,Amy Gonzalez,Engineering,Engineering Manager,2020-05-13,111649.19,Toronto
+EMP0117,Stephanie Schwartz,Operations,Ops Manager,2020-01-12,174458.3,San Francisco
+EMP0118,Laura Sims,Product,Senior PM,2022-03-28,99669.82,Austin
+EMP0119,Virginia Newman,Customer Success,CS Manager,2019-05-19,125663.66,Chicago
+EMP0120,Shelley Rice,Finance,Finance Manager,2019-01-23,156956.27,Chicago
