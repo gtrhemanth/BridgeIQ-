@@ -19,7 +19,7 @@ st.set_page_config(
     page_title="BridgeIQ | Business Intelligence",
     page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "bridgeiq.db")
@@ -42,13 +42,10 @@ header[data-testid="stHeader"] { background: #0f1117 !important; }
 [data-testid="stToolbar"] { visibility: hidden; }
 [data-testid="stDecoration"] { display: none; }
 
-/* Hide the collapse arrow INSIDE sidebar so it can never be accidentally closed */
-[data-testid="stSidebar"] button[data-testid="stBaseButton-header"],
-[data-testid="stSidebar"] [data-testid="stSidebarHeader"] button,
-[data-testid="stSidebarNavCloseButton"],
-[data-testid="stSidebar"] button[kind="header"] {
-    display: none !important;
-}
+/* Hide sidebar entirely — filters removed */
+[data-testid="stSidebar"],
+[data-testid="stSidebarCollapsedControl"],
+section[data-testid="stSidebarContent"] { display: none !important; }
 
 /* ── Animations ──────────────────────────────────────────────────────────────── */
 @keyframes pulse-dot {
@@ -461,24 +458,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Sidebar (filters only, for Executive Dashboard) ───────────────────────────
-with st.sidebar:
-    st.markdown('<div class="brand-title">BridgeIQ</div>', unsafe_allow_html=True)
-    st.markdown('<div class="brand-subtitle">DASHBOARD FILTERS</div>', unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    all_plans      = ["All", "Starter", "Growth", "Enterprise"]
-    all_regions    = ["All", "North America", "Europe", "Asia Pacific", "Latin America", "Middle East"]
-    all_industries = ["All", "Healthcare", "Finance", "Retail", "Manufacturing", "Education",
-                      "Logistics", "Real Estate", "Legal", "Technology", "Consulting"]
-
-    st.markdown('<div class="filter-label">Global Filters (Dashboard only)</div>', unsafe_allow_html=True)
-    sel_plans  = st.multiselect("Plan Type", all_plans, default=["All"], key="plan")
-    sel_region = st.multiselect("Region",    all_regions, default=["All"], key="region")
-    sel_ind    = st.multiselect("Industry",  all_industries, default=["All"], key="ind")
-    st.markdown("---")
-    st.caption("Built by **Sai Hemanth**")
-    st.caption("Technical BA Portfolio · 2026")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -610,45 +589,18 @@ if page == "🏠 Home":
 elif page == "📊 Executive Dashboard":
 
     st.markdown('<div class="page-title">Executive Dashboard</div>', unsafe_allow_html=True)
-    st.markdown('<div class="page-subtitle">Apex Solutions · B2B SaaS · Real-time business intelligence · All metrics update with filters</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Apex Solutions · B2B SaaS · Real-time business intelligence across 500 customers and 16,000+ data points</div>', unsafe_allow_html=True)
 
-    # Build filter clause
-    f_plans = sel_plans if "All" not in sel_plans else []
-    f_regions = sel_region if "All" not in sel_region else []
-    f_inds = sel_ind if "All" not in sel_ind else []
-
-    def where_clause(prefix="c"):
-        parts = []
-        if f_plans:
-            ps = ", ".join([f"'{p}'" for p in f_plans])
-            parts.append(f"{prefix}.plan_type IN ({ps})")
-        if f_regions:
-            rs = ", ".join([f"'{r}'" for r in f_regions])
-            parts.append(f"{prefix}.region IN ({rs})")
-        if f_inds:
-            ins = ", ".join([f"'{i}'" for i in f_inds])
-            parts.append(f"{prefix}.industry IN ({ins})")
-        return ("WHERE " + " AND ".join(parts)) if parts else ""
-
-    def and_clause(prefix="c"):
-        wc = where_clause(prefix)
-        return wc.replace("WHERE ", "AND ") if wc else ""
-
-    @st.cache_data(ttl=60)
-    def get_kpis(fp, fr, fi):
-        wc = where_clause()
-        return query(f"""
-            SELECT
-                COUNT(CASE WHEN status='Active' THEN 1 END) AS active_customers,
-                COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned_customers,
-                ROUND(SUM(CASE WHEN status='Active' THEN mrr ELSE 0 END),0) AS total_mrr,
-                ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
-                ROUND(AVG(CASE WHEN status='Active' THEN health_score END),1) AS avg_health,
-                ROUND(AVG(CASE WHEN status='Active' THEN nps_score END),1) AS avg_nps
-            FROM customers c {wc}
-        """)
-
-    kpi = get_kpis(tuple(f_plans), tuple(f_regions), tuple(f_inds)).iloc[0]
+    kpi = query("""
+        SELECT
+            COUNT(CASE WHEN status='Active' THEN 1 END) AS active_customers,
+            COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned_customers,
+            ROUND(SUM(CASE WHEN status='Active' THEN mrr ELSE 0 END),0) AS total_mrr,
+            ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
+            ROUND(AVG(CASE WHEN status='Active' THEN health_score END),1) AS avg_health,
+            ROUND(AVG(CASE WHEN status='Active' THEN nps_score END),1) AS avg_nps
+        FROM customers
+    """).iloc[0]
 
     open_tickets = query("SELECT COUNT(*) AS cnt FROM support_tickets WHERE status IN ('Open','In Progress')").iloc[0]["cnt"]
     onb_pct      = query("SELECT ROUND(COUNT(CASE WHEN completed=1 THEN 1 END)*100.0/COUNT(*),1) AS pct FROM onboarding").iloc[0]["pct"]
@@ -750,7 +702,7 @@ elif page == "📊 Executive Dashboard":
                        ROUND(SUM(t.amount),0) AS net_revenue,
                        ROUND(SUM(CASE WHEN t.amount>0 THEN t.amount ELSE 0 END),0) AS gross_revenue
                 FROM transactions t JOIN customers c ON t.customer_id=c.customer_id
-                WHERE t.status='Completed' {and_clause()}
+                WHERE t.status='Completed' 
                 GROUP BY month ORDER BY month
             """)
             fig = go.Figure()
@@ -799,7 +751,7 @@ elif page == "📊 Executive Dashboard":
             st.markdown('<div class="section-header">Customer Mix</div>', unsafe_allow_html=True)
             mix = query(f"""
                 SELECT plan_type, COUNT(*) AS count, ROUND(SUM(mrr),0) AS mrr
-                FROM customers c {where_clause()}
+                FROM customers c 
                 GROUP BY plan_type
             """)
             fig_donut = go.Figure(go.Pie(
@@ -844,7 +796,7 @@ elif page == "📊 Executive Dashboard":
             LEFT JOIN t ON c.customer_id=t.customer_id
             LEFT JOIN u ON c.customer_id=u.customer_id
             LEFT JOIN o ON c.customer_id=o.customer_id
-            WHERE c.status='Active' {and_clause()}
+            WHERE c.status='Active' 
             ORDER BY Risk DESC LIMIT 15
         """)
 
@@ -882,7 +834,7 @@ elif page == "📊 Executive Dashboard":
                 SELECT strftime('%Y-%m', t.transaction_date) AS month, c.plan_type,
                        ROUND(SUM(t.amount),0) AS revenue
                 FROM transactions t JOIN customers c ON t.customer_id=c.customer_id
-                WHERE t.status='Completed' {and_clause()}
+                WHERE t.status='Completed' 
                 GROUP BY month, c.plan_type ORDER BY month
             """)
             fig = px.area(rev_plan, x="month", y="revenue", color="plan_type",
@@ -897,7 +849,7 @@ elif page == "📊 Executive Dashboard":
                 SELECT t.transaction_type, ROUND(SUM(t.amount),0) AS total,
                        COUNT(*) AS count
                 FROM transactions t JOIN customers c ON t.customer_id=c.customer_id
-                WHERE t.status='Completed' {and_clause()}
+                WHERE t.status='Completed' 
                 GROUP BY t.transaction_type ORDER BY total DESC
             """)
             fig2 = px.bar(tx_type, x="transaction_type", y="total",
@@ -915,7 +867,7 @@ elif page == "📊 Executive Dashboard":
                 SELECT c.company_name, c.plan_type, ROUND(SUM(t.amount),0) AS ltv,
                        COUNT(t.transaction_id) AS txns, c.status
                 FROM customers c JOIN transactions t ON c.customer_id=t.customer_id
-                WHERE t.status='Completed' {and_clause()}
+                WHERE t.status='Completed' 
                 GROUP BY c.customer_id ORDER BY ltv DESC LIMIT 10
             """)
             fig3 = px.bar(top_cust, x="ltv", y="company_name", orientation="h",
@@ -931,7 +883,7 @@ elif page == "📊 Executive Dashboard":
             st.markdown('<div class="section-header">MRR Distribution by Region</div>', unsafe_allow_html=True)
             reg_mrr = query(f"""
                 SELECT region, ROUND(SUM(mrr),0) AS total_mrr, COUNT(*) AS customers
-                FROM customers c WHERE status='Active' {and_clause()}
+                FROM customers c WHERE status='Active' 
                 GROUP BY region ORDER BY total_mrr DESC
             """)
             fig4 = px.treemap(reg_mrr, path=["region"], values="total_mrr",
@@ -955,7 +907,7 @@ elif page == "📊 Executive Dashboard":
                        COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned,
                        ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
                        ROUND(SUM(CASE WHEN status='Churned' THEN mrr ELSE 0 END),0) AS mrr_lost
-                FROM customers c {where_clause()}
+                FROM customers c 
                 GROUP BY industry ORDER BY churn_rate DESC
             """)
             fig = px.bar(ind_churn, x="churn_rate", y="industry", orientation="h",
@@ -971,7 +923,7 @@ elif page == "📊 Executive Dashboard":
 
         with c2:
             st.markdown('<div class="section-header">Health Score: Active vs Churned</div>', unsafe_allow_html=True)
-            health_df = query(f"SELECT status, health_score FROM customers c {where_clause()}")
+            health_df = query(f"SELECT status, health_score FROM customers c ")
             fig2 = go.Figure()
             for status, color in [("Active", PRIMARY), ("Churned", DANGER)]:
                 d = health_df[health_df["status"] == status]["health_score"]
@@ -992,7 +944,7 @@ elif page == "📊 Executive Dashboard":
             heatmap_df = query(f"""
                 SELECT plan_type, region,
                        ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate
-                FROM customers c {where_clause()}
+                FROM customers c 
                 GROUP BY plan_type, region
             """)
             pivot = heatmap_df.pivot(index="plan_type", columns="region", values="churn_rate").fillna(0)
@@ -1014,7 +966,7 @@ elif page == "📊 Executive Dashboard":
                 FROM customers c
                 LEFT JOIN (SELECT customer_id, COUNT(*) AS sessions FROM product_usage GROUP BY customer_id) u
                     ON c.customer_id=u.customer_id
-                WHERE 1=1 {and_clause()}
+                
             """)
             fig4 = px.scatter(scatter_df, x="sessions", y="health_score",
                               color="status", size="mrr",
@@ -1180,7 +1132,7 @@ elif page == "📊 Executive Dashboard":
                        ROUND(COUNT(CASE WHEN o.completed=1 THEN 1 END)*100.0/COUNT(*),1) AS pct,
                        ROUND(AVG(CASE WHEN o.completed=1 THEN o.days_to_complete END),1) AS avg_days
                 FROM onboarding o JOIN customers c ON o.customer_id=c.customer_id
-                WHERE 1=1 {and_clause()}
+                
                 GROUP BY c.plan_type
             """)
             fig3 = go.Figure()
