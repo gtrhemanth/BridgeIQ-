@@ -227,39 +227,49 @@ def query_filtered(sql: str, plans=None, regions=None, industries=None) -> pd.Da
     conn.close()
     return df
 
-# ── Sidebar ────────────────────────────────────────────────────────────────────
+# ── Top Navigation Bar (always visible, no sidebar dependency) ─────────────────
+st.markdown("""
+<div style="background:linear-gradient(90deg,#0d1b2a,#1a2d40);border-bottom:1px solid #1e3a5f;
+     padding:10px 20px;margin:-1rem -1rem 1.5rem -1rem;display:flex;align-items:center;gap:16px">
+    <div style="font-size:20px;font-weight:700;color:#4F8EF7;white-space:nowrap">BridgeIQ</div>
+    <div style="font-size:10px;color:#64748b;letter-spacing:1px;white-space:nowrap">AI-POWERED BUSINESS INTELLIGENCE</div>
+</div>
+""", unsafe_allow_html=True)
+
+PAGES = [
+    "📊 Executive Dashboard",
+    "🧠 AI Insights Engine",
+    "🤖 AI Feedback Analyzer",
+    "📋 AI Requirements Generator",
+    "🎯 Interview Simulator",
+    "🔍 Customer 360",
+    "📐 BA Artifacts",
+    "👤 About the Analyst",
+]
+
+nav_col, info_col = st.columns([3, 1])
+with nav_col:
+    page = st.selectbox("Navigate", PAGES, label_visibility="collapsed")
+with info_col:
+    st.markdown('<div style="text-align:right;font-size:11px;color:#64748b;padding-top:8px">Apex Solutions · B2B SaaS Demo · Built by <b>Sai Hemanth</b></div>', unsafe_allow_html=True)
+
+st.markdown("---")
+
+# ── Sidebar (filters only, for Executive Dashboard) ───────────────────────────
 with st.sidebar:
     st.markdown('<div class="brand-title">BridgeIQ</div>', unsafe_allow_html=True)
-    st.markdown('<div class="brand-subtitle">AI-POWERED BUSINESS INTELLIGENCE</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand-subtitle">DASHBOARD FILTERS</div>', unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    page = st.radio("", [
-        "📊 Executive Dashboard",
-        "🧠 AI Insights Engine",
-        "🤖 AI Feedback Analyzer",
-        "📋 AI Requirements Generator",
-        "🎯 Interview Simulator",
-        "🔍 Customer 360",
-        "📐 BA Artifacts",
-        "👤 About the Analyst",
-    ], label_visibility="collapsed")
+    all_plans      = ["All", "Starter", "Growth", "Enterprise"]
+    all_regions    = ["All", "North America", "Europe", "Asia Pacific", "Latin America", "Middle East"]
+    all_industries = ["All", "Healthcare", "Finance", "Retail", "Manufacturing", "Education",
+                      "Logistics", "Real Estate", "Legal", "Technology", "Consulting"]
 
-    if page == "📊 Executive Dashboard":
-        st.markdown("---")
-        st.markdown('<div class="filter-label">Global Filters</div>', unsafe_allow_html=True)
-
-        all_plans      = ["All", "Starter", "Growth", "Enterprise"]
-        all_regions    = ["All", "North America", "Europe", "Asia Pacific", "Latin America", "Middle East"]
-        all_industries = ["All", "Healthcare", "Finance", "Retail", "Manufacturing", "Education",
-                          "Logistics", "Real Estate", "Legal", "Technology", "Consulting"]
-
-        sel_plans  = st.multiselect("Plan Type", all_plans, default=["All"], key="plan")
-        sel_region = st.multiselect("Region",    all_regions, default=["All"], key="region")
-        sel_ind    = st.multiselect("Industry",  all_industries, default=["All"], key="ind")
-        st.markdown("---")
-
-    st.markdown("**Apex Solutions**")
-    st.markdown("B2B SaaS · 500 Customers · Fictional Demo")
+    st.markdown('<div class="filter-label">Global Filters (Dashboard only)</div>', unsafe_allow_html=True)
+    sel_plans  = st.multiselect("Plan Type", all_plans, default=["All"], key="plan")
+    sel_region = st.multiselect("Region",    all_regions, default=["All"], key="region")
+    sel_ind    = st.multiselect("Industry",  all_industries, default=["All"], key="ind")
     st.markdown("---")
     st.caption("Built by **Sai Hemanth**")
     st.caption("Technical BA Portfolio · 2026")
