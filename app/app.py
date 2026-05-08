@@ -50,14 +50,41 @@ header[data-testid="stHeader"] { background: #0f1117 !important; }
     display: none !important;
 }
 
+/* ── Animations ──────────────────────────────────────────────────────────────── */
+@keyframes pulse-dot {
+    0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+    50%      { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+}
+@keyframes slide-up {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+@keyframes gradient-x {
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+}
+@keyframes danger-flash {
+    0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+    50%      { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+@keyframes border-glow {
+    0%,100% { box-shadow: 0 0 8px rgba(79,142,247,0.15), inset 0 0 8px rgba(79,142,247,0.05); }
+    50%      { box-shadow: 0 0 24px rgba(79,142,247,0.4), inset 0 0 16px rgba(79,142,247,0.1); }
+}
+@keyframes float {
+    0%,100% { transform: translateY(0px); }
+    50%      { transform: translateY(-6px); }
+}
+@keyframes count-in {
+    from { opacity:0; transform:scale(0.8); }
+    to   { opacity:1; transform:scale(1); }
+}
+
 /* Main background */
 .stApp { background-color: #0f1117; }
 
-/* Reduce top padding — small gap only, not full removal */
-.main .block-container {
-    padding-top: 0.5rem !important;
-    padding-bottom: 1rem !important;
-}
+/* Reduce top padding */
+.main .block-container { padding-top: 0.5rem !important; padding-bottom: 1rem !important; }
 
 /* Sidebar */
 [data-testid="stSidebar"] {
@@ -66,58 +93,128 @@ header[data-testid="stHeader"] { background: #0f1117 !important; }
 }
 [data-testid="stSidebar"] * { color: #e2e8f0 !important; }
 
-/* KPI Cards */
+/* ── KPI Cards ───────────────────────────────────────────────────────────────── */
 .kpi-card {
     background: linear-gradient(135deg, #0d1b2a 0%, #1a2d40 100%);
     border: 1px solid #1e3a5f;
     border-left: 4px solid #4F8EF7;
-    border-radius: 12px;
-    padding: 20px 24px;
+    border-radius: 14px;
+    padding: 20px 22px;
     margin: 4px 0;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    animation: slide-up 0.5s ease-out both;
+    position: relative;
+    overflow: hidden;
+}
+.kpi-card::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, rgba(79,142,247,0.4), transparent);
 }
 .kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(79, 142, 247, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(79,142,247,0.2), 0 0 0 1px rgba(79,142,247,0.3);
+    border-left-width: 4px;
 }
 .kpi-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: #64748b !important;
-    margin-bottom: 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #64748b !important; margin-bottom: 10px;
 }
 .kpi-value {
-    font-size: 28px;
-    font-weight: 700;
-    color: #f1f5f9 !important;
-    line-height: 1;
+    font-size: 30px; font-weight: 800; color: #f1f5f9 !important;
+    line-height: 1; animation: count-in 0.6s ease-out both; letter-spacing: -0.5px;
 }
-.kpi-delta-good { font-size: 12px; color: #22c55e !important; margin-top: 6px; font-weight: 500; }
-.kpi-delta-bad  { font-size: 12px; color: #ef4444 !important; margin-top: 6px; font-weight: 500; }
-.kpi-delta-neutral { font-size: 12px; color: #94a3b8 !important; margin-top: 6px; font-weight: 500; }
+.kpi-delta-good    { font-size: 12px; color: #22c55e !important; margin-top: 8px; font-weight: 600; }
+.kpi-delta-bad     { font-size: 12px; color: #ef4444 !important; margin-top: 8px; font-weight: 600; }
+.kpi-delta-neutral { font-size: 12px; color: #94a3b8 !important; margin-top: 8px; font-weight: 500; }
 
-/* Section headers */
+/* ── Live Indicator ──────────────────────────────────────────────────────────── */
+.live-dot {
+    display: inline-block; width: 8px; height: 8px;
+    background: #22c55e; border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+    vertical-align: middle; margin-right: 6px;
+}
+.live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 20px; padding: 3px 12px; font-size: 10px;
+    font-weight: 700; letter-spacing: 1px; color: #22c55e; text-transform: uppercase;
+}
+
+/* ── Section Headers ─────────────────────────────────────────────────────────── */
 .section-header {
-    font-size: 18px;
-    font-weight: 600;
-    color: #f1f5f9;
-    margin: 24px 0 12px 0;
-    padding-bottom: 8px;
+    font-size: 16px; font-weight: 700; color: #f1f5f9;
+    margin: 24px 0 12px 0; padding: 0 0 8px 12px;
     border-bottom: 1px solid #1e3a5f;
+    border-left: 3px solid #4F8EF7;
+    position: relative;
 }
 
-/* Page title */
+/* ── Page Title ──────────────────────────────────────────────────────────────── */
 .page-title {
-    font-size: 32px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #4F8EF7, #7bb3ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 4px;
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(270deg, #4F8EF7, #7bb3ff, #a5f3fc, #4F8EF7);
+    background-size: 300% 300%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: gradient-x 5s ease infinite;
+    margin-bottom: 6px;
 }
-.page-subtitle { font-size: 13px; color: #64748b; margin-bottom: 24px; }
+.page-subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+
+/* ── Badges ──────────────────────────────────────────────────────────────────── */
+.badge { display:inline-block; border-radius:20px; padding:2px 10px; font-size:11px; font-weight:700; letter-spacing:0.5px; }
+.badge-green  { background:rgba(34,197,94,0.12);  color:#22c55e;  border:1px solid rgba(34,197,94,0.3);  }
+.badge-red    { background:rgba(239,68,68,0.12);  color:#ef4444;  border:1px solid rgba(239,68,68,0.3);  animation: danger-flash 2.5s ease-in-out infinite; }
+.badge-yellow { background:rgba(245,158,11,0.12); color:#f59e0b;  border:1px solid rgba(245,158,11,0.3); }
+.badge-blue   { background:rgba(79,142,247,0.12); color:#4F8EF7;  border:1px solid rgba(79,142,247,0.3); }
+.badge-purple { background:rgba(167,139,250,0.12);color:#a78bfa;  border:1px solid rgba(167,139,250,0.3);}
+
+/* ── Hero Stats Strip ────────────────────────────────────────────────────────── */
+.hero-strip {
+    background: linear-gradient(90deg, #051525, #0d1b2a, #051525);
+    border: 1px solid #1e3a5f; border-radius: 14px;
+    padding: 16px 24px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 0; overflow-x: auto;
+    animation: border-glow 4s ease-in-out infinite;
+}
+.hero-stat { text-align:center; padding: 0 24px; flex: 1; min-width: 100px; }
+.hero-stat + .hero-stat { border-left: 1px solid #1e3a5f; }
+.hero-stat-label { font-size:9px; font-weight:700; letter-spacing:1.5px; color:#64748b; text-transform:uppercase; }
+.hero-stat-value { font-size:22px; font-weight:800; color:#f1f5f9; margin-top:3px; letter-spacing:-0.5px; }
+.hero-stat-delta { font-size:11px; font-weight:600; margin-top:2px; }
+
+/* ── Progress Bar ────────────────────────────────────────────────────────────── */
+.prog-bg   { background:#1e3a5f; border-radius:8px; height:5px; margin-top:8px; overflow:hidden; }
+.prog-fill { height:100%; border-radius:8px; transition: width 1.5s cubic-bezier(0.4,0,0.2,1); }
+
+/* ── Alert boxes ─────────────────────────────────────────────────────────────── */
+.alert-critical {
+    background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
+    border-left: 4px solid #ef4444; border-radius: 10px; padding: 12px 16px; margin: 4px 0;
+    animation: danger-flash 3s ease-in-out infinite;
+}
+.alert-warning {
+    background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25);
+    border-left: 4px solid #f59e0b; border-radius: 10px; padding: 12px 16px; margin: 4px 0;
+}
+
+/* ── Floating AI icon ────────────────────────────────────────────────────────── */
+.float-icon { animation: float 3s ease-in-out infinite; display:inline-block; font-size:52px; }
+
+/* ── Button override ─────────────────────────────────────────────────────────── */
+[data-testid="stButton"] button[kind="primary"] {
+    background: linear-gradient(135deg, #4F8EF7, #3b82f6) !important;
+    border: none !important; border-radius: 10px !important;
+    font-weight: 700 !important; letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(79,142,247,0.3) !important;
+}
+[data-testid="stButton"] button[kind="primary"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(79,142,247,0.5) !important;
+}
 
 /* Tab styling */
 .stTabs [data-baseweb="tab-list"] {
@@ -388,23 +485,82 @@ if page == "📊 Executive Dashboard":
 
     open_tickets = query("SELECT COUNT(*) AS cnt FROM support_tickets WHERE status IN ('Open','In Progress')").iloc[0]["cnt"]
     onb_pct      = query("SELECT ROUND(COUNT(CASE WHEN completed=1 THEN 1 END)*100.0/COUNT(*),1) AS pct FROM onboarding").iloc[0]["pct"]
+    at_risk_n    = query("""SELECT COUNT(*) AS n FROM (
+        WITH t AS (SELECT customer_id,COUNT(*) tc FROM support_tickets GROUP BY customer_id),
+             u AS (SELECT customer_id,COUNT(*) uc FROM product_usage GROUP BY customer_id),
+             o AS (SELECT customer_id,completed FROM onboarding)
+        SELECT c.customer_id,
+            (CASE WHEN c.health_score<60 THEN 30 WHEN c.health_score<75 THEN 15 ELSE 0 END)+
+            (CASE WHEN COALESCE(t.tc,0)>15 THEN 20 WHEN COALESCE(t.tc,0)>8 THEN 10 ELSE 0 END)+
+            (CASE WHEN COALESCE(u.uc,0)<3 THEN 25 WHEN COALESCE(u.uc,0)<8 THEN 12 ELSE 0 END)+
+            (CASE WHEN COALESCE(o.completed,0)=0 THEN 15 ELSE 0 END)+
+            (CASE WHEN c.nps_score<5 THEN 10 ELSE 0 END) AS rs
+        FROM customers c LEFT JOIN t ON c.customer_id=t.customer_id
+        LEFT JOIN u ON c.customer_id=u.customer_id LEFT JOIN o ON c.customer_id=o.customer_id
+        WHERE c.status='Active') WHERE rs>=50""").iloc[0]["n"]
+
+    arr = int(kpi["total_mrr"]) * 12
+    mrr_at_risk = round(int(kpi["total_mrr"]) * float(kpi["churn_rate"]) / 100)
+
+    # ── Live Hero Strip ────────────────────────────────────────────────────────
+    st.markdown(f"""
+    <div class="hero-strip">
+        <div style="display:flex;align-items:center;gap:8px;padding-right:24px;border-right:1px solid #1e3a5f;white-space:nowrap">
+            <span class="live-dot"></span>
+            <span style="font-size:10px;font-weight:800;color:#22c55e;letter-spacing:2px">LIVE DATA</span>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-label">Total ARR</div>
+            <div class="hero-stat-value">${arr:,}</div>
+            <div class="hero-stat-delta" style="color:#22c55e">▲ Active Revenue</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-label">MRR at Risk</div>
+            <div class="hero-stat-value" style="color:#ef4444">${mrr_at_risk:,}</div>
+            <div class="hero-stat-delta" style="color:#ef4444">⚠ Churn exposure</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-label">At-Risk Accounts</div>
+            <div class="hero-stat-value" style="color:#f59e0b">{int(at_risk_n)}</div>
+            <div class="hero-stat-delta" style="color:#f59e0b">Risk score ≥ 50</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-label">Open Tickets</div>
+            <div class="hero-stat-value" style="color:#4F8EF7">{int(open_tickets):,}</div>
+            <div class="hero-stat-delta" style="color:#64748b">Needs resolution</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-label">Avg Health Score</div>
+            <div class="hero-stat-value" style="color:#22c55e">{kpi['avg_health']}</div>
+            <div class="hero-stat-delta" style="color:#64748b">out of 100</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-label">Churn Rate</div>
+            <div class="hero-stat-value" style="color:#ef4444">{kpi['churn_rate']}%</div>
+            <div class="hero-stat-delta" style="color:#ef4444">▼ 2.1% target needed</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # ── KPI Row ───────────────────────────────────────────────────────────────
     cols = st.columns(6)
+    health_pct = float(kpi['avg_health'])
+    onb_bar    = float(onb_pct)
     kpi_data = [
-        ("ACTIVE CUSTOMERS", f"{int(kpi['active_customers']):,}", "▲ vs last quarter", "good"),
-        ("TOTAL MRR",        f"${int(kpi['total_mrr']):,}", "Monthly Recurring Revenue", "neutral"),
-        ("TOTAL ARR",        f"${int(kpi['total_mrr'])*12:,}", "Annualized Run Rate", "neutral"),
-        ("CHURN RATE",       f"{kpi['churn_rate']}%", "▼ 2.1% from last quarter", "bad"),
-        ("AVG HEALTH SCORE", f"{kpi['avg_health']}/100", f"NPS: {kpi['avg_nps']}", "good"),
-        ("ONBOARDING",       f"{onb_pct}%", f"{open_tickets:,} open tickets", "neutral"),
+        ("ACTIVE CUSTOMERS", f"{int(kpi['active_customers']):,}", "▲ Growing portfolio", "good",   int(kpi['active_customers'])/500*100, "#22c55e"),
+        ("TOTAL MRR",        f"${int(kpi['total_mrr']):,}",       "Monthly Recurring Rev",   "neutral", 72, "#4F8EF7"),
+        ("TOTAL ARR",        f"${arr:,}",                          "Annualized Run Rate",      "neutral", 72, "#4F8EF7"),
+        ("CHURN RATE",       f"{kpi['churn_rate']}%",              "▲ 17% above SaaS avg",    "bad",     min(float(kpi['churn_rate'])*4, 100), "#ef4444"),
+        ("AVG HEALTH",       f"{health_pct}/100",                  f"NPS avg: {kpi['avg_nps']}/10","good", health_pct, "#22c55e"),
+        ("ONBOARDING",       f"{onb_pct}%",                        f"{open_tickets:,} open tickets","neutral", onb_bar, "#f59e0b"),
     ]
-    for col, (label, value, delta, dtype) in zip(cols, kpi_data):
+    for col, (label, value, delta, dtype, bar_pct, bar_color) in zip(cols, kpi_data):
         delta_class = f"kpi-delta-{dtype}"
         col.markdown(f"""
         <div class="kpi-card">
             <div class="kpi-label">{label}</div>
             <div class="kpi-value">{value}</div>
+            <div class="prog-bg"><div class="prog-fill" style="width:{min(bar_pct,100):.0f}%;background:{bar_color}"></div></div>
             <div class="{delta_class}">{delta}</div>
         </div>
         """, unsafe_allow_html=True)
@@ -1437,13 +1593,24 @@ Write with authority. Use active voice. Every sentence must earn its place."""
                     st.error(f"API Error: {e}")
     else:
         st.markdown("""
-        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:32px;text-align:center;margin-top:20px">
-            <div style="font-size:48px;margin-bottom:16px">🧠</div>
-            <div style="font-size:18px;font-weight:600;color:#f1f5f9;margin-bottom:8px">AI reads your data. You present the insight.</div>
-            <div style="font-size:13px;color:#64748b;max-width:500px;margin:0 auto">
-                Select a focus area, choose your audience, and Claude will analyze the live database —
-                customer health, churn signals, support performance, onboarding gaps —
-                and produce an executive brief you can present in any interview or boardroom.
+        <div style="background:linear-gradient(135deg,#051525 0%,#0d1b2a 40%,#1a2d40 100%);
+             border:1px solid #1e3a5f;border-radius:16px;padding:48px 32px;text-align:center;margin-top:20px;
+             position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;
+                 background:linear-gradient(90deg,transparent,#4F8EF7,#22c55e,#4F8EF7,transparent)"></div>
+            <div class="float-icon">🧠</div>
+            <div style="font-size:24px;font-weight:800;color:#f1f5f9;margin:16px 0 8px;letter-spacing:-0.5px">
+                AI reads your data. You present the insight.
+            </div>
+            <div style="font-size:13px;color:#64748b;max-width:480px;margin:0 auto 24px;line-height:1.8">
+                Select a focus area, choose your audience, and Claude analyzes 16,000+ rows of live data —
+                churn signals, support failures, onboarding gaps — and writes the brief a McKinsey consultant would charge $50K for.
+            </div>
+            <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+                <span class="badge badge-blue">500 Customers Analyzed</span>
+                <span class="badge badge-green">Live SQLite Data</span>
+                <span class="badge badge-purple">Claude Sonnet Powered</span>
+                <span class="badge badge-yellow">Executive Ready</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1543,12 +1710,24 @@ Be direct, specific, and brutally useful."""
                     st.error(f"API Error: {e}")
     else:
         st.markdown("""
-        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:32px;text-align:center;margin-top:20px">
-            <div style="font-size:48px;margin-bottom:16px">🎯</div>
-            <div style="font-size:18px;font-weight:600;color:#f1f5f9;margin-bottom:8px">Walk into every interview prepared.</div>
-            <div style="font-size:13px;color:#64748b;max-width:520px;margin:0 auto">
-                Paste any BA job description. Claude analyzes the requirements, matches them to your BridgeIQ project,
-                and generates tailored talking points, model answers, and a 60-second pitch — specific to that company and role.
+        <div style="background:linear-gradient(135deg,#051525 0%,#0d1b2a 40%,#1a2d40 100%);
+             border:1px solid #1e3a5f;border-radius:16px;padding:48px 32px;text-align:center;margin-top:20px;
+             position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;
+                 background:linear-gradient(90deg,transparent,#f59e0b,#ef4444,#f59e0b,transparent)"></div>
+            <div class="float-icon">🎯</div>
+            <div style="font-size:24px;font-weight:800;color:#f1f5f9;margin:16px 0 8px;letter-spacing:-0.5px">
+                Walk into every interview overprepared.
+            </div>
+            <div style="font-size:13px;color:#64748b;max-width:480px;margin:0 auto 24px;line-height:1.8">
+                Paste any BA job description. Claude matches it to BridgeIQ, generates tailored talking points,
+                8 likely interview questions with model answers, and your 60-second pitch. Specific to that role and company.
+            </div>
+            <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+                <span class="badge badge-yellow">JD Match Score</span>
+                <span class="badge badge-blue">Tailored Talking Points</span>
+                <span class="badge badge-green">Model Answers</span>
+                <span class="badge badge-red">60-Second Pitch</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
