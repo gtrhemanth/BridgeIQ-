@@ -35,7 +35,24 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 /* Hide default streamlit elements */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
-header {visibility: hidden;}
+
+/* Blend header into dark background instead of hiding it — keeps sidebar toggle functional */
+header[data-testid="stHeader"] {
+    background-color: #0f1117 !important;
+    border-bottom: none !important;
+}
+/* Hide the toolbar deploy/share buttons but keep sidebar toggle */
+[data-testid="stToolbar"] { visibility: hidden; }
+[data-testid="stToolbar"] * { visibility: hidden; }
+/* Sidebar toggle stays visible */
+[data-testid="collapsedControl"] {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+[data-testid="collapsedControl"] * {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 
 /* Main background */
 .stApp { background-color: #0f1117; }
@@ -226,6 +243,8 @@ with st.sidebar:
         "🤖 AI Feedback Analyzer",
         "📋 AI Requirements Generator",
         "🎯 Interview Simulator",
+        "🔍 Customer 360",
+        "📐 BA Artifacts",
         "👤 About the Analyst",
     ], label_visibility="collapsed")
 
@@ -322,7 +341,7 @@ if page == "📊 Executive Dashboard":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Tabs ──────────────────────────────────────────────────────────────────
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📈 Overview", "💰 Revenue", "👥 Customer Health", "🎫 Support", "🚀 Onboarding"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["📈 Overview", "💰 Revenue", "👥 Customer Health", "🎫 Support", "🚀 Onboarding", "📊 Cohort Retention", "🏆 SaaS Benchmarks"])
 
     # ════════════════════════════════════════════════════════════════════════
     # TAB 1 — OVERVIEW
@@ -821,6 +840,190 @@ if page == "📊 Executive Dashboard":
             st.plotly_chart(fig5, use_container_width=True)
 
 
+    # ════════════════════════════════════════════════════════════════════════
+    # TAB 6 — COHORT RETENTION
+    # ════════════════════════════════════════════════════════════════════════
+    with tab6:
+        st.markdown('<div class="section-header">Customer Cohort Retention by Signup Quarter</div>', unsafe_allow_html=True)
+        st.caption("Tracks retention of each signup cohort over time — the gold standard metric for B2B SaaS health analysis.")
+
+        cohort = query("""
+            WITH cohorts AS (
+                SELECT customer_id, mrr, status,
+                    strftime('%Y-Q', contract_start) ||
+                        CASE
+                            WHEN CAST(strftime('%m', contract_start) AS INTEGER) BETWEEN 1 AND 3 THEN '1'
+                            WHEN CAST(strftime('%m', contract_start) AS INTEGER) BETWEEN 4 AND 6 THEN '2'
+                            WHEN CAST(strftime('%m', contract_start) AS INTEGER) BETWEEN 7 AND 9 THEN '3'
+                            ELSE '4'
+                        END AS cohort_quarter
+                FROM customers
+            )
+            SELECT cohort_quarter,
+                   COUNT(*) AS cohort_size,
+                   COUNT(CASE WHEN status='Active' THEN 1 END) AS still_active,
+                   COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned,
+                   ROUND(COUNT(CASE WHEN status='Active' THEN 1 END)*100.0/COUNT(*),1) AS retention_rate,
+                   ROUND(SUM(CASE WHEN status='Active' THEN mrr ELSE 0 END),0) AS retained_mrr
+            FROM cohorts GROUP BY cohort_quarter ORDER BY cohort_quarter
+        """)
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown('<div class="section-header">Retention Rate by Cohort</div>', unsafe_allow_html=True)
+            fig_c1 = px.bar(cohort, x="cohort_quarter", y="retention_rate",
+                            color="retention_rate",
+                            color_continuous_scale=["#ef4444", "#f59e0b", "#22c55e"],
+                            text="retention_rate",
+                            labels={"cohort_quarter": "Signup Cohort", "retention_rate": "Retention (%)"},
+                            hover_data={"cohort_size": True, "still_active": True, "churned": True})
+            fig_c1.update_traces(texttemplate="%{text}%", textposition="outside")
+            fig_c1.update_layout(coloraxis_showscale=False)
+            chart_layout(fig_c1, 320)
+            st.plotly_chart(fig_c1, use_container_width=True)
+
+        with c2:
+            st.markdown('<div class="section-header">Retained MRR by Cohort</div>', unsafe_allow_html=True)
+            fig_c2 = go.Figure()
+            fig_c2.add_trace(go.Bar(
+                x=cohort["cohort_quarter"], y=cohort["retained_mrr"],
+                marker_color=PRIMARY, opacity=0.8,
+                text=cohort["retained_mrr"].apply(lambda x: f"${x:,.0f}"),
+                textposition="outside",
+                hovertemplate="<b>%{x}</b><br>Retained MRR: $%{y:,.0f}<extra></extra>"
+            ))
+            fig_c2.add_trace(go.Scatter(
+                x=cohort["cohort_quarter"],
+                y=cohort["retained_mrr"].rolling(2, min_periods=1).mean(),
+                name="Trend", line=dict(color=WARNING, width=2, dash="dot"), mode="lines"
+            ))
+            chart_layout(fig_c2, 320)
+            st.plotly_chart(fig_c2, use_container_width=True)
+
+        st.markdown('<div class="section-header">Average Customer Lifespan Before Churn (by Plan)</div>', unsafe_allow_html=True)
+        lifespan = query("""
+            SELECT plan_type,
+                   ROUND(AVG(julianday(churn_date) - julianday(contract_start)), 0) AS avg_days,
+                   ROUND(AVG(julianday(churn_date) - julianday(contract_start)) / 30.0, 1) AS avg_months,
+                   COUNT(*) AS churned_count
+            FROM customers WHERE status='Churned'
+            GROUP BY plan_type ORDER BY avg_days DESC
+        """)
+        ls_cols = st.columns(len(lifespan))
+        for col, (_, row) in zip(ls_cols, lifespan.iterrows()):
+            lc = SUCCESS if row["avg_months"] > 12 else WARNING
+            col.markdown(f"""
+            <div class="kpi-card" style="border-left-color:{lc}">
+                <div class="kpi-label">{row['plan_type']} Plan</div>
+                <div class="kpi-value">{row['avg_months']}mo</div>
+                <div class="kpi-delta-neutral">avg lifespan · {int(row['churned_count'])} lost</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown('<div class="section-header">Cohort Summary Table</div>', unsafe_allow_html=True)
+        cohort_display = cohort.rename(columns={
+            "cohort_quarter": "Cohort", "cohort_size": "Started",
+            "still_active": "Active", "churned": "Churned",
+            "retention_rate": "Retention %", "retained_mrr": "Retained MRR ($)"
+        })
+
+        def style_retention(v):
+            if isinstance(v, (int, float)):
+                if v >= 85: return "color:#22c55e;font-weight:700"
+                if v >= 70: return "color:#f59e0b;font-weight:600"
+                return "color:#ef4444;font-weight:600"
+            return ""
+
+        st.dataframe(cohort_display.style.map(style_retention, subset=["Retention %"]),
+                     use_container_width=True, hide_index=True)
+
+    # ════════════════════════════════════════════════════════════════════════
+    # TAB 7 — SAAS BENCHMARKS
+    # ════════════════════════════════════════════════════════════════════════
+    with tab7:
+        st.markdown('<div class="section-header">Apex Solutions vs SaaS Industry Benchmarks</div>', unsafe_allow_html=True)
+        st.caption("Benchmarks sourced from Baremetrics, Gainsight, Zendesk, Totango, and SaaStr annual reports (2024). Shows where Apex stands vs market expectations.")
+
+        live_bm = query("""
+            SELECT
+                ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
+                ROUND(AVG(CASE WHEN status='Active' THEN nps_score END)*10,1) AS nps_norm,
+                ROUND(AVG(CASE WHEN status='Active' THEN health_score END),1) AS avg_health
+            FROM customers
+        """).iloc[0]
+
+        supp_bm = query("""
+            SELECT ROUND(AVG(resolution_time_hours),1) AS avg_res,
+                   ROUND(AVG(satisfaction_score),2) AS avg_csat,
+                   ROUND(COUNT(CASE WHEN priority='Critical' AND resolution_time_hours>8 THEN 1 END)*100.0/
+                         COUNT(CASE WHEN priority='Critical' THEN 1 END),1) AS crit_breach
+            FROM support_tickets
+        """).iloc[0]
+
+        onb_bm = query("""
+            SELECT ROUND(COUNT(CASE WHEN completed=1 THEN 1 END)*100.0/COUNT(*),1) AS completion
+            FROM onboarding
+        """).iloc[0]
+
+        benchmarks = [
+            {"metric": "Annual Churn Rate", "apex": float(live_bm["churn_rate"]), "apex_str": f"{live_bm['churn_rate']}%",
+             "good": 5.0, "good_str": "< 5%", "avg_str": "5–10%", "dir": "lower", "source": "Baremetrics 2024"},
+            {"metric": "NPS Score", "apex": float(live_bm["nps_norm"]), "apex_str": f"{live_bm['nps_norm']}",
+             "good": 40.0, "good_str": "> 40", "avg_str": "20–40", "dir": "higher", "source": "Satmetrix 2024"},
+            {"metric": "Avg Resolution Time", "apex": float(supp_bm["avg_res"]), "apex_str": f"{supp_bm['avg_res']}h",
+             "good": 8.0, "good_str": "< 8h", "avg_str": "8–24h", "dir": "lower", "source": "Zendesk 2024"},
+            {"metric": "CSAT Score", "apex": float(supp_bm["avg_csat"]), "apex_str": f"{supp_bm['avg_csat']}/5",
+             "good": 4.5, "good_str": "> 4.5/5", "avg_str": "3.5–4.5/5", "dir": "higher", "source": "Gainsight 2024"},
+            {"metric": "Onboarding Completion", "apex": float(onb_bm["completion"]), "apex_str": f"{onb_bm['completion']}%",
+             "good": 85.0, "good_str": "> 85%", "avg_str": "70–85%", "dir": "higher", "source": "Totango 2024"},
+            {"metric": "Critical SLA Breach Rate", "apex": float(supp_bm["crit_breach"]), "apex_str": f"{supp_bm['crit_breach']}%",
+             "good": 5.0, "good_str": "< 5%", "avg_str": "5–15%", "dir": "lower", "source": "PagerDuty 2024"},
+        ]
+
+        bm_cols = st.columns(3)
+        for i, bm in enumerate(benchmarks):
+            col = bm_cols[i % 3]
+            v, g = bm["apex"], bm["good"]
+            if bm["dir"] == "lower":
+                ok = v <= g
+                near = v <= g * 2
+            else:
+                ok = v >= g
+                near = v >= g * 0.7
+            color = SUCCESS if ok else (WARNING if near else DANGER)
+            icon = "✓" if ok else ("△" if near else "✕")
+            label = "MEETS BENCHMARK" if ok else ("NEAR BENCHMARK" if near else "BELOW BENCHMARK")
+            col.markdown(f"""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid {color};border-radius:12px;padding:16px;margin-bottom:12px">
+                <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#64748b;margin-bottom:8px">{bm['metric']}</div>
+                <div style="font-size:28px;font-weight:700;color:#f1f5f9;margin-bottom:4px">{bm['apex_str']}</div>
+                <div style="font-size:12px;color:{color};font-weight:600;margin-bottom:4px">{icon} {label}</div>
+                <div style="font-size:11px;color:#64748b">Good: {bm['good_str']} · Avg: {bm['avg_str']}</div>
+                <div style="font-size:10px;color:#374151;margin-top:4px">Source: {bm['source']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown('<div class="section-header">Gap Analysis & Priority Actions</div>', unsafe_allow_html=True)
+        gaps = [bm for bm in benchmarks if
+                (bm["dir"] == "lower" and bm["apex"] > bm["good"]) or
+                (bm["dir"] == "higher" and bm["apex"] < bm["good"])]
+
+        if gaps:
+            st.markdown(f'<div class="alert-critical"><b>⚠ {len(gaps)} metric(s) below benchmark</b> — these are the highest-priority process improvement areas</div>', unsafe_allow_html=True)
+            for g in gaps:
+                gap_val = abs(g["apex"] - g["good"])
+                st.markdown(f'<div class="alert-warning" style="margin-top:6px"><b>{g["metric"]}</b>: Apex at <b>{g["apex_str"]}</b> vs target <b>{g["good_str"]}</b> — gap of {gap_val:.1f}. Immediate action required.</div>', unsafe_allow_html=True)
+        else:
+            st.success("All metrics meet or exceed industry benchmarks.")
+
+        ok_metrics = [bm for bm in benchmarks if
+                      (bm["dir"] == "lower" and bm["apex"] <= bm["good"]) or
+                      (bm["dir"] == "higher" and bm["apex"] >= bm["good"])]
+        if ok_metrics:
+            st.markdown(f'<div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:12px;margin-top:8px"><b style="color:#22c55e">✓ {len(ok_metrics)} metric(s) meet or exceed benchmark:</b> <span style="color:#64748b">{", ".join([m["metric"] for m in ok_metrics])}</span></div>', unsafe_allow_html=True)
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 2 — AI FEEDBACK ANALYZER
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1281,7 +1484,398 @@ Be direct, specific, and brutally useful."""
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE 6 — ABOUT THE ANALYST
+# PAGE 6 — CUSTOMER 360
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "🔍 Customer 360":
+    st.markdown('<div class="page-title">Customer 360</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Full account intelligence in one view — what every CSM needs before any customer interaction</div>', unsafe_allow_html=True)
+    st.markdown("---")
+
+    customers_list = query("SELECT customer_id, company_name, plan_type, status FROM customers ORDER BY company_name")
+    options = {f"{r['company_name']} ({r['plan_type']}) — {r['status']}": r['customer_id']
+               for _, r in customers_list.iterrows()}
+    selected_label = st.selectbox("Search & Select Customer", list(options.keys()))
+    sid = options[selected_label]
+
+    cust = query(f"SELECT * FROM customers WHERE customer_id='{sid}'").iloc[0]
+    txns = query(f"SELECT transaction_date, transaction_type, amount, status, payment_method FROM transactions WHERE customer_id='{sid}' ORDER BY transaction_date DESC LIMIT 20")
+    tickets = query(f"SELECT ticket_id, category, priority, status, created_date, resolution_time_hours, satisfaction_score FROM support_tickets WHERE customer_id='{sid}' ORDER BY created_date DESC LIMIT 15")
+    usage = query(f"SELECT feature, COUNT(*) AS sessions, ROUND(AVG(session_minutes),1) AS avg_mins, SUM(actions_count) AS total_actions FROM product_usage WHERE customer_id='{sid}' GROUP BY feature ORDER BY sessions DESC")
+    onb = query(f"SELECT * FROM onboarding WHERE customer_id='{sid}'")
+
+    risk_data = query(f"""
+        WITH t AS (SELECT COUNT(*) AS tickets FROM support_tickets WHERE customer_id='{sid}'),
+             u AS (SELECT COUNT(*) AS sessions FROM product_usage WHERE customer_id='{sid}'),
+             o AS (SELECT completed FROM onboarding WHERE customer_id='{sid}')
+        SELECT
+            (CASE WHEN {float(cust['health_score'])}<60 THEN 30 WHEN {float(cust['health_score'])}<75 THEN 15 ELSE 0 END) AS hp,
+            (CASE WHEN t.tickets>15 THEN 20 WHEN t.tickets>8 THEN 10 ELSE 0 END) AS tp,
+            (CASE WHEN u.sessions<3 THEN 25 WHEN u.sessions<8 THEN 12 ELSE 0 END) AS up,
+            (CASE WHEN o.completed=0 THEN 15 ELSE 0 END) AS op,
+            (CASE WHEN {int(cust['nps_score'])}<5 THEN 10 ELSE 0 END) AS np,
+            t.tickets, u.sessions
+        FROM t, u, o
+    """).iloc[0]
+    risk_total = int(risk_data["hp"] + risk_data["tp"] + risk_data["up"] + risk_data["op"] + risk_data["np"])
+    risk_color = DANGER if risk_total >= 50 else (WARNING if risk_total >= 30 else SUCCESS)
+    risk_label = "CRITICAL RISK" if risk_total >= 50 else ("HIGH RISK" if risk_total >= 30 else "LOW RISK")
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+    mrr_val = int(cust["mrr"])
+    health = float(cust["health_score"])
+    hc = SUCCESS if health >= 75 else (WARNING if health >= 55 else DANGER)
+    sc = DANGER if cust["status"] == "Churned" else SUCCESS
+    for col, (lbl, val, sub, border) in zip([c1,c2,c3,c4,c5], [
+        ("Company",    cust["company_name"],     f"{cust['plan_type']} · {cust['industry']}", PRIMARY),
+        ("MRR",        f"${mrr_val:,}",          f"ARR: ${mrr_val*12:,}", PRIMARY),
+        ("Health",     f"{health}/100",           f"NPS: {cust['nps_score']}/10", hc),
+        ("Risk Score", f"{risk_total}/100",       risk_label, risk_color),
+        ("Status",     cust["status"],            f"Since {cust['contract_start']}", sc),
+    ]):
+        col.markdown(f"""<div class="kpi-card" style="border-left-color:{border}">
+            <div class="kpi-label">{lbl}</div>
+            <div class="kpi-value" style="font-size:18px;color:{border}">{val}</div>
+            <div class="kpi-delta-neutral">{sub}</div></div>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    col_l, col_r = st.columns([1, 2])
+
+    with col_l:
+        st.markdown('<div class="section-header">Risk Factor Breakdown</div>', unsafe_allow_html=True)
+        rf_names = ["Health Score", "Ticket Volume", "Low Usage", "Onboarding", "NPS Score"]
+        rf_vals  = [int(risk_data["hp"]), int(risk_data["tp"]), int(risk_data["up"]), int(risk_data["op"]), int(risk_data["np"])]
+        fig_rf = go.Figure(go.Bar(
+            x=rf_vals, y=rf_names, orientation="h",
+            marker_color=[DANGER if v >= 20 else WARNING if v >= 10 else SUCCESS for v in rf_vals],
+            text=[f"{v}pts" for v in rf_vals], textposition="outside",
+        ))
+        chart_layout(fig_rf, 260)
+        fig_rf.update_layout(xaxis_range=[0, 35], margin=dict(t=10, b=10, l=10, r=50))
+        st.plotly_chart(fig_rf, use_container_width=True)
+
+    with col_r:
+        st.markdown('<div class="section-header">Product Usage by Feature</div>', unsafe_allow_html=True)
+        if not usage.empty:
+            fig_u = px.bar(usage, x="feature", y="sessions",
+                           color="sessions", color_continuous_scale=["#1e3a5f", PRIMARY],
+                           text="avg_mins",
+                           labels={"feature": "", "sessions": "Sessions"},
+                           hover_data={"total_actions": True, "avg_mins": True})
+            fig_u.update_traces(texttemplate="%{text}m avg", textposition="outside")
+            fig_u.update_layout(coloraxis_showscale=False)
+            chart_layout(fig_u, 260)
+            st.plotly_chart(fig_u, use_container_width=True)
+        else:
+            st.info("No usage data recorded for this customer.")
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown('<div class="section-header">Transaction History</div>', unsafe_allow_html=True)
+        if not txns.empty:
+            txns["amount"] = txns["amount"].apply(lambda x: f"${x:,.0f}")
+            st.dataframe(txns, use_container_width=True, hide_index=True, height=280)
+        else:
+            st.info("No transactions found.")
+
+    with col_b:
+        st.markdown('<div class="section-header">Support Ticket History</div>', unsafe_allow_html=True)
+        if not tickets.empty:
+            def style_prio(v):
+                if v == "Critical": return "color:#ef4444;font-weight:700"
+                if v == "High": return "color:#f59e0b;font-weight:600"
+                return ""
+            st.dataframe(tickets.style.map(style_prio, subset=["priority"]),
+                         use_container_width=True, hide_index=True, height=280)
+        else:
+            st.info("No support tickets found.")
+
+    st.markdown("---")
+    if not onb.empty:
+        ob = onb.iloc[0]
+        oc = SUCCESS if ob["completed"] == 1 else DANGER
+        st.markdown(f"""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid {oc};border-radius:12px;padding:20px">
+            <div style="font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:12px">Onboarding Status</div>
+            <div style="display:flex;gap:32px;flex-wrap:wrap">
+                <div><div style="font-size:11px;color:#64748b">STATUS</div><div style="font-size:16px;font-weight:700;color:{oc}">{'COMPLETED' if ob['completed']==1 else 'INCOMPLETE'}</div></div>
+                <div><div style="font-size:11px;color:#64748b">STAGE</div><div style="font-size:16px;color:#f1f5f9">{ob['stage']}</div></div>
+                <div><div style="font-size:11px;color:#64748b">STARTED</div><div style="font-size:16px;color:#f1f5f9">{ob['start_date']}</div></div>
+                <div><div style="font-size:11px;color:#64748b">DAYS TO COMPLETE</div><div style="font-size:16px;color:#f1f5f9">{int(ob['days_to_complete']) if ob['days_to_complete'] else 'N/A'}</div></div>
+                <div><div style="font-size:11px;color:#64748b">BLOCKER</div><div style="font-size:16px;color:{'#ef4444' if ob['blocker']!='None' else '#22c55e'}">{ob['blocker']}</div></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("Generate AI Account Intelligence Summary", type="primary"):
+        if not API_KEY:
+            st.error("ANTHROPIC_API_KEY not configured.")
+        else:
+            with st.spinner("Claude is analyzing this account..."):
+                acct_data = f"""
+CUSTOMER: {cust['company_name']} | Plan: {cust['plan_type']} | Industry: {cust['industry']} | Region: {cust['region']}
+MRR: ${mrr_val:,} | ARR: ${mrr_val*12:,} | Health: {cust['health_score']}/100 | NPS: {cust['nps_score']}/10
+Status: {cust['status']} | Risk Score: {risk_total}/100 ({risk_label})
+Risk breakdown — Health: {int(risk_data['hp'])}pts, Tickets: {int(risk_data['tp'])}pts ({int(risk_data['tickets'])} total), Usage: {int(risk_data['up'])}pts ({int(risk_data['sessions'])} sessions), Onboarding: {int(risk_data['op'])}pts, NPS: {int(risk_data['np'])}pts
+Product usage: {usage.to_string(index=False) if not usage.empty else 'No usage data'}
+Tickets: {len(tickets)} recent | Transactions: {len(txns)} recent
+"""
+                try:
+                    msg = anthropic.Anthropic(api_key=API_KEY).messages.create(
+                        model="claude-haiku-4-5-20251001", max_tokens=1200,
+                        messages=[{"role": "user", "content": f"""You are a CSM reviewing an account 5 minutes before a call.
+
+{acct_data}
+
+## ACCOUNT SITUATION (2-3 sentences)
+Current state. Be direct.
+
+## TOP 3 RISK SIGNALS
+Signal → what it means → what to do
+
+## RECOMMENDED NEXT ACTIONS (next 7 days)
+3 specific actions.
+
+## TALKING POINTS FOR THE CALL
+2-3 starters based on their data. Be sharp."""}]
+                    )
+                    st.markdown("### Account Intelligence Summary")
+                    st.markdown(msg.content[0].text)
+                except Exception as e:
+                    st.error(f"API Error: {e}")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 7 — BA ARTIFACTS
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "📐 BA Artifacts":
+    st.markdown('<div class="page-title">BA Artifacts Library</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Every deliverable from the BridgeIQ engagement — live in the app, not buried in a PDF</div>', unsafe_allow_html=True)
+
+    art_tab1, art_tab2, art_tab3, art_tab4, art_tab5 = st.tabs(["📋 User Stories", "⚠️ Risk Register", "👥 RACI Matrix", "🗺️ Process Maps", "🔗 Traceability"])
+
+    with art_tab1:
+        st.markdown('<div class="section-header">15 Sprint-Ready User Stories</div>', unsafe_allow_html=True)
+        st.caption("MoSCoW prioritized · Story points estimated · Jira-importable")
+
+        fa, fb = st.columns(2)
+        with fa:
+            f_pri = st.multiselect("Priority", ["Must Have", "Should Have", "Could Have"],
+                                   default=["Must Have", "Should Have", "Could Have"], key="us_pri")
+        with fb:
+            f_epc = st.multiselect("Epic", ["Customer Health","Onboarding","Support","Analytics","AI Features"],
+                                   default=["Customer Health","Onboarding","Support","Analytics","AI Features"], key="us_epc")
+
+        stories = [
+            ("US-01","Customer Health","Customer Success Manager","see a real-time composite risk score for each active customer","immediately identify which accounts need attention without manual data pulling","Must Have",8,"In Progress","Dashboard shows risk 0-100 · Updates within 24hrs · Color coded · Click opens detail profile"),
+            ("US-02","Customer Health","Customer Success Manager","receive a Slack alert when risk score jumps 15+ points in 7 days","proactively reach out before the customer decides to cancel","Must Have",5,"To Do","Slack sent within 1hr · Includes name/plan/MRR/top 3 factors · No duplicate alerts in 24hrs"),
+            ("US-03","Onboarding","Customer Success Manager","see which onboarding stage each customer is in and how long they've been stuck","intervene early when customers hit blockers","Must Have",5,"To Do","All 5 stages shown · Days-in-stage counter · Red flag if stuck >5 days · Blocker field visible"),
+            ("US-04","Onboarding","New Customer","receive a guided onboarding checklist immediately after account creation","set up the platform without waiting for a CS call","Must Have",8,"To Do","Checklist emailed within 1hr · 5 stages with time estimates · Customer marks steps complete"),
+            ("US-05","Support","Support Team Lead","view a live dashboard of open tickets, SLA compliance, and avg resolution by category","allocate team resources proactively and prevent SLA breaches","Must Have",8,"To Do","Refreshes every 15min · SLA breach indicator per ticket · Escalated tickets highlighted"),
+            ("US-06","Support","Customer","receive automated ticket status updates on assignment and resolution","know my issue is being handled without following up manually","Should Have",3,"To Do","Email on status change · Resolution includes fix summary + KB link · CSAT survey included"),
+            ("US-07","Analytics","VP Customer Success","see a monthly executive report with churn trend, onboarding completion, and MRR at risk","present accurate metrics to the board without manual data compilation","Must Have",5,"To Do","Auto-generated 1st of month · MoM delta · Downloadable · Prior 6 months trend"),
+            ("US-08","AI Features","Business Analyst","paste raw customer feedback and receive structured pain point analysis + user stories","translate unstructured feedback into backlog-ready requirements 10x faster","Should Have",8,"To Do","AI returns within 15s · Sentiment % + ranked pain points + 4-6 user stories · Download option"),
+            ("US-09","AI Features","Business Analyst","input a business problem and auto-generate a BRD excerpt with user stories and UAT test cases","produce first-draft requirements 5x faster","Should Have",8,"To Do","Output within 20s · BRD includes objectives/scope/assumptions · Min 5 user stories + 5 UAT cases"),
+            ("US-10","Analytics","CSM","filter the customer dashboard by plan, region, and industry","focus analysis on my segment without irrelevant data","Should Have",3,"To Do","Filter panel with dropdowns · All charts update dynamically · Filter persists during session"),
+            ("US-11","Customer Health","Data Engineer","have all health signals in a SQL schema with a documented data dictionary","build reliable pipelines without reverse-engineering undocumented tables","Should Have",5,"To Do","Schema documented · ERD published · FK relationships enforced · Data dictionary as CSV"),
+            ("US-12","Onboarding","CS Director","receive a weekly automated report on onboarding completion and top 3 blockers","identify systemic onboarding failures and prioritize fixes","Could Have",3,"To Do","Emailed every Monday 9AM · Completion rate by plan · Top 3 blockers · 4-week trend"),
+            ("US-13","Support","Support Agent","see all previous tickets for a customer before responding to a new one","provide context-aware responses without asking customers to repeat","Could Have",3,"To Do","History accessible from ticket detail · Sorted by date desc · Loads in <2s"),
+            ("US-14","Analytics","CFO","see projected MRR at risk based on at-risk cohort and historical churn","make informed decisions on CS resourcing and retention budget","Could Have",5,"To Do","MRR at risk = sum of MRR for risk≥50 · Shown as $ and % · Daily update"),
+            ("US-15","AI Features","Product Manager","have AI-generated stories auto-tagged with story points and MoSCoW priority","import them into Jira with minimal manual editing","Could Have",3,"To Do","Story points by complexity · MoSCoW tag applied · Formatted for Jira CSV import"),
+        ]
+        pc = {"Must Have": PRIMARY, "Should Have": WARNING, "Could Have": MUTED}
+        sc2 = {"In Progress": SUCCESS, "To Do": MUTED}
+        filtered = [s for s in stories if s[5] in f_pri and s[1] in f_epc]
+        st.caption(f"Showing {len(filtered)} of 15 stories")
+        for s in filtered:
+            sid2, epic, persona, want, benefit, pri, pts, stat, ac = s
+            st.markdown(f"""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid {pc[pri]};border-radius:12px;padding:16px;margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <span style="background:#1e3a5f;color:#4F8EF7;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px">{sid2}</span>
+                        <span style="background:rgba(100,116,139,0.15);color:#94a3b8;font-size:11px;padding:2px 8px;border-radius:4px">{epic}</span>
+                        <span style="color:{pc[pri]};font-size:11px;font-weight:600">{pri}</span>
+                    </div>
+                    <div style="display:flex;gap:12px">
+                        <span style="color:#64748b;font-size:11px">{pts} pts</span>
+                        <span style="color:{sc2[stat]};font-size:11px;font-weight:600">{stat}</span>
+                    </div>
+                </div>
+                <div style="font-size:13px;color:#f1f5f9;margin-bottom:6px">
+                    <span style="color:#64748b">As a</span> <b style="color:#4F8EF7">{persona}</b><span style="color:#64748b">, I want to</span> {want}, <span style="color:#64748b">so that</span> {benefit}.
+                </div>
+                <div style="font-size:11px;color:#64748b"><b>AC:</b> {ac}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    with art_tab2:
+        st.markdown('<div class="section-header">Risk Register — 6 Identified Risks</div>', unsafe_allow_html=True)
+        st.caption("Probability × Impact scoring · Mitigation strategies · Owners assigned")
+        risks = [
+            ("R-01","Low CSM adoption of new platform","Organizational","High","High",9,
+             "Dedicated onboarding (2 sessions), 30-day success metrics, executive sponsorship from VP CS","VP Customer Success","Open"),
+            ("R-02","Data quality issues in legacy systems","Technical","Medium","High",6,
+             "Data audit before migration, validation rules at ETL layer, fallback to manual override","Data Engineering Lead","Open"),
+            ("R-03","Risk score misclassifies healthy customers","Model Accuracy","Medium","Medium",4,
+             "Back-test against 6-month churn history, set threshold conservatively, monthly calibration review","Business Analyst","Mitigating"),
+            ("R-04","Scope creep from stakeholder requests","Scope","High","Medium",6,
+             "MoSCoW prioritization enforced, formal change request via Jira, weekly sprint review to guard scope","Project Manager","Open"),
+            ("R-05","API rate limits during high usage","Technical","Low","Medium",2,
+             "Implement request throttling, cache common AI responses 1hr, fallback message if API unavailable","Engineering Lead","Mitigated"),
+            ("R-06","Customer data privacy / GDPR gap","Compliance","Low","High",3,
+             "Legal review of data storage and AI processing, anonymization for AI prompts, data retention policy","Legal / Compliance","Mitigating"),
+        ]
+        sco_c = {9: DANGER, 6: WARNING, 4: PRIMARY, 3: PRIMARY, 2: SUCCESS}
+        prob_c = {"High": DANGER, "Medium": WARNING, "Low": SUCCESS}
+        for r in risks:
+            rid, name, cat, prob, imp, score, mit, owner, stat2 = r
+            sc_col = sco_c.get(score, MUTED)
+            st.markdown(f"""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid {sc_col};border-radius:12px;padding:16px;margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                    <div>
+                        <span style="background:#1e3a5f;color:#4F8EF7;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;margin-right:8px">{rid}</span>
+                        <span style="font-size:14px;font-weight:600;color:#f1f5f9">{name}</span>
+                        <span style="background:rgba(100,116,139,0.15);color:#64748b;font-size:11px;padding:2px 8px;border-radius:4px;margin-left:8px">{cat}</span>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <span style="font-size:11px;color:{prob_c[prob]}">P: {prob}</span>
+                        <span style="font-size:11px;color:{prob_c[imp]}">I: {imp}</span>
+                        <span style="background:{sc_col};color:#fff;font-size:12px;font-weight:700;padding:2px 10px;border-radius:20px">Score: {score}</span>
+                    </div>
+                </div>
+                <div style="font-size:12px;color:#94a3b8;margin-bottom:6px"><b>Mitigation:</b> {mit}</div>
+                <div style="font-size:11px;color:#64748b"><b>Owner:</b> {owner} &nbsp;·&nbsp; <b>Status:</b> {stat2}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    with art_tab3:
+        st.markdown('<div class="section-header">RACI Matrix</div>', unsafe_allow_html=True)
+        st.caption("R = Responsible · A = Accountable · C = Consulted · I = Informed")
+        raci = pd.DataFrame({
+            "Activity": ["Define business requirements","Design data model","Develop ETL pipeline",
+                         "Build dashboard","Define risk scoring logic","Write user stories",
+                         "Approve BRD","UAT sign-off","Deploy to production","Train CSM team",
+                         "Monitor system health","Post-launch review"],
+            "Business Analyst": ["R","C","I","C","R","R","C","R","I","C","I","R"],
+            "Engineering Lead":  ["C","R","R","R","C","I","I","C","R","I","R","C"],
+            "VP Customer Success":["A","I","I","I","A","A","A","A","I","A","A","A"],
+            "Data Engineer":      ["C","R","R","I","C","I","I","C","C","I","R","C"],
+            "Product Manager":    ["C","C","I","C","C","C","C","C","I","I","I","C"],
+            "CS Manager":         ["I","I","I","I","I","C","I","R","I","R","I","R"],
+        })
+        def style_raci(v):
+            if v == "R": return f"background-color:#1e3a5f;color:{PRIMARY};font-weight:700"
+            if v == "A": return "background-color:#3d2a0a;color:#f59e0b;font-weight:700"
+            if v == "C": return "background-color:#0a2e1a;color:#22c55e;font-weight:600"
+            if v == "I": return "color:#64748b"
+            return ""
+        rcols = ["Business Analyst","Engineering Lead","VP Customer Success","Data Engineer","Product Manager","CS Manager"]
+        st.dataframe(raci.style.map(style_raci, subset=rcols), use_container_width=True, hide_index=True, height=450)
+        st.markdown("""<div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap">
+            <span style="font-size:12px"><span style="background:#1e3a5f;color:#4F8EF7;padding:1px 8px;border-radius:3px;font-weight:700">R</span> Does the work</span>
+            <span style="font-size:12px"><span style="background:#3d2a0a;color:#f59e0b;padding:1px 8px;border-radius:3px;font-weight:700">A</span> Owns the outcome</span>
+            <span style="font-size:12px"><span style="background:#0a2e1a;color:#22c55e;padding:1px 8px;border-radius:3px;font-weight:700">C</span> Provides input</span>
+            <span style="font-size:12px;color:#64748b"><b>I</b> Kept informed</span>
+        </div>""", unsafe_allow_html=True)
+
+    with art_tab4:
+        st.markdown('<div class="section-header">AS-IS vs TO-BE Process Maps</div>', unsafe_allow_html=True)
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            st.markdown("""<div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-top:3px solid #ef4444;border-radius:12px;padding:20px">
+                <div style="font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:4px">AS-IS — Manual Churn Detection</div>
+                <div style="font-size:11px;color:#64748b;margin-bottom:14px">Current state: manual, reactive, error-prone</div>
+                <div style="font-size:12px;color:#94a3b8;line-height:2.2">
+                    📅 Mon 9AM: CSM opens Spreadsheet 1 (Usage)<br>
+                    → Opens Spreadsheet 2 (Billing)<br>
+                    → Opens Spreadsheet 3 (Support tickets)<br>
+                    → ⏱ 2hrs manual cross-reference<br>
+                    → Gut-feel risk assessment (no scoring)<br>
+                    → Email to CS Director (if concerned)<br>
+                    → ⏳ Director reviews in 1-2 days<br>
+                    → Manual outreach to customer<br>
+                    → Customer may already have decided to leave
+                </div>
+                <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1e3a5f">
+                    <div style="font-size:11px;color:#ef4444;font-weight:700;margin-bottom:6px">PAIN POINTS</div>
+                    <div style="font-size:12px;color:#94a3b8">• 4 hrs/week manual labor &nbsp;• No SLA on escalation<br>• Gut feel, no consistent scoring &nbsp;• Reactive — too late</div>
+                </div>
+            </div>""", unsafe_allow_html=True)
+        with col_m2:
+            st.markdown("""<div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-top:3px solid #22c55e;border-radius:12px;padding:20px">
+                <div style="font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:4px">TO-BE — BridgeIQ Automated</div>
+                <div style="font-size:11px;color:#64748b;margin-bottom:14px">Future state: automated, proactive, data-driven</div>
+                <div style="font-size:12px;color:#94a3b8;line-height:2.2">
+                    ⚡ 6AM: Automated pipeline triggers<br>
+                    → Pulls 5 signals simultaneously (usage/billing/tickets/onboarding/NPS)<br>
+                    → Composite risk score computed per customer<br>
+                    → Score &lt;30: No action (monitored daily)<br>
+                    → Score 30-49: Flagged on CSM dashboard<br>
+                    → Score 50-79: 🔔 Slack alert → CSM (≤1hr)<br>
+                    → Score ≥80: 🚨 Immediate CSM + Director alert<br>
+                    → CSM reviews, selects intervention strategy<br>
+                    → Intervention logged with timestamp + owner
+                </div>
+                <div style="margin-top:14px;padding-top:12px;border-top:1px solid #1e3a5f">
+                    <div style="font-size:11px;color:#22c55e;font-weight:700;margin-bottom:6px">IMPROVEMENTS</div>
+                    <div style="font-size:12px;color:#94a3b8">• 97% faster detection (7d → &lt;6hrs)<br>• 88% CSM time saved &nbsp;• Consistent auditable scoring &nbsp;• Full audit trail</div>
+                </div>
+            </div>""", unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        imp_df = pd.DataFrame([
+            ["Detection time", "7 days (weekly review)", "< 6 hours (automated)", "97% faster"],
+            ["Data sources", "3 manual spreadsheets", "5 integrated signals", "Complete & unified"],
+            ["Risk assessment", "Gut feel", "Composite scoring algorithm", "Consistent & auditable"],
+            ["Alert mechanism", "Email chain (1-2 day delay)", "Slack + in-app (≤1hr)", "Instant & trackable"],
+            ["Intervention logging", "None", "Timestamped in BridgeIQ", "Full audit trail"],
+            ["CSM weekly time", "4 hrs manual review", "< 30 min (review alerts)", "88% time saved"],
+        ], columns=["Dimension", "AS-IS (Current)", "TO-BE (BridgeIQ)", "Improvement"])
+        st.dataframe(imp_df, use_container_width=True, hide_index=True)
+
+    with art_tab5:
+        st.markdown('<div class="section-header">Requirements Traceability Matrix</div>', unsafe_allow_html=True)
+        st.caption("Maps each user story → business objective → data source → dashboard metric. Demonstrates governance maturity — a 2025 hiring differentiator.")
+
+        trace = pd.DataFrame([
+            ["US-01","Reduce churn rate by 15%","customers, product_usage, support_tickets","Health Score gauge · At-Risk table"],
+            ["US-02","Reduce churn rate by 15%","customers (risk score delta)","Alert trigger logic (not yet built)"],
+            ["US-03","Reduce onboarding failure to <10%","onboarding (stage, blocker)","Onboarding tab · Blocker pie chart"],
+            ["US-04","Reduce onboarding failure to <10%","onboarding (completed flag)","Onboarding Completion gauge"],
+            ["US-05","Resolve 95% of tickets within SLA","support_tickets (resolution_time_hours)","SLA Breach Rate chart · Resolution Time box"],
+            ["US-06","Improve CSAT to >4.5/5","support_tickets (satisfaction_score)","Monthly CSAT trend line"],
+            ["US-07","Achieve 360° executive visibility","All 6 tables","Executive Dashboard KPI row"],
+            ["US-08","10x requirements velocity","support_tickets (description)","AI Feedback Analyzer → user stories"],
+            ["US-09","5x documentation velocity","business problem input","AI Requirements Generator → BRD"],
+            ["US-10","Enable segment-level analysis","customers (plan_type, region, industry)","Sidebar global filters → all charts"],
+            ["US-11","Enable reliable data pipelines","All tables (schema design)","ERD · Data Dictionary (48 columns)"],
+            ["US-14","Quantify MRR at financial risk","customers (mrr, risk score)","About page ROI calculator"],
+        ], columns=["Story ID", "Business Objective", "Primary Data Source(s)", "Dashboard / Artifact"])
+
+        def style_trace(v):
+            if isinstance(v, str) and v.startswith("US-0"):
+                return f"color:{PRIMARY};font-weight:700"
+            return ""
+
+        st.dataframe(trace.style.map(style_trace, subset=["Story ID"]),
+                     use_container_width=True, hide_index=True, height=450)
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid #a78bfa;border-radius:10px;padding:14px;margin-top:12px">
+            <div style="font-size:12px;font-weight:600;color:#a78bfa;margin-bottom:6px">Why Traceability Matters</div>
+            <div style="font-size:12px;color:#94a3b8">
+                Requirement traceability ensures every feature built connects back to a business objective and can be validated against real data.
+                It prevents scope creep, supports impact analysis when requirements change, and satisfies governance/compliance requirements.
+                Most junior BAs skip this — it signals senior-level thinking.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 8 — ABOUT THE ANALYST
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "👤 About the Analyst":
     st.markdown('<div class="page-title">About the Analyst</div>', unsafe_allow_html=True)
