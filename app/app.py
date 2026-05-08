@@ -406,6 +406,7 @@ PAGES = [
     "🎯 Interview Simulator",
     "🔍 Customer 360",
     "📐 BA Artifacts",
+    "💡 What-If Simulator",
     "👤 About the Analyst",
 ]
 
@@ -416,6 +417,17 @@ with info_col:
     st.markdown('<div style="text-align:right;font-size:11px;color:#64748b;padding-top:8px">Apex Solutions · B2B SaaS Demo · Built by <b>Sai Hemanth</b></div>', unsafe_allow_html=True)
 
 st.markdown("---")
+
+# Active page breadcrumb
+_pname = " ".join(page.split(" ")[1:])
+_picon = page.split(" ")[0]
+st.markdown(f"""
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;margin-top:-8px">
+    <span style="font-size:11px;color:#374151">BridgeIQ</span>
+    <span style="color:#374151;font-size:11px">›</span>
+    <span style="background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.25);border-radius:6px;padding:2px 10px;font-size:11px;color:#4F8EF7;font-weight:600">{_picon} {_pname}</span>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Sidebar (filters only, for Executive Dashboard) ───────────────────────────
 with st.sidebar:
@@ -568,7 +580,7 @@ if page == "📊 Executive Dashboard":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Tabs ──────────────────────────────────────────────────────────────────
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["📈 Overview", "💰 Revenue", "👥 Customer Health", "🎫 Support", "🚀 Onboarding", "📊 Cohort Retention", "🏆 SaaS Benchmarks"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(["📈 Overview", "💰 Revenue", "👥 Customer Health", "🎫 Support", "🚀 Onboarding", "📊 Cohort Retention", "🏆 SaaS Benchmarks", "🔍 Anomaly Detector"])
 
     # ════════════════════════════════════════════════════════════════════════
     # TAB 1 — OVERVIEW
@@ -1249,6 +1261,158 @@ if page == "📊 Executive Dashboard":
                       (bm["dir"] == "higher" and bm["apex"] >= bm["good"])]
         if ok_metrics:
             st.markdown(f'<div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:12px;margin-top:8px"><b style="color:#22c55e">✓ {len(ok_metrics)} metric(s) meet or exceed benchmark:</b> <span style="color:#64748b">{", ".join([m["metric"] for m in ok_metrics])}</span></div>', unsafe_allow_html=True)
+
+    # ════════════════════════════════════════════════════════════════════════
+    # TAB 8 — ANOMALY DETECTOR
+    # ════════════════════════════════════════════════════════════════════════
+    with tab8:
+        st.markdown('<div class="section-header">Statistical Anomaly Detection</div>', unsafe_allow_html=True)
+        st.caption("Identifies unusual patterns in churn, support, usage, and billing data — statistical outliers vs baseline. One-click AI root cause diagnosis.")
+
+        churn_by_ind = query("""
+            SELECT industry, COUNT(*) AS total,
+                   COUNT(CASE WHEN status='Churned' THEN 1 END) AS churned,
+                   ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate
+            FROM customers GROUP BY industry ORDER BY churn_rate DESC
+        """)
+        avg_churn_a = float(churn_by_ind["churn_rate"].mean())
+        std_churn_a = float(churn_by_ind["churn_rate"].std())
+        outlier_inds = churn_by_ind[churn_by_ind["churn_rate"] > avg_churn_a + std_churn_a]
+
+        ticket_monthly_a = query("""
+            SELECT strftime('%Y-%m', created_date) AS month, COUNT(*) AS tickets
+            FROM support_tickets GROUP BY month ORDER BY month
+        """)
+        avg_tix = float(ticket_monthly_a["tickets"].mean())
+        std_tix = float(ticket_monthly_a["tickets"].std())
+        spike_months_a = ticket_monthly_a[ticket_monthly_a["tickets"] > avg_tix + std_tix]
+
+        low_usage_a = query("""
+            WITH uc AS (SELECT customer_id, COUNT(*) AS sessions FROM product_usage GROUP BY customer_id)
+            SELECT c.company_name, c.plan_type, c.mrr, c.health_score, COALESCE(u.sessions,0) AS sessions
+            FROM customers c LEFT JOIN uc u ON c.customer_id=u.customer_id
+            WHERE c.status='Active' ORDER BY sessions ASC LIMIT 15
+        """)
+        sla_by_cat_a = query("""
+            SELECT category,
+                   COUNT(CASE WHEN priority='Critical' AND resolution_time_hours>8 THEN 1 END) AS crit_breach,
+                   COUNT(CASE WHEN priority='High' AND resolution_time_hours>24 THEN 1 END) AS high_breach,
+                   COUNT(*) AS total
+            FROM support_tickets GROUP BY category ORDER BY crit_breach DESC
+        """)
+
+        anomalies_a = []
+        for _, row in outlier_inds.iterrows():
+            anomalies_a.append({
+                "severity": "HIGH", "type": "Churn Spike", "color": DANGER,
+                "title": f"{row['industry']} — {row['churn_rate']}% churn (avg: {avg_churn_a:.1f}%)",
+                "detail": f"{row['churned']} of {row['total']} customers lost · {(row['churn_rate']-avg_churn_a):.1f}% above dataset average",
+                "action": "Segment deep-dive required. Analyze shared attributes of churned accounts in this vertical."
+            })
+        for _, row in spike_months_a.iterrows():
+            anomalies_a.append({
+                "severity": "MEDIUM", "type": "Ticket Volume Spike", "color": WARNING,
+                "title": f"{row['month']} — {int(row['tickets'])} tickets (avg: {avg_tix:.0f}/month)",
+                "detail": f"+{int(row['tickets']-avg_tix)} above baseline · {round((row['tickets']-avg_tix)/avg_tix*100)}% spike",
+                "action": "Investigate what changed: product release, pricing update, or seasonal pattern?"
+            })
+        hv_low = low_usage_a[low_usage_a["mrr"] > low_usage_a["mrr"].quantile(0.5)]
+        if not hv_low.empty:
+            anomalies_a.append({
+                "severity": "HIGH", "type": "Ghost Accounts", "color": DANGER,
+                "title": f"{len(hv_low)} high-MRR active accounts with near-zero product usage",
+                "detail": f"Avg MRR: ${hv_low['mrr'].mean():,.0f} · Avg sessions: {hv_low['sessions'].mean():.0f} · 3× churn risk",
+                "action": "Proactive CSM outreach required. Low-usage customers churn at 3× the rate of engaged accounts."
+            })
+        if not sla_by_cat_a.empty:
+            top_cat = sla_by_cat_a.iloc[0]
+            if int(top_cat["crit_breach"]) > 0:
+                anomalies_a.append({
+                    "severity": "MEDIUM", "type": "SLA Breach Concentration", "color": WARNING,
+                    "title": f"{top_cat['category']} — {int(top_cat['crit_breach'])} critical SLA breaches",
+                    "detail": f"Highest-failure category · {int(top_cat['high_breach'])} High-priority breaches too",
+                    "action": "Assign dedicated SLA owner for this category. Set queue alert at 6-hour mark."
+                })
+
+        st.markdown(f'<div class="alert-critical" style="margin-bottom:16px"><b>🔍 {len(anomalies_a)} anomaly pattern(s) detected</b> — statistical outliers identified vs baseline expectations</div>', unsafe_allow_html=True)
+
+        for a in anomalies_a:
+            sev_bg = "rgba(239,68,68,0.15)" if a["severity"] == "HIGH" else "rgba(245,158,11,0.15)"
+            st.markdown(f"""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid {a['color']};border-radius:12px;padding:16px;margin-bottom:10px">
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+                    <span style="background:{sev_bg};color:{a['color']};font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">{a['severity']}</span>
+                    <span style="background:#1e3a5f;color:#64748b;font-size:10px;padding:2px 8px;border-radius:4px">{a['type']}</span>
+                </div>
+                <div style="font-size:14px;font-weight:600;color:#f1f5f9;margin-bottom:4px">{a['title']}</div>
+                <div style="font-size:12px;color:#94a3b8;margin-bottom:8px">{a['detail']}</div>
+                <div style="font-size:12px;color:#64748b"><b>Recommended action:</b> {a['action']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        c_anom1, c_anom2 = st.columns(2)
+        with c_anom1:
+            st.markdown('<div class="section-header">Churn Rate by Industry (Outliers Flagged)</div>', unsafe_allow_html=True)
+            bar_colors_a = [DANGER if v > avg_churn_a + std_churn_a else (WARNING if v > avg_churn_a else SUCCESS)
+                            for v in churn_by_ind["churn_rate"]]
+            fig_anom1 = go.Figure()
+            fig_anom1.add_trace(go.Bar(x=churn_by_ind["industry"], y=churn_by_ind["churn_rate"],
+                                        marker_color=bar_colors_a, text=churn_by_ind["churn_rate"],
+                                        texttemplate="%{text}%", textposition="outside"))
+            fig_anom1.add_hline(y=avg_churn_a, line_dash="dot", line_color=WARNING,
+                                 annotation_text=f"Avg {avg_churn_a:.1f}%", annotation_position="right")
+            fig_anom1.add_hline(y=avg_churn_a + std_churn_a, line_dash="dash", line_color=DANGER,
+                                 annotation_text="Outlier threshold", annotation_position="right")
+            chart_layout(fig_anom1, 320)
+            fig_anom1.update_layout(xaxis=dict(tickangle=30))
+            st.plotly_chart(fig_anom1, use_container_width=True)
+
+        with c_anom2:
+            st.markdown('<div class="section-header">Monthly Ticket Volume (Spikes Highlighted)</div>', unsafe_allow_html=True)
+            spike_flags_a = ticket_monthly_a["tickets"] > avg_tix + std_tix
+            fig_anom2 = go.Figure()
+            fig_anom2.add_trace(go.Bar(x=ticket_monthly_a["month"], y=ticket_monthly_a["tickets"],
+                                        marker_color=[DANGER if s else PRIMARY for s in spike_flags_a],
+                                        text=ticket_monthly_a["tickets"], texttemplate="%{text}", textposition="outside"))
+            fig_anom2.add_hline(y=avg_tix + std_tix, line_dash="dash", line_color=DANGER,
+                                 annotation_text="Spike threshold", annotation_position="right")
+            chart_layout(fig_anom2, 320)
+            fig_anom2.update_layout(xaxis=dict(tickangle=30))
+            st.plotly_chart(fig_anom2, use_container_width=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("Generate AI Root Cause Analysis", type="primary", key="anomaly_ai_btn"):
+            if not API_KEY:
+                st.error("ANTHROPIC_API_KEY not configured.")
+            else:
+                anom_summary = "\n".join([f"- [{a['severity']}] {a['type']}: {a['title']}. {a['detail']}" for a in anomalies_a])
+                with st.spinner("Claude is diagnosing root causes..."):
+                    try:
+                        anom_msg = anthropic.Anthropic(api_key=API_KEY).messages.create(
+                            model="claude-haiku-4-5-20251001", max_tokens=1500,
+                            messages=[{"role": "user", "content": f"""You are a Senior Business Analyst analyzing data anomalies in a B2B SaaS company (Apex Solutions).
+
+ANOMALIES DETECTED:
+{anom_summary}
+
+CONTEXT: 500 customers, 22% annual churn, 28hr avg ticket resolution, 82% onboarding completion.
+
+## ROOT CAUSE ANALYSIS
+For each anomaly: symptom → cause → root cause (2 levels deep).
+
+## INTERCONNECTIONS
+How are these anomalies driving each other?
+
+## PRIORITY FIX ORDER
+Which should leadership address first? Why?
+
+## QUICK WINS (next 30 days)
+3 immediate actions that begin to reverse these trends. Be specific."""}]
+                        )
+                        st.markdown("### AI Root Cause Analysis")
+                        st.markdown(anom_msg.content[0].text)
+                    except Exception as e:
+                        st.error(f"API Error: {e}")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -2125,12 +2289,176 @@ elif page == "📐 BA Artifacts":
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# PAGE 8 — ABOUT THE ANALYST
+# PAGE 8 — WHAT-IF REVENUE SIMULATOR
+# ══════════════════════════════════════════════════════════════════════════════
+elif page == "💡 What-If Simulator":
+    st.markdown('<div class="page-title">What-If Revenue Simulator</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">Move the sliders — see the live dollar impact of fixing Apex Solutions\' three biggest problems</div>', unsafe_allow_html=True)
+    st.markdown("---")
+
+    base_sim = query("""
+        SELECT ROUND(SUM(CASE WHEN status='Active' THEN mrr ELSE 0 END),0) AS total_mrr,
+               ROUND(COUNT(CASE WHEN status='Churned' THEN 1 END)*100.0/COUNT(*),1) AS churn_rate,
+               COUNT(*) AS total_cust,
+               ROUND(AVG(CASE WHEN status='Active' THEN mrr END),0) AS avg_mrr
+        FROM customers
+    """).iloc[0]
+    onb_sim = query("SELECT ROUND(COUNT(CASE WHEN completed=1 THEN 1 END)*100.0/COUNT(*),1) AS pct, COUNT(CASE WHEN completed=0 THEN 1 END) AS incomplete FROM onboarding").iloc[0]
+    supp_sim = query("SELECT ROUND(AVG(resolution_time_hours),1) AS avg_res FROM support_tickets").iloc[0]
+
+    curr_mrr_s = int(base_sim["total_mrr"])
+    curr_arr_s = curr_mrr_s * 12
+    curr_churn_s = float(base_sim["churn_rate"])
+    curr_onb_s = float(onb_sim["pct"])
+    curr_res_s = float(supp_sim["avg_res"])
+    avg_mrr_s = float(base_sim["avg_mrr"])
+    incomplete_s = int(onb_sim["incomplete"])
+    total_cust_s = int(base_sim["total_cust"])
+
+    st.markdown('<div class="section-header">Current Baseline — Apex Solutions</div>', unsafe_allow_html=True)
+    b1, b2, b3, b4 = st.columns(4)
+    for col, (lbl, val, color) in zip([b1,b2,b3,b4], [
+        ("Current ARR", f"${curr_arr_s:,}", PRIMARY),
+        ("Annual Churn Rate", f"{curr_churn_s}%", DANGER),
+        ("Onboarding Completion", f"{curr_onb_s}%", WARNING),
+        ("Avg Resolution Time", f"{curr_res_s}h", WARNING),
+    ]):
+        col.markdown(f"""<div class="kpi-card" style="border-left-color:{color}">
+            <div class="kpi-label">{lbl}</div>
+            <div class="kpi-value" style="color:{color}">{val}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Intervention Controls — Drag to model the impact</div>', unsafe_allow_html=True)
+
+    s1, s2, s3 = st.columns(3)
+    with s1:
+        st.markdown(f'<div style="font-size:12px;font-weight:600;color:{DANGER};margin-bottom:6px">CHURN RATE TARGET (%)</div>', unsafe_allow_html=True)
+        target_churn_s = st.slider("Target Churn Rate", min_value=2.0, max_value=float(curr_churn_s),
+                                    value=round(curr_churn_s * 0.6, 1), step=0.5, key="sim_churn",
+                                    help="Industry best: <5% annually")
+    with s2:
+        st.markdown(f'<div style="font-size:12px;font-weight:600;color:{WARNING};margin-bottom:6px">ONBOARDING COMPLETION TARGET (%)</div>', unsafe_allow_html=True)
+        target_onb_s = st.slider("Target Onboarding %", min_value=float(curr_onb_s), max_value=100.0,
+                                  value=min(curr_onb_s + 12.0, 95.0), step=1.0, key="sim_onb",
+                                  help="Industry best: >85%")
+    with s3:
+        st.markdown(f'<div style="font-size:12px;font-weight:600;color:{WARNING};margin-bottom:6px">AVG RESOLUTION TIME TARGET (hrs)</div>', unsafe_allow_html=True)
+        target_res_s = st.slider("Target Resolution (hrs)", min_value=4.0, max_value=float(curr_res_s),
+                                  value=max(curr_res_s * 0.5, 8.0), step=1.0, key="sim_res",
+                                  help="SLA target: <8h for critical")
+
+    # Calculations
+    churn_delta = curr_churn_s - target_churn_s
+    arr_from_churn = round(total_cust_s * churn_delta / 100 * avg_mrr_s)
+
+    onb_delta = target_onb_s - curr_onb_s
+    newly_done = round(incomplete_s * onb_delta / 100)
+    arr_from_onb = round(newly_done * avg_mrr_s * 0.35)
+
+    res_pct_improve = (curr_res_s - target_res_s) / curr_res_s
+    arr_from_res = round(curr_arr_s * res_pct_improve * 0.05)
+    cs_hrs_saved = round((curr_res_s - target_res_s) * 8)
+
+    total_arr_gain = arr_from_churn + arr_from_onb + arr_from_res
+    new_arr_s = curr_arr_s + total_arr_gain
+    roi_pct_s = round(total_arr_gain / curr_arr_s * 100, 1)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Live Impact Calculation</div>', unsafe_allow_html=True)
+
+    i1, i2, i3, i4 = st.columns(4)
+    for col, (lbl, val, sub, color) in zip([i1,i2,i3,i4], [
+        ("Churn Fix ARR Recovery", f"${arr_from_churn:,}", f"↓ {churn_delta:.1f}% reduction", SUCCESS),
+        ("Onboarding Fix Recovery", f"${arr_from_onb:,}", f"{newly_done} more completions", SUCCESS),
+        ("Resolution Time Savings", f"${arr_from_res:,}", f"{cs_hrs_saved}h CS time saved/week", SUCCESS),
+        ("TOTAL ARR OPPORTUNITY", f"${total_arr_gain:,}", f"+{roi_pct_s}% revenue growth", PRIMARY),
+    ]):
+        col.markdown(f"""<div class="kpi-card" style="border-left-color:{color}">
+            <div class="kpi-label">{lbl}</div>
+            <div class="kpi-value" style="color:{color}">{val}</div>
+            <div class="kpi-delta-good">{sub}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    c_wf, c_roi = st.columns([2, 1])
+
+    with c_wf:
+        st.markdown('<div class="section-header">ARR Waterfall — Before vs After BridgeIQ</div>', unsafe_allow_html=True)
+        fig_wf = go.Figure(go.Waterfall(
+            orientation="v",
+            measure=["absolute", "relative", "relative", "relative", "total"],
+            x=["Current ARR", "Churn Fix", "Onboarding Fix", "Resolution Fix", "New ARR"],
+            y=[curr_arr_s, arr_from_churn, arr_from_onb, arr_from_res, new_arr_s],
+            connector={"line": {"color": "#1e3a5f"}},
+            decreasing={"marker": {"color": DANGER}},
+            increasing={"marker": {"color": SUCCESS}},
+            totals={"marker": {"color": PRIMARY}},
+            text=[f"${v:,.0f}" for v in [curr_arr_s, arr_from_churn, arr_from_onb, arr_from_res, new_arr_s]],
+            textposition="outside",
+        ))
+        chart_layout(fig_wf, 380)
+        st.plotly_chart(fig_wf, use_container_width=True)
+
+    with c_roi:
+        st.markdown('<div class="section-header">ROI Summary</div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style="background:linear-gradient(135deg,#051525,#0d1b2a);border:1px solid #1e3a5f;border-left:4px solid {PRIMARY};border-radius:12px;padding:20px">
+            <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1e3a5f">
+                <div style="font-size:11px;color:#64748b">Current ARR</div>
+                <div style="font-size:22px;font-weight:700;color:{DANGER}">${curr_arr_s:,}</div>
+            </div>
+            <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1e3a5f">
+                <div style="font-size:11px;color:#64748b">Projected ARR (with fixes)</div>
+                <div style="font-size:22px;font-weight:700;color:{SUCCESS}">${new_arr_s:,}</div>
+            </div>
+            <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #1e3a5f">
+                <div style="font-size:11px;color:#64748b">Net ARR Gain</div>
+                <div style="font-size:28px;font-weight:800;color:{PRIMARY}">+${total_arr_gain:,}</div>
+                <div style="font-size:12px;color:{SUCCESS};margin-top:2px">+{roi_pct_s}% revenue growth</div>
+            </div>
+            <div>
+                <div style="font-size:11px;color:#64748b">CS Hours Saved / Week</div>
+                <div style="font-size:18px;font-weight:700;color:#f59e0b">{cs_hrs_saved}h</div>
+                <div style="font-size:11px;color:#64748b">= {cs_hrs_saved*52:,} hrs/year</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="alert-warning">
+            <div style="font-size:11px;font-weight:700;color:#f59e0b;margin-bottom:6px">BA INSIGHT</div>
+            <div style="font-size:12px;color:#94a3b8">Fixing churn from <b>{curr_churn_s}% → {target_churn_s}%</b> alone recovers <b style="color:{SUCCESS}">${arr_from_churn:,} ARR</b>. Combined interventions unlock <b style="color:{PRIMARY}">${total_arr_gain:,}</b> — justifying significant CS tooling investment.</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# PAGE 9 — ABOUT THE ANALYST
 # ══════════════════════════════════════════════════════════════════════════════
 elif page == "👤 About the Analyst":
     st.markdown('<div class="page-title">About the Analyst</div>', unsafe_allow_html=True)
     st.markdown('<div class="page-subtitle">The person behind BridgeIQ — bridging computer science and business strategy</div>', unsafe_allow_html=True)
     st.markdown("---")
+
+    # Stats at a glance strip
+    st.markdown("""
+    <div class="hero-strip">
+        <div style="display:flex;align-items:center;gap:8px;padding-right:24px;border-right:1px solid #1e3a5f;white-space:nowrap">
+            <span style="font-size:10px;font-weight:800;color:#4F8EF7;letter-spacing:2px">BRIDGEIQ BY THE NUMBERS</span>
+        </div>
+        <div class="hero-stat"><div class="hero-stat-label">Data Rows</div><div class="hero-stat-value">16K+</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">SQL Tables</div><div class="hero-stat-value">6</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">SQL Queries</div><div class="hero-stat-value">10</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">AI Features</div><div class="hero-stat-value">6</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">User Stories</div><div class="hero-stat-value">15</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">BA Deliverables</div><div class="hero-stat-value">14</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">App Pages</div><div class="hero-stat-value">9</div></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
 
     col1, col2 = st.columns([2, 1])
 
@@ -2259,3 +2587,67 @@ elif page == "👤 About the Analyst":
             <div class="kpi-delta-neutral">{sub}</div>
         </div>
         """, unsafe_allow_html=True)
+
+    # Project timeline
+    st.markdown("---")
+    st.markdown('<div class="section-header">How BridgeIQ Was Built — Project Timeline</div>', unsafe_allow_html=True)
+    tl_items = [
+        ("Week 1", "Discovery & Data Engineering", "Designed 6-table relational schema, defined 48-column data dictionary, generated 16,000+ rows of synthetic data with realistic business patterns using Faker + NumPy.", "#4F8EF7"),
+        ("Week 2", "SQL Analytics Layer", "Wrote 10 SQL query files covering churn analysis, revenue trends, cohort retention, SLA compliance, and composite risk scoring — using CTEs, window functions, and multi-table joins.", "#22c55e"),
+        ("Week 3", "Streamlit Application", "Built 9-page interactive Streamlit app with Plotly dashboards, dark theme, custom CSS animations, responsive layout, and global filter system.", "#a78bfa"),
+        ("Week 4", "Claude AI Integration", "Integrated Anthropic Claude API for 6 AI features: feedback analyzer, requirements generator, insights engine, interview simulator, account intelligence, and anomaly root cause analysis.", "#f59e0b"),
+        ("Week 5", "BA Deliverables Suite", "Produced BRD (11 sections), 15 Agile user stories with AC, AS-IS/TO-BE process maps, risk register, RACI matrix, requirements traceability matrix, and 10-slide executive deck.", "#ef4444"),
+        ("Shipped", "Live on Streamlit Cloud", "Deployed publicly. 16K+ rows of data, 6 AI features, 9 interactive pages — all running live. GitHub repository published and documented.", "#22c55e"),
+    ]
+    tl_rows = ""
+    for week, title, desc, color in tl_items:
+        tl_rows += f"""
+        <div style="display:flex;gap:16px;margin-bottom:12px;align-items:flex-start">
+            <div style="min-width:72px;text-align:right;padding-top:2px">
+                <span style="background:{color};color:#000;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;white-space:nowrap">{week}</span>
+            </div>
+            <div style="width:2px;background:linear-gradient(180deg,{color},transparent);min-height:48px;flex-shrink:0;border-radius:2px;margin-top:6px"></div>
+            <div style="flex:1;padding-bottom:12px;border-bottom:1px solid #1e3a5f">
+                <div style="font-size:13px;font-weight:600;color:#f1f5f9;margin-bottom:3px">{title}</div>
+                <div style="font-size:12px;color:#64748b;line-height:1.6">{desc}</div>
+            </div>
+        </div>"""
+    st.markdown(f'<div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:24px 28px">{tl_rows}</div>', unsafe_allow_html=True)
+
+    # Strong CTA section
+    st.markdown("---")
+    st.markdown(f"""
+    <div style="background:linear-gradient(135deg,#051525,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:16px;
+         padding:48px 40px;text-align:center;position:relative;overflow:hidden;animation:border-glow 4s ease-in-out infinite">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4F8EF7,#22c55e,#4F8EF7,transparent)"></div>
+        <div style="font-size:32px;font-weight:800;color:#f1f5f9;margin-bottom:8px;letter-spacing:-0.5px;
+             background:linear-gradient(270deg,#4F8EF7,#7bb3ff,#a5f3fc,#4F8EF7);background-size:300% 300%;
+             -webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradient-x 5s ease infinite">
+            Ready to bring this to your team?
+        </div>
+        <div style="font-size:14px;color:#64748b;max-width:520px;margin:0 auto 28px;line-height:1.8">
+            BridgeIQ shows what a Technical BA delivers when given real problems and the right tools —
+            end-to-end, from stakeholder interviews to a live AI-powered product. Let's talk.
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+            <a href="mailto:gtrhemanth14@gmail.com"
+               style="background:linear-gradient(135deg,#4F8EF7,#3b82f6);color:#fff;text-decoration:none;
+                      padding:14px 32px;border-radius:10px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;
+                      box-shadow:0 4px 15px rgba(79,142,247,0.3)">
+                ✉ Email Me
+            </a>
+            <a href="https://github.com/gtrhemanth/BridgeIQ"
+               style="background:transparent;color:#4F8EF7;text-decoration:none;
+                      padding:14px 32px;border-radius:10px;font-weight:700;font-size:14px;border:1px solid #4F8EF7;display:inline-flex;align-items:center;gap:8px">
+                ⭐ View on GitHub
+            </a>
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+            <span class="badge badge-blue">Open to BA roles</span>
+            <span class="badge badge-green">Available for interviews</span>
+            <span class="badge badge-purple">IEEE-Published Researcher</span>
+            <span class="badge badge-yellow">3–4yr BA experience level</span>
+        </div>
+        <div style="font-size:11px;color:#374151;margin-top:20px">gtrhemanth14@gmail.com · github.com/gtrhemanth</div>
+    </div>
+    """, unsafe_allow_html=True)

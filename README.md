@@ -3,11 +3,11 @@
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat&logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Live-FF4B4B?style=flat&logo=streamlit&logoColor=white)
 ![Plotly](https://img.shields.io/badge/Plotly-Interactive-3F4F75?style=flat&logo=plotly&logoColor=white)
-![Claude AI](https://img.shields.io/badge/Claude_AI-Integrated-D97757?style=flat)
+![Claude AI](https://img.shields.io/badge/Claude_AI-Sonnet_4.6-D97757?style=flat)
 ![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=flat&logo=sqlite&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat)
 
-> A Technical Business Analyst portfolio project demonstrating end-to-end BA capabilities — from data modeling and SQL analytics to AI-powered requirements generation and live interactive dashboards.
+> A Technical Business Analyst portfolio project demonstrating end-to-end BA capabilities — from data modeling and SQL analytics to AI-powered requirements generation, anomaly detection, and live interactive dashboards.
 
 ---
 
@@ -28,6 +28,84 @@ BridgeIQ simulates a real-world Technical BA engagement at **Apex Solutions**, a
 | 28hr avg ticket resolution | 35% SLA breach on critical tickets | CSAT declining, support costs rising |
 
 As the Technical BA, I diagnosed these problems using data analysis, redesigned the processes, specified AI-integrated solutions, and delivered a complete set of BA artifacts — all documented and built in this repository.
+
+---
+
+## App Pages (9 total)
+
+| Page | What It Shows |
+|---|---|
+| 📊 Executive Dashboard | 8-tab BI dashboard: KPIs, revenue, churn, support, onboarding, cohort retention, SaaS benchmarks, anomaly detection |
+| 🧠 AI Insights Engine | Claude Sonnet reads live data → generates executive intelligence brief (McKinsey-style) |
+| 🤖 AI Feedback Analyzer | Paste customer feedback → structured pain points + auto-generated user stories |
+| 📋 AI Requirements Generator | Describe a business problem → BRD + user stories + UAT cases + risk register |
+| 🎯 Interview Simulator | Paste any BA job description → tailored talking points + 8 likely questions + 60-second pitch |
+| 🔍 Customer 360 | Full account intelligence view: risk score, usage, tickets, transactions, AI account summary |
+| 📐 BA Artifacts | Live in-app: 15 user stories, risk register, RACI matrix, process maps, traceability matrix |
+| 💡 What-If Simulator | Move sliders (churn %, onboarding %, resolution time) → see live ARR impact waterfall |
+| 👤 About the Analyst | Project timeline, stats, skills grid, ROI calculator, CTA |
+
+---
+
+## Screenshots
+
+### Executive Dashboard
+![Executive Dashboard](https://via.placeholder.com/800x400/0d1b2a/4F8EF7?text=Executive+Dashboard+—+KPIs+%2B+Live+Hero+Strip)
+
+### AI Insights Engine
+![AI Insights Engine](https://via.placeholder.com/800x400/0d1b2a/22c55e?text=AI+Insights+Engine+—+Claude+reads+your+data)
+
+### What-If Revenue Simulator
+![What-If Simulator](https://via.placeholder.com/800x400/0d1b2a/f59e0b?text=What-If+Simulator+—+Live+ARR+Waterfall)
+
+### Customer 360
+![Customer 360](https://via.placeholder.com/800x400/0d1b2a/a78bfa?text=Customer+360+—+Full+Account+Intelligence)
+
+---
+
+## Three-Layer Capability Stack
+
+### Layer 1 — Business Analysis
+- **BRD** — 11-section Business Requirements Document (Word .docx)
+- **User Stories** — 15 sprint-ready stories with Acceptance Criteria, Story Points, MoSCoW priority
+- **Process Maps** — AS-IS / TO-BE churn detection workflow
+- **Stakeholder Analysis** — RACI matrix, engagement strategies
+- **Risk Register** — 6 identified risks with mitigation strategies
+- **Requirements Traceability Matrix** — stories → objectives → data → metrics
+- **UAT Framework** — test cases per user story
+- **Executive Deck** — 10-slide PowerPoint presentation
+
+### Layer 2 — Data & Analytics
+- **Data Model** — 6-table schema designed from scratch; ERD documented
+- **Synthetic Data** — 16,000+ rows generated with realistic business patterns (Faker + NumPy)
+- **SQL Analytics** — 10 query files: KPIs, churn, revenue trends, SLA compliance, cohort retention, at-risk scoring
+- **Composite Risk Score** — multi-signal customer risk scoring logic (SQL CTE)
+- **Cohort Retention Analysis** — signup quarter retention and MRR tracking
+- **SaaS Benchmarks** — live data vs Baremetrics, Gainsight, Zendesk, Totango
+
+### Layer 3 — Live AI Application
+- **Executive Dashboard** — 8-tab Plotly dashboard with real data and global filters
+- **Statistical Anomaly Detector** — identifies churn spikes, ticket surges, ghost accounts, SLA concentration
+- **What-If Revenue Simulator** — interactive ARR impact model (churn × onboarding × resolution)
+- **AI Feedback Analyzer** — Claude API → structured pain points + user stories
+- **AI Requirements Generator** — Claude API → BRD + user stories + UAT + risk register
+- **AI Insights Engine** — Claude Sonnet → McKinsey-style executive intelligence brief
+- **Interview Simulator** — JD → tailored prep, talking points, 8 questions + model answers
+
+---
+
+## Technology Stack
+
+| Category | Technology |
+|---|---|
+| Language | Python 3.11 |
+| Web App | Streamlit |
+| Charts | Plotly (bar, area, scatter, waterfall, violin, heatmap, treemap, gauge) |
+| AI API | Anthropic Claude (Sonnet 4.6 + Haiku 4.5) |
+| Database | SQLite |
+| Data Generation | Faker, NumPy, Pandas |
+| Documents | python-docx, python-pptx |
+| Version Control | Git / GitHub |
 
 ---
 
@@ -62,13 +140,14 @@ BridgeIQ/
 │   └── 10_executive_summary_view.sql
 │
 ├── app/
-│   ├── app.py                  # Streamlit multi-page app
+│   ├── app.py                  # Streamlit multi-page app (9 pages, ~2,600 lines)
 │   ├── .env.example            # API key template
 │   └── .env                    # Your API key (gitignored)
 │
 ├── docs/
 │   ├── build_brd.py            # BRD generator script
 │   ├── BridgeIQ_BRD.docx       # Business Requirements Document (generated)
+│   ├── data_dictionary.csv     # 48 columns documented
 │   └── user_stories.csv        # 15 Jira-importable user stories
 │
 ├── presentation/
@@ -76,47 +155,10 @@ BridgeIQ/
 │   └── BridgeIQ_Executive_Presentation.pptx
 │
 └── diagrams/
-    └── erd.md                  # Entity Relationship Diagram (Mermaid)
+    ├── erd.md                  # Entity Relationship Diagram (Mermaid)
+    ├── process_asis.md         # AS-IS process flow
+    └── process_tobe.md         # TO-BE process flow
 ```
-
----
-
-## Three-Layer Capability Stack
-
-### Layer 1 — Business Analysis (for every BA hiring manager)
-- **BRD** — 11-section Business Requirements Document (Word .docx)
-- **User Stories** — 15 sprint-ready stories with Acceptance Criteria, Story Points, MoSCoW priority
-- **Process Maps** — AS-IS / TO-BE churn detection workflow
-- **Stakeholder Analysis** — RACI matrix, engagement strategies
-- **Risk Register** — 6 identified risks with mitigation strategies
-- **UAT Framework** — test cases per user story
-- **Executive Deck** — 10-slide PowerPoint presentation
-
-### Layer 2 — Data & Analytics (for technical interviewers)
-- **Data Model** — 6-table schema designed from scratch; ERD documented
-- **Synthetic Data** — 16,000+ rows generated with realistic business patterns (Faker + NumPy)
-- **SQL Analytics** — 10 query files covering: KPIs, churn analysis, revenue trends, SLA compliance, cohort retention, at-risk scoring, feature adoption
-- **Composite Risk Score** — multi-signal customer risk scoring logic (SQL CTE)
-
-### Layer 3 — Live AI Application (what nobody else has)
-- **Executive Dashboard** — Plotly charts with real data: revenue trend, churn by plan/industry, feature adoption, at-risk customer table
-- **AI Feedback Analyzer** — paste customer feedback → Claude API → structured pain points + auto-generated user stories
-- **AI Requirements Generator** — describe a business problem → Claude API → BRD excerpt + user stories + acceptance criteria + UAT cases + risk register
-
----
-
-## Technology Stack
-
-| Category | Technology |
-|---|---|
-| Language | Python 3.11 |
-| Web App | Streamlit |
-| Charts | Plotly |
-| AI API | Anthropic Claude (claude-haiku-4-5) |
-| Database | SQLite |
-| Data Generation | Faker, NumPy, Pandas |
-| Documents | python-docx, python-pptx |
-| Version Control | Git / GitHub |
 
 ---
 
@@ -166,16 +208,21 @@ cd ../presentation && python build_deck.py
 - [x] Stakeholder Analysis & RACI Matrix
 - [x] AS-IS / TO-BE Process Maps
 - [x] 15 User Stories with Acceptance Criteria
-- [x] Risk Register
+- [x] Risk Register (6 risks, scored)
+- [x] Requirements Traceability Matrix
 - [x] Success Metrics & KPIs
 - [x] Entity Relationship Diagram (ERD)
-- [x] Data Dictionary
+- [x] Data Dictionary (48 columns)
 - [x] SQL Analytics Layer (10 queries)
-- [x] Executive Dashboard (live)
+- [x] Executive Dashboard (8 tabs, live)
+- [x] Statistical Anomaly Detector (live)
+- [x] What-If Revenue Simulator (live)
+- [x] Customer 360 View (live)
 - [x] AI Feedback Analysis Tool (live)
 - [x] AI Requirements Generator (live)
+- [x] AI Executive Intelligence Engine (live)
+- [x] Interview Simulator (live)
 - [x] Executive Presentation Deck
-- [x] UAT Test Framework
 
 ---
 
@@ -197,4 +244,4 @@ cd ../presentation && python build_deck.py
 - GitHub: [github.com/gtrhemanth](https://github.com/gtrhemanth)
 - Email: gtrhemanth14@gmail.com
 
-> This project demonstrates the ability to operate across the full BA spectrum — from stakeholder interviews and requirements documentation to SQL analytics, AI integration, and live application delivery. Designed for Technical BA roles requiring both business acumen and technical depth.
+> This project demonstrates the ability to operate across the full BA spectrum — from stakeholder interviews and requirements documentation to SQL analytics, AI integration, anomaly detection, and live application delivery. Designed for Technical BA roles requiring both business acumen and technical depth.
