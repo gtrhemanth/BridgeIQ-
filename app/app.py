@@ -25,6 +25,18 @@ st.set_page_config(
 DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "bridgeiq.db")
 API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
+# Force sidebar open via JavaScript on every page load
+import streamlit.components.v1 as components
+components.html("""
+<script>
+setTimeout(function() {
+    var btn = window.parent.document.querySelector('[data-testid="stSidebarCollapsedControl"] button');
+    if (!btn) btn = window.parent.document.querySelector('[data-testid="collapsedControl"] button');
+    if (btn) btn.click();
+}, 300);
+</script>
+""", height=0)
+
 # ── Custom CSS ─────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
