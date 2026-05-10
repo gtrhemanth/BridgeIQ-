@@ -46,7 +46,7 @@ As the Technical BA, I diagnosed these problems using data analysis, redesigned 
 | 💡 What-If Simulator | Move sliders (churn %, onboarding %, resolution time) → see live ARR impact waterfall |
 | 🔮 Churn Predictor | **ML model** (Logistic Regression) trained on live data → churn probability per customer + feature importances + risk table |
 | 💻 SQL Playground | Live SQL editor against the SQLite DB — 5 example queries, schema reference, CSV export |
-| 👤 About the Analyst | Project timeline, stats, skills grid, ROI calculator, CTA |
+| 👤 Engagement Summary | Project charter, stakeholder profiles, elicitation transcript, lessons learned, version history, ROI calculator, CTA |
 
 ---
 

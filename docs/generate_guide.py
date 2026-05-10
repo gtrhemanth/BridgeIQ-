@@ -229,7 +229,7 @@ def build():
         ("16", "Page 9 -- What-If Revenue Simulator"),
         ("17", "Page 10 -- Churn Predictor (ML Model)"),
         ("18", "Page 11 -- SQL Playground"),
-        ("19", "Page 12 -- About the Analyst"),
+        ("19", "Page 12 -- Engagement Summary"),
         ("20", "AI Integration -- How Claude API Works"),
         ("21", "Navigation & Deep Links"),
         ("22", "CSS & Visual Design System"),
@@ -686,7 +686,7 @@ def build():
              ("CSV Download", "st.download_button appears after a successful query. Downloads the result as a CSV file."),
              ("Why this matters", "Most BA portfolios have static screenshots of SQL results. This lets anyone run any query and see the real data. It is a live proof of the SQL layer's depth."),
          ]),
-        ("19", "[USER]", "About the Analyst", "Profile, project stats, skills, ROI calculator, and CTA.",
+        ("19", "[USER]", "Engagement Summary", "Profile, project stats, skills, ROI calculator, and CTA.",
          "This page serves as a live resume and contact card for the analyst. It is optimised for a recruiter or hiring manager who has spent a few minutes in the app and wants to know who built it.",
          [
              ("Stats Strip", "5 metrics: Years BA Experience, Data Rows Generated, SQL Queries Written, AI Features Built, User Stories Delivered."),
