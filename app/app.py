@@ -437,7 +437,7 @@ PAGES = [
     "💡 What-If Simulator",
     "🔮 Churn Predictor",
     "💻 SQL Playground",
-    "👤 About the Analyst",
+    "👤 Engagement Summary",
 ]
 
 # Programmatic navigation: buttons set go_to_page, we consume it here before rendering the selectbox
@@ -519,14 +519,30 @@ if page == "🏠 Home":
     # The scenario
     st.markdown('<div class="section-header">The Scenario</div>', unsafe_allow_html=True)
     st.markdown("""
-    <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:14px;padding:28px 32px;margin-bottom:24px">
+    <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:14px;padding:28px 32px;margin-bottom:16px">
         <div style="font-size:16px;font-weight:700;color:#f1f5f9;margin-bottom:8px">Apex Solutions — B2B SaaS Company</div>
         <div style="font-size:14px;color:#94a3b8;line-height:1.9;max-width:720px">
-            Apex Solutions is a fictional B2B SaaS company with 500 customers, $X MRR, and a Customer Success team
-            that is drowning in manual spreadsheet work. Three critical problems are destroying revenue —
-            and leadership has brought in a Technical Business Analyst to diagnose, redesign, and deliver a solution.
+            Apex Solutions is a B2B SaaS company with 500 enterprise customers, ~$2.1M ARR, and a 12-person
+            Customer Success team still running churn detection out of three spreadsheets. Three critical
+            problems are compounding quarterly — and leadership brought in a Technical Business Analyst to
+            diagnose, redesign, and deliver a data-driven solution in 12 weeks.
             <br><br>
             That analyst is me. This platform is the result.
+        </div>
+    </div>
+    <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid #f59e0b;border-radius:14px;padding:20px 28px;margin-bottom:24px">
+        <div style="font-size:12px;font-weight:800;color:#f59e0b;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Why This Engagement Started</div>
+        <div style="font-size:13px;color:#94a3b8;line-height:1.9">
+            In Q3 2024, the Board of Directors reviewed quarterly metrics and flagged a <b style="color:#ef4444">22% annual churn rate</b>
+            as a P0 risk to the company's planned Series B fundraising round. CFO <b style="color:#f1f5f9">Rachel Okonkwo</b>
+            escalated to the CTO, noting that the CS team had no early warning system — they were finding out
+            about churn <em>after</em> customers had already decided to leave. VP of Customer Success
+            <b style="color:#f1f5f9">Marcus Chen</b> pushed back initially, arguing his team "knew the accounts" —
+            but agreed to a 12-week data-driven BA engagement when presented with the Q3 revenue impact numbers.
+            <br><br>
+            The engagement scope was intentionally constrained: diagnose the three core problems, redesign the
+            workflows, specify the AI-integrated solution, and deliver a working prototype — no full engineering
+            build-out. That constraint shaped every trade-off in this project.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -597,7 +613,7 @@ if page == "🏠 Home":
             The AI pages show what happens when BA meets Claude.
         </div>
         <div style="font-size:12px;color:#374151">
-            Built by <span style="color:#4F8EF7;font-weight:700">Sai Hemanth</span> · gtrhemanth14@gmail.com · github.com/gtrhemanth
+            Built by <span style="color:#4F8EF7;font-weight:700">Sai Hemanth</span> · gtrhemanth14@gmail.com · github.com/gtrhemanth/BridgeIQ-
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -2492,7 +2508,10 @@ elif page == "📐 BA Artifacts":
     st.markdown('<div class="page-title">BA Artifacts Library</div>', unsafe_allow_html=True)
     st.markdown('<div class="page-subtitle">Every deliverable from the BridgeIQ engagement — live in the app, not buried in a PDF</div>', unsafe_allow_html=True)
 
-    art_tab1, art_tab2, art_tab3, art_tab4, art_tab5 = st.tabs(["📋 User Stories", "⚠️ Risk Register", "👥 RACI Matrix", "🗺️ Process Maps", "🔗 Traceability"])
+    art_tab1, art_tab2, art_tab3, art_tab4, art_tab5, art_tab6, art_tab7, art_tab8 = st.tabs([
+        "📋 User Stories", "⚠️ Risk Register", "👥 RACI Matrix", "🗺️ Process Maps", "🔗 Traceability",
+        "🧑‍💼 Stakeholders", "🎙️ Elicitation", "📁 Project Charter"
+    ])
 
     with art_tab1:
         st.markdown('<div class="section-header">15 Sprint-Ready User Stories</div>', unsafe_allow_html=True)
@@ -2714,6 +2733,199 @@ elif page == "📐 BA Artifacts":
         """, unsafe_allow_html=True)
 
 
+    with art_tab6:
+        st.markdown('<div class="section-header">Stakeholder Profiles — Key Players & Conflict Points</div>', unsafe_allow_html=True)
+        st.caption("Real BA engagements have friction. These are the four stakeholders who shaped every trade-off in this project.")
+
+        stakeholders = [
+            ("Marcus Chen", "VP Customer Success", "#f59e0b",
+             "The engagement sponsor — but not an easy one. Marcus initially pushed back on the data-driven approach, arguing his team 'knew their accounts' and didn't need a scoring algorithm. His buy-in was conditional: the risk score had to be explainable in plain English, not a black box. That constraint drove the decision to use Logistic Regression over a more accurate but opaque ensemble model.",
+             "Agreed to participate only after Q3 churn numbers were shared directly. Requested weekly check-ins. Vetoed the original dashboard layout twice — wanted health score front and center, not buried in tab 3."),
+            ("Rachel Okonkwo", "CFO", "#ef4444",
+             "The engagement trigger. Rachel escalated the churn issue to the Board after Q3 revenue fell 8% short of forecast. Her primary concern was financial visibility: 'I need to see MRR at risk in a number, not a percentage.' That demand created the ROI calculator and the What-If Simulator — both built specifically to answer her board-level question.",
+             "Approved the engagement budget but set a hard 12-week deadline tied to the Series B data room preparation. Any feature not delivering financial signal was deprioritized — that's why the Slack alert integration (US-02) landed in Phase 2."),
+            ("Dev Patel", "Engineering Lead", "#4F8EF7",
+             "The most skeptical stakeholder. Dev's team had already built two internal tools that 'solved this problem' in previous years — both abandoned. He was protective of engineering bandwidth and pushed back on any requirement that looked like 'another dashboard nobody will use.' His pushback forced clearer AC on every user story and tighter scope on the MVP.",
+             "Introduced the data quality constraint that became R-02 in the risk register. Insisted on a documented ERD and data dictionary before any ETL work would begin. The 48-column data dictionary exists because Dev required it as a gate."),
+            ("Priya Mehta", "CS Manager (Lead CSM)", "#22c55e",
+             "The day-to-day user. Priya represented the 12-person CS team and was the most engaged stakeholder in requirements elicitation. She identified the 4-hour weekly manual review pain point, named the three spreadsheets being used, and described the exact moment in the week when churn decisions were made. Her feedback shaped the dashboard layout, the alert thresholds, and the Customer 360 view.",
+             "Requested the onboarding stage tracker (US-03) after two enterprise customers churned mid-onboarding in Q2 without the team realizing they were stuck. Also asked for the 'days stuck in stage' counter — not in the original scope, added after sprint 2 review."),
+        ]
+
+        for name, role, color, context, impact in stakeholders:
+            st.markdown(f"""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid {color};border-radius:12px;padding:20px;margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+                    <div>
+                        <div style="font-size:16px;font-weight:700;color:#f1f5f9">{name}</div>
+                        <div style="font-size:12px;color:{color};font-weight:600">{role}</div>
+                    </div>
+                </div>
+                <div style="font-size:13px;color:#94a3b8;line-height:1.8;margin-bottom:10px">{context}</div>
+                <div style="background:rgba(0,0,0,0.25);border-radius:8px;padding:12px 14px">
+                    <div style="font-size:11px;font-weight:700;color:{color};margin-bottom:4px">IMPACT ON SCOPE</div>
+                    <div style="font-size:12px;color:#64748b;line-height:1.7">{impact}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid #a78bfa;border-radius:10px;padding:14px;margin-top:4px">
+            <div style="font-size:12px;font-weight:600;color:#a78bfa;margin-bottom:4px">Why Stakeholder Profiles Matter</div>
+            <div style="font-size:12px;color:#94a3b8">
+                Every requirement in this project was shaped by a real stakeholder constraint or request.
+                The explainability requirement from Marcus drove model selection. Rachel's financial framing drove the ROI calculator.
+                Dev's engineering skepticism drove scope discipline. Priya's field knowledge drove the UX design.
+                This is what real BA work looks like — requirements don't come from thin air, they come from people with competing priorities.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with art_tab7:
+        st.markdown('<div class="section-header">Requirements Elicitation — Stakeholder Interview Transcript</div>', unsafe_allow_html=True)
+        st.caption("Extract from Week 1 discovery session with Marcus Chen (VP CS) and Priya Mehta (Lead CSM) · Duration: 90 minutes · Format: semi-structured interview")
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:20px 24px;margin-bottom:16px">
+            <div style="font-size:12px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Session Context</div>
+            <div style="font-size:13px;color:#94a3b8;line-height:1.7">
+                Date: Week 1, Day 3 of engagement &nbsp;|&nbsp; Attendees: Marcus Chen (VP CS), Priya Mehta (Lead CSM), Sai Hemanth (BA)
+                <br>Goal: Understand current churn detection process, identify pain points, surface unspoken requirements
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        qa_pairs = [
+            ("BA", "Walk me through exactly what happens on a Monday morning in your team right now when it comes to tracking customer health.",
+             "Priya", "So I open three different spreadsheets — one from billing, one from the product usage export we get every Friday, and one I maintain manually for support tickets. I spend about two hours cross-referencing them. Then I write up a summary email and send it to Marcus. He reads it, usually by Tuesday or Wednesday, and if something looks bad we reach out to the customer."),
+            ("BA", "How often do you find out a customer is churning before they've already made the decision?",
+             "Marcus", "Honestly? Less than 30% of the time. Most of the time we get a cancellation request and then we go back through the data and realize 'oh, their usage dropped four months ago.' We're always one step behind."),
+            ("BA", "What does 'at risk' mean to your team right now — is there a definition, a threshold?",
+             "Priya", "It's mostly gut feel. If someone files three tickets in a week, or if I notice their login frequency dropped, I flag them. But there's no consistent scoring. Two different CSMs would classify the same account differently."),
+            ("BA", "If you had a single number per customer — a risk score — what would make you trust it?",
+             "Marcus", "It has to be explainable. I don't want a black box. If the score says 82 out of 100, I need to be able to tell my CSM: here's why. Usage dropped, billing failed twice, NPS was a 3. Not just 'the model says so.'"),
+            ("BA", "What's the one thing that would make the biggest difference for your team in the next 90 days?",
+             "Priya", "Knowing which customers to call on Monday morning without spending two hours figuring it out. If I could open one screen and see: these are your five at-risk accounts this week, here's why — that alone would change everything."),
+            ("BA", "Are there any constraints I should know about — things that are off the table regardless of what the data shows?",
+             "Dev (joined late)", "We're not building another internal tool that gets abandoned in six months. Whatever gets specced needs to be scoped tightly. My team has two sprints max for an MVP. If it doesn't fit in that, we cut it."),
+            ("BA", "Priya, are there cases where customers churn that don't show up in usage or billing data at all?",
+             "Priya", "Yes — onboarding. We had two enterprise accounts this quarter that just... stopped. They never finished setup. No support tickets, no billing failures. They just went quiet and then cancelled. We had no way to know they were stuck."),
+            ("BA", "Marcus, what does success look like at the end of this 12-week engagement?",
+             "Marcus", "Rachel needs to be able to show the board a number. How much MRR are we saving. Not a percentage — a dollar amount. And I need my team to actually use whatever we build. If it's too complicated they'll go back to the spreadsheets."),
+        ]
+
+        for i, (q_role, question, a_role, answer) in enumerate(qa_pairs):
+            st.markdown(f"""
+            <div style="margin-bottom:16px">
+                <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+                    <div style="min-width:32px;height:32px;background:#1e3a5f;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#4F8EF7;flex-shrink:0">BA</div>
+                    <div style="background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2);border-radius:10px;padding:12px 14px;flex:1">
+                        <div style="font-size:12px;color:#94a3b8;line-height:1.7">{question}</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:flex-start;padding-left:20px">
+                    <div style="min-width:32px;height:32px;background:#0a2e1a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#22c55e;flex-shrink:0">{a_role[:2].upper()}</div>
+                    <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:12px 14px;flex:1">
+                        <div style="font-size:10px;font-weight:700;color:#22c55e;margin-bottom:4px">{a_role}</div>
+                        <div style="font-size:12px;color:#94a3b8;line-height:1.7">{answer}</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid #f59e0b;border-radius:10px;padding:14px;margin-top:8px">
+            <div style="font-size:12px;font-weight:600;color:#f59e0b;margin-bottom:6px">Key Requirements Surfaced in This Session</div>
+            <div style="font-size:12px;color:#94a3b8;line-height:1.9">
+                → Risk score must be <b style="color:#f1f5f9">explainable per signal</b> — not a black box (Marcus) → drove model choice (Logistic Regression)<br>
+                → Dashboard must surface <b style="color:#f1f5f9">top 5 at-risk accounts on load</b> — not buried in a table (Priya) → drove Customer 360 design<br>
+                → Output must include <b style="color:#f1f5f9">dollar MRR at risk</b>, not just a percentage (Rachel via Marcus) → drove What-If Simulator and ROI calculator<br>
+                → <b style="color:#f1f5f9">Onboarding stage tracking</b> added as unplanned requirement — two churned accounts discovered during session (Priya)<br>
+                → MVP must fit <b style="color:#f1f5f9">two engineering sprints</b> — Slack integration and real-time webhooks deprioritized to Phase 2 (Dev)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with art_tab8:
+        st.markdown('<div class="section-header">Project Charter & Scope Decisions</div>', unsafe_allow_html=True)
+
+        col_ch1, col_ch2 = st.columns([3, 2])
+        with col_ch1:
+            st.markdown("""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:22px;margin-bottom:14px">
+                <div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:14px">Project Charter — BridgeIQ Engagement</div>
+                <div style="display:grid;grid-template-columns:140px 1fr;gap:8px 16px;font-size:12px">
+                    <div style="color:#64748b;font-weight:600">Client</div><div style="color:#94a3b8">Apex Solutions (fictional B2B SaaS)</div>
+                    <div style="color:#64748b;font-weight:600">Sponsor</div><div style="color:#94a3b8">Marcus Chen, VP Customer Success</div>
+                    <div style="color:#64748b;font-weight:600">Financial Approver</div><div style="color:#94a3b8">Rachel Okonkwo, CFO</div>
+                    <div style="color:#64748b;font-weight:600">BA</div><div style="color:#94a3b8">Sai Hemanth</div>
+                    <div style="color:#64748b;font-weight:600">Start Date</div><div style="color:#94a3b8">Q4 2024 (post Board escalation)</div>
+                    <div style="color:#64748b;font-weight:600">Deadline</div><div style="color:#94a3b8">12 weeks — tied to Series B data room</div>
+                    <div style="color:#64748b;font-weight:600">Objective</div><div style="color:#94a3b8">Diagnose churn root causes, redesign CS workflow, specify + prototype AI-integrated solution</div>
+                    <div style="color:#64748b;font-weight:600">Success Metric</div><div style="color:#94a3b8">Working prototype with live data, stakeholder sign-off, MRR-at-risk quantified for board</div>
+                    <div style="color:#64748b;font-weight:600">Out of Scope</div><div style="color:#94a3b8">Full production build, Salesforce integration, real-time webhooks (Phase 2)</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            milestone_rows = [
+                ("Wk 1-2", "Discovery & Elicitation", "done", "Stakeholder interviews, AS-IS process mapping, pain point analysis, data audit"),
+                ("Wk 2-3", "Data Engineering", "done", "6-table schema design, 48-col data dictionary, ERD, 16K+ synthetic data generated"),
+                ("Wk 3-4", "SQL Analytics Layer", "done", "10 SQL queries: churn, cohort, SLA compliance, composite risk scoring"),
+                ("Wk 5-7", "Application Build", "done", "12-page Streamlit app, Plotly dashboards, custom CSS, filter system"),
+                ("Wk 7-9", "AI Integration", "done", "Claude API: feedback analyzer, requirements generator, insights engine"),
+                ("Wk 9-11", "BA Deliverables", "done", "BRD, 15 user stories, risk register, RACI, RTM, 10-slide deck"),
+                ("Wk 12", "UAT & Deployment", "done", "Stakeholder review, Streamlit Cloud deploy, GitHub publish"),
+            ]
+            rows_html = ""
+            for wk, title, status, desc in milestone_rows:
+                rows_html += f"""
+                <div style="display:flex;gap:12px;margin-bottom:10px;align-items:flex-start">
+                    <div style="min-width:60px;text-align:right"><span style="background:#22c55e;color:#000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:10px">{wk}</span></div>
+                    <div style="width:2px;background:linear-gradient(180deg,#22c55e,transparent);min-height:38px;flex-shrink:0;border-radius:2px;margin-top:4px"></div>
+                    <div style="flex:1;padding-bottom:8px;border-bottom:1px solid #1e3a5f">
+                        <div style="font-size:12px;font-weight:600;color:#f1f5f9">{title}</div>
+                        <div style="font-size:11px;color:#64748b;line-height:1.6">{desc}</div>
+                    </div>
+                </div>"""
+            st.markdown(f'<div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:20px 24px">{rows_html}</div>', unsafe_allow_html=True)
+
+        with col_ch2:
+            st.markdown("""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-top:3px solid #ef4444;border-radius:12px;padding:18px;margin-bottom:14px">
+                <div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:12px">What We Cut & Why</div>
+                <div style="font-size:11px;font-weight:700;color:#ef4444;letter-spacing:1px;margin-bottom:10px">DEPRIORITIZED TO PHASE 2</div>
+            """, unsafe_allow_html=True)
+
+            cuts = [
+                ("Slack Alert Integration (US-02)", "Dev's team had no sprint capacity. Documented in R-04. Phase 2 spec written."),
+                ("Real-time Webhook Pipeline", "Would require 3-4 engineering weeks. Out of 12-week window. Replaced with daily batch logic."),
+                ("Salesforce CRM Sync", "Legal flagged data sharing agreement gaps (R-06). Tabled pending compliance review."),
+                ("Mobile-responsive UI", "CSM team is desktop-only. Dropped after Priya confirmed no mobile usage in current workflow."),
+                ("Email Digest Automation (US-12)", "Low stakeholder priority. Marcus rated it 'nice to have' vs. the dashboard."),
+            ]
+            for title, reason in cuts:
+                st.markdown(f"""
+                <div style="border-bottom:1px solid #1e3a5f;padding:10px 0">
+                    <div style="font-size:12px;font-weight:600;color:#f1f5f9;margin-bottom:4px">{title}</div>
+                    <div style="font-size:11px;color:#64748b;line-height:1.6">{reason}</div>
+                </div>
+                """, unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            st.markdown("""
+            <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-top:3px solid #a78bfa;border-radius:12px;padding:18px">
+                <div style="font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:12px">Data Assumptions</div>
+                <div style="font-size:11px;color:#64748b;line-height:1.9">
+                    <b style="color:#a78bfa">A-01:</b> MRR ranges inferred from plan tier pricing (Starter $500-999, Growth $1k-5k, Enterprise $5k-15k). Reviewed by Finance proxy.<br><br>
+                    <b style="color:#a78bfa">A-02:</b> Health score weights (usage 35%, support 25%, billing 20%, NPS 20%) agreed with Marcus in Wk 2. Not validated against historical churn data — to be recalibrated post-launch.<br><br>
+                    <b style="color:#a78bfa">A-03:</b> Ticket descriptions generated synthetically. Sentiment model trained on proxy corpus — NLP accuracy not production-validated.<br><br>
+                    <b style="color:#a78bfa">A-04:</b> Churn ML model trained on synthetic data. Feature importances directionally correct but coefficients not calibrated to real Apex data.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 8 — WHAT-IF REVENUE SIMULATOR
 # ══════════════════════════════════════════════════════════════════════════════
@@ -2863,9 +3075,9 @@ elif page == "💡 What-If Simulator":
 # ══════════════════════════════════════════════════════════════════════════════
 # PAGE 9 — ABOUT THE ANALYST
 # ══════════════════════════════════════════════════════════════════════════════
-elif page == "👤 About the Analyst":
-    st.markdown('<div class="page-title">About the Analyst</div>', unsafe_allow_html=True)
-    st.markdown('<div class="page-subtitle">The person behind BridgeIQ — bridging computer science and business strategy</div>', unsafe_allow_html=True)
+elif page == "👤 Engagement Summary":
+    st.markdown('<div class="page-title">Engagement Summary</div>', unsafe_allow_html=True)
+    st.markdown('<div class="page-subtitle">12-week Technical BA engagement at Apex Solutions — delivered by Sai Hemanth</div>', unsafe_allow_html=True)
     st.markdown("---")
 
     # Stats at a glance strip
@@ -2880,7 +3092,7 @@ elif page == "👤 About the Analyst":
         <div class="hero-stat"><div class="hero-stat-label">AI Features</div><div class="hero-stat-value">6</div></div>
         <div class="hero-stat"><div class="hero-stat-label">User Stories</div><div class="hero-stat-value">15</div></div>
         <div class="hero-stat"><div class="hero-stat-label">BA Deliverables</div><div class="hero-stat-value">14</div></div>
-        <div class="hero-stat"><div class="hero-stat-label">App Pages</div><div class="hero-stat-value">9</div></div>
+        <div class="hero-stat"><div class="hero-stat-label">App Pages</div><div class="hero-stat-value">12</div></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -2907,16 +3119,39 @@ elif page == "👤 About the Analyst":
 
         st.markdown("""
         <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:28px;margin-bottom:16px">
-            <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:16px">Why I Built BridgeIQ</div>
+            <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:16px">Engagement Recap</div>
             <div style="font-size:14px;color:#94a3b8;line-height:1.8">
-                Most BA portfolios are PDFs. A BRD written in isolation, user stories no one will implement,
-                process maps that live in a Confluence page nobody reads.
+                This 12-week engagement was triggered by a Board-level escalation after Apex Solutions missed
+                Q3 revenue targets by 8%. I was brought in to diagnose three compounding problems — churn,
+                onboarding failure, and SLA breach — and deliver a working, data-driven solution within
+                a tight deadline tied to Series B fundraising.
                 <br><br>
-                I wanted to build something a recruiter could <em>click</em>. Something that shows — not tells —
-                that I can take a business problem, go deep on the data, design a solution, spec it in Agile,
-                and deliver a live working product. All of it. Not just one piece.
-                <br><br>
-                BridgeIQ is that proof. It's a fake company with real problems. And I solved them end-to-end.
+                The constraint shaped everything. No full engineering build. No Salesforce integration. No
+                real-time webhooks. Just: diagnose, redesign, specify, and prove it works. The result is this
+                platform — 12 pages, 16K+ rows of live data, 6 AI features, and every BA deliverable a
+                hiring manager would ask for. End-to-end. Not just one piece.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-left:4px solid #a78bfa;border-radius:12px;padding:24px;margin-bottom:16px">
+            <div style="font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:14px">Lessons Learned</div>
+            <div style="font-size:13px;color:#94a3b8;line-height:1.9">
+                <b style="color:#a78bfa">1. Stakeholder buy-in precedes every technical decision.</b>
+                Marcus's explainability requirement wasn't a blocker — it was better requirements. It forced a cleaner model
+                and a more useful output. The instinct to push back on constraints is almost always wrong.<br><br>
+                <b style="color:#a78bfa">2. The unspoken requirement is the most valuable one.</b>
+                The onboarding stage tracker (US-03) wasn't in the original brief. It came out of a single interview
+                question: "Are there cases where customers churn that don't show up in usage data?" Priya's answer
+                added one of the highest-value features in the platform.<br><br>
+                <b style="color:#a78bfa">3. Scope discipline is a BA deliverable.</b>
+                Saying no to Slack integration, Salesforce sync, and mobile UI wasn't failure — it was how the MVP
+                shipped on time. The deprioritization list in the Project Charter tab is as important as the feature list.<br><br>
+                <b style="color:#a78bfa">4. Initial churn model overfit to plan type.</b>
+                First Logistic Regression run had plan_type dominating feature importances. Retrained after removing
+                the feature and adding usage frequency signals. Final model is directionally correct — but calibration
+                against real Apex data would be the first post-launch task.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -3016,14 +3251,14 @@ elif page == "👤 About the Analyst":
 
     # Project timeline
     st.markdown("---")
-    st.markdown('<div class="section-header">How BridgeIQ Was Built — Project Timeline</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-header">Delivery Timeline</div>', unsafe_allow_html=True)
     tl_items = [
-        ("Week 1", "Discovery & Data Engineering", "Designed 6-table relational schema, defined 48-column data dictionary, generated 16,000+ rows of synthetic data with realistic business patterns using Faker + NumPy.", "#4F8EF7"),
-        ("Week 2", "SQL Analytics Layer", "Wrote 10 SQL query files covering churn analysis, revenue trends, cohort retention, SLA compliance, and composite risk scoring — using CTEs, window functions, and multi-table joins.", "#22c55e"),
-        ("Week 3", "Streamlit Application", "Built 9-page interactive Streamlit app with Plotly dashboards, dark theme, custom CSS animations, responsive layout, and global filter system.", "#a78bfa"),
-        ("Week 4", "Claude AI Integration", "Integrated Anthropic Claude API for 6 AI features: feedback analyzer, requirements generator, insights engine, interview simulator, account intelligence, and anomaly root cause analysis.", "#f59e0b"),
-        ("Week 5", "BA Deliverables Suite", "Produced BRD (11 sections), 15 Agile user stories with AC, AS-IS/TO-BE process maps, risk register, RACI matrix, requirements traceability matrix, and 10-slide executive deck.", "#ef4444"),
-        ("Shipped", "Live on Streamlit Cloud", "Deployed publicly. 16K+ rows of data, 6 AI features, 9 interactive pages — all running live. GitHub repository published and documented.", "#22c55e"),
+        ("Wk 1–2", "Discovery & Elicitation", "Stakeholder interviews (Marcus, Priya, Dev, Rachel). AS-IS process mapping — 3-spreadsheet manual workflow documented with 4 pain points. Data audit. Requirements prioritization using MoSCoW.", "#4F8EF7"),
+        ("Wk 2–3", "Data Engineering", "Designed 6-table relational schema from scratch. Defined 48-column data dictionary (Dev's gate requirement). Generated 16,000+ synthetic rows with Faker + NumPy. ERD published.", "#22c55e"),
+        ("Wk 3–4", "SQL Analytics Layer", "10 SQL query files: churn analysis, revenue trends, cohort retention, SLA compliance, composite risk scoring. CTEs, window functions, multi-table joins.", "#a78bfa"),
+        ("Wk 5–8", "Application Build + AI", "12-page Streamlit app with Plotly dashboards. Claude API integration: 6 AI features. Custom CSS dark theme. Inline filter system. PDF export.", "#f59e0b"),
+        ("Wk 9–11", "BA Deliverables Suite", "BRD (11 sections), 15 Agile user stories with AC, AS-IS/TO-BE process maps, risk register, RACI matrix, RTM, 10-slide executive deck.", "#ef4444"),
+        ("Wk 12", "UAT & Deployment", "Stakeholder review with Marcus and Priya. Scope sign-off. Deployed to Streamlit Cloud. GitHub repository published. PDF guide generated.", "#22c55e"),
     ]
     tl_rows = ""
     for week, title, desc, color in tl_items:
@@ -3039,6 +3274,28 @@ elif page == "👤 About the Analyst":
             </div>
         </div>"""
     st.markdown(f'<div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:24px 28px">{tl_rows}</div>', unsafe_allow_html=True)
+
+    # Version history
+    st.markdown("---")
+    st.markdown('<div class="section-header">Version History — Iterative Delivery</div>', unsafe_allow_html=True)
+    versions = [
+        ("v1.0", "MVP — Core Dashboard", "3-page app: Executive Dashboard, AI Feedback Analyzer, Requirements Generator. Basic Plotly charts, SQLite data layer, first Claude API integration."),
+        ("v1.1", "Filter System + Home Page", "Added global inline filters (plan, region, industry) to all dashboard tabs. Built Home page with scenario context and navigation grid. Fixed filter SQL injection across 5 tabs."),
+        ("v1.2", "Stakeholder-Driven Scope Expansion", "Added What-If Simulator (Rachel's MRR-at-risk requirement), Customer 360 with journey timeline (Priya's account intelligence request), anomaly detector."),
+        ("v2.0", "ML + AI + Production Features", "Logistic Regression churn predictor (retrained after plan_type overfit). SQL Playground. PDF export. 3D customer segmentation. Ticket sentiment analysis. Capacity planning tab. 12 pages total."),
+        ("v2.1", "Real-World Authenticity Layer", "Added stakeholder profiles with conflict documentation, requirements elicitation transcript, project charter, scope decisions log, data assumptions, lessons learned, version history."),
+    ]
+    ver_html = ""
+    for ver, title, desc in versions:
+        ver_html += f"""
+        <div style="display:flex;gap:14px;margin-bottom:12px;align-items:flex-start">
+            <div style="min-width:44px"><span style="background:#1e3a5f;color:#4F8EF7;font-size:10px;font-weight:800;padding:3px 7px;border-radius:6px;white-space:nowrap">{ver}</span></div>
+            <div style="flex:1;border-bottom:1px solid #1e3a5f;padding-bottom:10px">
+                <div style="font-size:12px;font-weight:600;color:#f1f5f9;margin-bottom:3px">{title}</div>
+                <div style="font-size:11px;color:#64748b;line-height:1.6">{desc}</div>
+            </div>
+        </div>"""
+    st.markdown(f'<div style="background:linear-gradient(135deg,#0d1b2a,#1a2d40);border:1px solid #1e3a5f;border-radius:12px;padding:20px 24px">{ver_html}</div>', unsafe_allow_html=True)
 
     # Strong CTA section
     st.markdown("---")
